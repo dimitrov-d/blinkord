@@ -1,0 +1,28 @@
+{
+  "name": "blinkord",
+  "version": "1.0.0",
+  "description": "An app that uses solana actions to enable users to easily gain access to a paid discord server",
+  "main": "index.ts",
+  "scripts": {
+    "start": "nodemon ./src/index.ts"
+  },
+  "keywords": [
+    "solana",
+    "actions",
+    "discord",
+    "blinkord"
+  ],
+  "author": "dimitrov-d",
+  "license": "ISC",
+  "dependencies": {
+    "@solana/actions": "^1.6.2",
+    "@solana/web3.js": "^1.95",
+    "axios": "^1.7.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21"
+  }
+}
