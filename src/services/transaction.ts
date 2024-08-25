@@ -35,6 +35,7 @@ export function verifySignature(address: string, message: string, signature: str
 
   return nacl.sign.detached.verify(
     decodeUTF8(message),
+    // Buffer.from(signature).toString('base64')
     Buffer.from(signature, 'base64'),
     new PublicKey(address).toBytes(),
   );

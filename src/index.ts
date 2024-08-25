@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { apiRouter } from './routers/api';
 import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 initializeDatabase();
 
-app.get('/actions.json', (req, res) =>
+app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
     rules: [
       { pathPattern: '/*', apiPath: '/api/*' },

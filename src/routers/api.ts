@@ -1,18 +1,22 @@
-import express from 'express';
-import axios from 'axios';
-import qs from 'querystring';
+import express, { Request, Response } from 'express';
 import { Action } from '@solana/actions-spec';
 import { actionCorsMiddleware, createPostResponse } from '@solana/actions';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
 import { findGuildById } from '../database/database';
+import { discordApi, getDiscordAccessToken } from '../services/oauth';
 
 export const apiRouter = express.Router();
 apiRouter.use(actionCorsMiddleware({}));
 
 const BASE_URL = env.APP_BASE_URL;
 
-apiRouter.get('/:guildId', async (req, res) => {
+/**
+ * Returns an action based on data for a given guild
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} code - Query param representing Discord OAuth code grant
+ */
+apiRouter.get('/:guildId', async (req: Request, res: Response) => {
   const { guildId } = req.params;
   if (!guildId) return res.status(500).send('Invalid data');
 
@@ -34,9 +38,9 @@ apiRouter.get('/:guildId', async (req, res) => {
     icon: guild.iconUrl,
     description: guild.description,
     links: {
-      actions: guild.roles.map((role) => ({
-        label: `${role.name} (${role.amount} SOL)`,
-        href: `${BASE_URL}/api/${guildId}/buy?roleId=${role.id}&code=${code}`,
+      actions: guild.roles.map(({ id, name, amount }) => ({
+        label: `${name} (${amount} SOL)`,
+        href: `${BASE_URL}/api/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
     disabled: !code,
@@ -46,7 +50,13 @@ apiRouter.get('/:guildId', async (req, res) => {
   return res.json(payload);
 });
 
-apiRouter.post('/:guildId/buy', async (req, res) => {
+/**
+ * Generates a transaction to send funds to the guild's wallet in order to obtain a role
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} code - Query param representing Discord OAuth code grant
+ * @param {string} roleId - Query param representing the role that the user selected and wants to buy
+ */
+apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
@@ -81,7 +91,14 @@ apiRouter.post('/:guildId/buy', async (req, res) => {
   }
 });
 
-apiRouter.post('/:guildId/confirm', async (req, res) => {
+/**
+ * A subsequent endpoint called after purchase TX was confirmed
+ * Uses Discord API to invite the user into a server and give them the role they bought
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} code - Query param representing Discord OAuth code grant
+ * @param {string} roleId - Query param representing the role that the user bought successfully
+ */
+apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
@@ -95,30 +112,20 @@ apiRouter.post('/:guildId/confirm', async (req, res) => {
 
   // Exchange the authorization code for an access token
   try {
-    const { data } = await axios.post(
-      'https://discord.com/api/oauth2/token',
-      qs.stringify({
-        client_id: env.DISCORD_CLIENT_ID,
-        client_secret: env.DISCORD_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code: code.toString(),
-        redirect_uri: env.DISCORD_REDIRECT_URI,
-      }),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
-    );
+    const access_token = await getDiscordAccessToken(code as string);
 
-    const { data: user } = await axios.get('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${data.access_token}` },
+    const { data: user } = await discordApi.get('/users/@me', {
+      headers: { Authorization: `Bearer ${access_token}` },
     });
 
-    await axios.put(
-      `https://discord.com/api/guilds/${guildId}/members/${user.id}`,
-      { access_token: data.access_token, roles: [roleId] },
+    await discordApi.put(
+      `/guilds/${guildId}/members/${user.id}`,
+      { access_token, roles: [roleId] },
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
 
-    await axios.put(
-      `https://discord.com/api/guilds/${guildId}/members/${user.id}/roles/${roleId}`,
+    await discordApi.put(
+      `/guilds/${guildId}/members/${user.id}/roles/${roleId}`,
       {},
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
