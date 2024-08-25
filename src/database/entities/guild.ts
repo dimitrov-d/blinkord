@@ -1,0 +1,42 @@
+import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
+import { Role } from './role';
+
+@Entity()
+export class Guild {
+  constructor(guild: Partial<Guild>) {
+    Object.assign(this, guild);
+  }
+
+  /**
+   * Discord guild ID
+   */
+  @PrimaryColumn({ type: 'varchar', unique: true })
+  id: string;
+
+  /**
+   * Name of the guild, this will be displayed on the blink
+   */
+  @Column({ type: 'varchar' })
+  name: string;
+
+  /**
+   * URL of the icon that will be displayed on the blink
+   */
+  @Column({ type: 'varchar' })
+  iconUrl: string;
+
+  /**
+   * Description that will be shown on the blink
+   */
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  /**
+   * Details of the server, with custom description of the whole server and the roles
+   */
+  @Column({ type: 'text', nullable: true })
+  details: string;
+
+  @OneToMany(() => Role, (role) => role.guild, { cascade: true })
+  roles: Role[];
+}

@@ -3,11 +3,13 @@ import axios from 'axios';
 import qs from 'querystring';
 import { guilds } from '../guilds';
 import { Action } from '@solana/actions-spec';
-import { createPostResponse } from '@solana/actions';
+import { actionCorsMiddleware, createPostResponse } from '@solana/actions';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
 
 export const apiRouter = express.Router();
+apiRouter.use(actionCorsMiddleware({}));
+
 const BASE_URL = env.APP_BASE_URL;
 
 apiRouter.get('/:guildId', (req, res) => {

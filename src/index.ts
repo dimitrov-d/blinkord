@@ -1,10 +1,10 @@
 import express from 'express';
-import { actionCorsMiddleware } from '@solana/actions';
 import { apiRouter } from './routers/api';
+import { initializeDatabase } from './database/database';
 
 const app = express();
 app.use(express.json());
-app.use(actionCorsMiddleware({}));
+initializeDatabase();
 
 app.get('/actions.json', (req, res) =>
   res.json({
