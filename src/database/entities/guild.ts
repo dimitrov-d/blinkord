@@ -14,6 +14,12 @@ export class Guild {
   id: string;
 
   /**
+   * The wallet address that payments are sent to
+   */
+  @Column({ type: 'varchar' })
+  address: string;
+
+  /**
    * Name of the guild, this will be displayed on the blink
    */
   @Column({ type: 'varchar' })

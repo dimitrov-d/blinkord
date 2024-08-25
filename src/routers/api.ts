@@ -58,10 +58,8 @@ apiRouter.post('/:guildId/buy', async (req, res) => {
   const role = guild.roles.find((r) => r.id === roleId);
   if (!role) return res.status(404).send('Role not found');
 
-  const { account } = req.body;
   try {
-    // TODO: Get recipient from DB guild
-    const transaction = await generateSendTransaction(account, role.amount, env.DEFAULT_RECIPIENT);
+    const transaction = await generateSendTransaction(req.body.account, role.amount, guild.address);
 
     return res.json(
       await createPostResponse({
@@ -97,7 +95,7 @@ apiRouter.post('/:guildId/confirm', async (req, res) => {
 
   // Exchange the authorization code for an access token
   try {
-    const tokenResponse = await axios.post(
+    const { data } = await axios.post(
       'https://discord.com/api/oauth2/token',
       qs.stringify({
         client_id: env.DISCORD_CLIENT_ID,
@@ -109,15 +107,13 @@ apiRouter.post('/:guildId/confirm', async (req, res) => {
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
     );
 
-    const accessToken = tokenResponse.data.access_token;
-
     const { data: user } = await axios.get('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${data.access_token}` },
     });
 
     await axios.put(
       `https://discord.com/api/guilds/${guildId}/members/${user.id}`,
-      { access_token: accessToken, roles: [roleId] },
+      { access_token: data.access_token, roles: [roleId] },
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
 
@@ -127,14 +123,13 @@ apiRouter.post('/:guildId/confirm', async (req, res) => {
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
 
-    const payload: Action<'completed'> = {
+    return res.json({
       title: guild.name,
       icon: guild.iconUrl,
       description: guild.description,
       label: `Role ${role.name} obtained`,
       type: 'completed',
-    };
-    return res.json(payload);
+    });
   } catch (error) {
     console.error(`Error during OAuth2 process: ${error}`);
     res.status(500).send('An error occurred');

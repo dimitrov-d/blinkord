@@ -8,7 +8,6 @@ const env = {
   DISCORD_REDIRECT_URI: null,
 
   APP_BASE_URL: null,
-  DEFAULT_RECIPIENT: null,
 
   DATABASE_HOST: null,
   DATABASE_USER: null,

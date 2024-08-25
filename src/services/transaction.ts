@@ -1,4 +1,6 @@
 import { PublicKey, LAMPORTS_PER_SOL, SystemProgram, Transaction, Connection, clusterApiUrl } from '@solana/web3.js';
+import nacl from 'tweetnacl';
+import { decodeUTF8 } from 'tweetnacl-util';
 
 export async function generateSendTransaction(from: string, amount: number, recipient: string) {
   const fromPubkey = new PublicKey(from);
@@ -26,4 +28,14 @@ export async function generateSendTransaction(from: string, amount: number, reci
     blockhash,
     lastValidBlockHeight,
   }).add(transferSolInstruction);
+}
+
+export function verifySignature(address: string, message: string, signature: string): boolean {
+  if (!message || !address || !signature) return false;
+
+  return nacl.sign.detached.verify(
+    decodeUTF8(message),
+    Buffer.from(signature, 'base64'),
+    new PublicKey(address).toBytes(),
+  );
 }
