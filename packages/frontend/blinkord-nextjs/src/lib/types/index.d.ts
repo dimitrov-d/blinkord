@@ -97,10 +97,19 @@ declare type DiscordMember = SupabaseUser & {
 
 // ========================================
 
-declare type SupabaseUser = Database['public']['Tables']['users']['Row'];
+declare type SupabaseUser = Database["public"]["Tables"]["users"]["Row"];
 
 // Defining a generic response type for Supabase
 declare type SupabaseResponse<T> = {
   data: T | null;
   error: Error | null;
+};
+
+// ======================================== UI types
+
+declare type ServerFormData = {
+  title: string;
+  description: string;
+  details: string;
+  roles: string[];
 };
