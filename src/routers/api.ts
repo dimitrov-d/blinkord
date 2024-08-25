@@ -1,29 +1,38 @@
 import express from 'express';
 import axios from 'axios';
 import qs from 'querystring';
-import { guilds } from '../guilds';
 import { Action } from '@solana/actions-spec';
 import { actionCorsMiddleware, createPostResponse } from '@solana/actions';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
+import { findGuildById } from '../database/database';
 
 export const apiRouter = express.Router();
 apiRouter.use(actionCorsMiddleware({}));
 
 const BASE_URL = env.APP_BASE_URL;
 
-apiRouter.get('/:guildId', (req, res) => {
+apiRouter.get('/:guildId', async (req, res) => {
   const { guildId } = req.params;
   if (!guildId) return res.status(500).send('Invalid data');
 
-  const guild = guilds.find((g) => g.id === guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+  const guild = await findGuildById(guildId);
+  if (!guild)
+    return res.json({
+      type: 'completed',
+      links: { actions: [] },
+      title: 'Not found',
+      icon: 'https://agentestudio.com/uploads/post/image/69/main_how_to_design_404_page.png',
+      description: 'Discord server not found',
+    });
 
   const { code } = req.query;
   const payload: Action<'action'> = {
     type: 'action',
     label: null,
-    ...guild,
+    title: guild.name,
+    icon: guild.iconUrl,
+    description: guild.description,
     links: {
       actions: guild.roles.map((role) => ({
         label: `${role.name} (${role.amount} SOL)`,
@@ -43,7 +52,7 @@ apiRouter.post('/:guildId/buy', async (req, res) => {
 
   if (!guildId || !code || !roleId) return res.status(500).send('Invalid data');
 
-  const guild = guilds.find((g) => g.id === guildId);
+  const guild = await findGuildById(guildId);
   if (!guild) return res.status(404).send('Guild not found');
 
   const role = guild.roles.find((r) => r.id === roleId);
@@ -80,7 +89,7 @@ apiRouter.post('/:guildId/confirm', async (req, res) => {
 
   if (!guildId || !roleId || !code) return res.status(500).send('Invalid data');
 
-  const guild = guilds.find((g) => g.id === guildId);
+  const guild = await findGuildById(guildId);
   if (!guild) return res.status(404).send('Guild not found');
 
   const role = guild.roles.find((r) => r.id === roleId);
@@ -119,7 +128,9 @@ apiRouter.post('/:guildId/confirm', async (req, res) => {
     );
 
     const payload: Action<'completed'> = {
-      ...guild,
+      title: guild.name,
+      icon: guild.iconUrl,
+      description: guild.description,
       label: `Role ${role.name} obtained`,
       type: 'completed',
     };

@@ -37,9 +37,11 @@ export async function saveRole(role: Role) {
   await roleRepository.save(role);
 }
 
-async function findGuildById(id: string) {
-  return await guildRepository.findOne({
+export async function findGuildById(id: string) {
+  const guild = await guildRepository.findOne({
     where: { id },
     relations: ['roles'],
   });
+  guild?.roles.sort((a, b) => a.amount - b.amount);
+  return guild;
 }
