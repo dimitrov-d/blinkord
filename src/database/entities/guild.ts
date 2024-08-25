@@ -28,13 +28,13 @@ export class Guild {
   /**
    * Description that will be shown on the blink
    */
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   description: string;
 
   /**
    * Details of the server, with custom description of the whole server and the roles
    */
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text' })
   details: string;
 
   @OneToMany(() => Role, (role) => role.guild, { cascade: true })

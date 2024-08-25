@@ -36,3 +36,10 @@ export async function saveGuild(guild: Guild) {
 export async function saveRole(role: Role) {
   await roleRepository.save(role);
 }
+
+async function findGuildById(id: string) {
+  return await guildRepository.findOne({
+    where: { id },
+    relations: ['roles'],
+  });
+}
