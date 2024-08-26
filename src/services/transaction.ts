@@ -33,10 +33,15 @@ export async function generateSendTransaction(from: string, amount: number, reci
 export function verifySignature(address: string, message: string, signature: string): boolean {
   if (!message || !address || !signature) return false;
 
-  return nacl.sign.detached.verify(
-    decodeUTF8(message),
-    // Buffer.from(signature).toString('base64')
-    Buffer.from(signature, 'base64'),
-    new PublicKey(address).toBytes(),
-  );
+  try {
+    return nacl.sign.detached.verify(
+      decodeUTF8(message),
+      // Buffer.from(signature).toString('base64')
+      Buffer.from(signature, 'base64'),
+      new PublicKey(address).toBytes(),
+    );
+  } catch (err) {
+    console.error(`Error verifying wallet signature: ${err}`);
+    return false;
+  }
 }

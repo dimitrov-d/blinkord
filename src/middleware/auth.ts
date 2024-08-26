@@ -33,7 +33,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     return res.status(401).json({ message: 'Invalid signature' });
   }
 
-  if (!req['user'].guildIds.includes(data.id)) {
+  if (!req['user'].guildIds?.includes(data?.id)) {
     return res.status(403).json({ message: 'User is not an owner/admin of the guild' });
   }
 

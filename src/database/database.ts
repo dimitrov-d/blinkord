@@ -1,14 +1,14 @@
 import 'reflect-metadata';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, InsertResult, UpdateResult } from 'typeorm';
 import { Guild } from './entities/guild';
 import { Role } from './entities/role';
 import env from '../services/env';
 
 let guildRepository: Repository<Guild>;
-let roleRepository: Repository<Role>;
+let dataSource: DataSource;
 
 export async function initializeDatabase() {
-  const dataSource = new DataSource({
+  dataSource = new DataSource({
     host: env.DATABASE_HOST,
     username: env.DATABASE_USER,
     password: env.DATABASE_PASSWORD,
@@ -26,19 +26,44 @@ export async function initializeDatabase() {
     .catch((err) => console.error('Error during database initialization', err));
 
   guildRepository = dataSource.getRepository(Guild);
-  roleRepository = dataSource.getRepository(Role);
 }
 
-export async function insertGuild(guild: Guild) {
-  return await guildRepository.insert(guild);
+export async function insertGuild(guild: Guild): Promise<InsertResult> {
+  return await dataSource.transaction(async (entityManager) => {
+    const newGuild = await entityManager.insert(Guild, guild);
+
+    await Promise.all(
+      guild.roles.map((role: Partial<Role>) =>
+        // Make relation between new guild and role
+        entityManager.insert(Role, new Role({ ...role, guild: new Guild({ id: guild.id }) })),
+      ),
+    );
+
+    return newGuild;
+  });
 }
 
-export async function updateGuild(guildId: string, data: Guild) {
-  return await guildRepository.update(guildId, data);
-}
+export async function updateGuild(guildId: string, guild: Guild): Promise<UpdateResult> {
+  return await dataSource.transaction(async (entityManager) => {
+    // roles property causes the update query to break
+    const updatedGuild = await entityManager.update(Guild, guildId, { ...guild, roles: undefined });
+    if (!guild.roles?.length) return;
+    // Delete roles that are not in the updated guild.roles array
+    const existingRoles = await entityManager.find(Role, { where: { guild: { id: guildId } } });
+    const rolesToDelete = existingRoles.filter(
+      (existingRole) => !guild.roles.map((role) => role.id).includes(existingRole.id),
+    );
+    await Promise.all(rolesToDelete.map((role) => entityManager.delete(Role, role.id)));
 
-export async function saveRole(role: Role) {
-  await roleRepository.save(role);
+    // Save new roles or update existing ones
+    await Promise.all(
+      guild.roles.map((role: Partial<Role>) =>
+        entityManager.save(Role, new Role({ ...role, guild: new Guild({ id: guild.id }) })),
+      ),
+    );
+
+    return updatedGuild;
+  });
 }
 
 export async function findGuildById(id: string) {

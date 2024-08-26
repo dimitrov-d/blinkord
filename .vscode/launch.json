@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Debug",
       "runtimeExecutable": "nodemon",
-      "runtimeArgs": ["${relativeFile}"],
+      "runtimeArgs": ["./src/index.ts"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }

@@ -42,7 +42,6 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
       actions: guild.roles.map(({ id, name, amount }) => ({
         label: `${name} (${amount} SOL)`,
         href: `${BASE_URL}/api/${guildId}/buy?roleId=${id}&code=${code}`,
-        parameters: [{ name: 'test' }],
       })),
     },
     disabled: !code,

@@ -22,6 +22,6 @@ export class Role {
   @Column('decimal', { precision: 10, scale: 2 })
   amount: number;
 
-  @ManyToOne(() => Guild, (guild) => guild.roles)
+  @ManyToOne(() => Guild, (guild) => guild.roles, { nullable: false, onDelete: 'CASCADE' })
   guild: Guild;
 }

@@ -43,6 +43,6 @@ export class Guild {
   @Column({ type: 'text' })
   details: string;
 
-  @OneToMany(() => Role, (role) => role.guild, { cascade: true })
+  @OneToMany(() => Role, (role) => role.guild, { onDelete: 'CASCADE' })
   roles: Role[];
 }

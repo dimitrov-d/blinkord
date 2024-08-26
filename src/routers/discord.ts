@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { findGuildById, insertGuild, saveRole, updateGuild } from '../database/database';
+import { findGuildById, insertGuild, updateGuild } from '../database/database';
 import { Guild } from '../database/entities/guild';
 import { Role } from '../database/entities/role';
 import env from '../services/env';
@@ -59,7 +59,7 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
     // Generate a JWT token for authentication
     const userId = user.id;
     const username = user.username;
-    const token = jwt.sign({ userId, username, guildIds }, env.JWT_SECRET);
+    const token = jwt.sign({ userId, username, guildIds }, env.JWT_SECRET, { expiresIn: '1d' });
 
     // Return the token, user data and filtered guilds with info if bot is in
     return res.json({
@@ -117,17 +117,17 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
 discordRouter.post('/guilds', authenticate, async (req: Request, res: Response) => {
   const { address, data } = req.body;
 
+  if (!data.name || !data.roles?.length) {
+    return res.status(400).send({ message: 'Invalid guild data provided' });
+  }
   data.address = address;
 
   try {
-    const guild = await insertGuild(new Guild(data));
-
-    await Promise.all(data.roles.map((role: Partial<Role>) => saveRole(new Role(role))));
-
-    return res.status(201).json(guild.raw);
+    await insertGuild(new Guild(data));
+    return res.status(201).json(data);
   } catch (error) {
     console.error(`Error saving guild: ${error}`);
-    return res.status(500).json({ message: `Failed to save guild and roles: ${error}` });
+    return res.status(500).json({ message: `Failed to save guild and roles` });
   }
 });
 
@@ -151,13 +151,10 @@ discordRouter.patch('/guilds/:guildId', authenticate, async (req: Request, res: 
   data.address = address;
 
   try {
-    const updatedGuild = await updateGuild(guildId, data);
-
-    await Promise.all(data.roles.map((role: Partial<Role>) => saveRole(new Role(role))));
-
-    return res.status(200).json(updatedGuild.raw);
+    await updateGuild(guildId, data);
+    return res.status(200).json(data);
   } catch (error) {
     console.error(`Error updating guild: ${error}`);
-    return res.status(500).json({ message: `Failed to update guild and roles: ${error}` });
+    return res.status(500).json({ message: `Failed to update guild and roles` });
   }
 });
