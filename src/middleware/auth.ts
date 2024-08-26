@@ -12,13 +12,13 @@ import env from '../services/env';
  */
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Token not provided' });
+  if (!token) return res.status(401).json({ error: 'Token not provided' });
 
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET) as { userId: string; guildIds: string[] };
     req['user'] = decoded;
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    return res.status(401).json({ error: 'Invalid token' });
   }
 
   // Verify signature and ownership
@@ -30,11 +30,11 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
   };
 
   if (!verifySignature(address, message, signature)) {
-    return res.status(401).json({ message: 'Invalid signature' });
+    return res.status(401).json({ error: 'Invalid signature' });
   }
 
   if (!req['user'].guildIds?.includes(data?.id)) {
-    return res.status(403).json({ message: 'User is not an owner/admin of the guild' });
+    return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
   }
 
   next();

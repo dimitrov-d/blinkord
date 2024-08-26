@@ -19,7 +19,6 @@ const BASE_URL = env.APP_BASE_URL;
  */
 apiRouter.get('/:guildId', async (req: Request, res: Response) => {
   const { guildId } = req.params;
-  if (!guildId) return res.status(500).send('Invalid data');
 
   const guild = await findGuildById(guildId);
   if (!guild)
@@ -30,6 +29,8 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
       icon: 'https://agentestudio.com/uploads/post/image/69/main_how_to_design_404_page.png',
       description: 'Discord server not found',
     });
+
+  console.info(`Sending action for guild ${guildId}`);
 
   const { code } = req.query;
   const payload: Action<'action'> = {
@@ -62,13 +63,13 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
-  if (!guildId || !code || !roleId) return res.status(500).send('Invalid data');
+  if (!guildId || !code || !roleId) return res.status(400).json({ error: 'Invalid role purchase data' });
 
   const guild = await findGuildById(guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+  if (!guild) return res.status(404).json({ error: 'Guild not found' });
 
   const role = guild.roles.find((r) => r.id === roleId);
-  if (!role) return res.status(404).send('Role not found');
+  if (!role) return res.status(404).json({ error: 'Role not found' });
 
   try {
     const transaction = await generateSendTransaction(req.body.account, role.amount, guild.address);
@@ -88,8 +89,8 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
       }),
     );
   } catch (error) {
-    console.error(`Error during generating transaction: ${error}`);
-    res.status(500).send('An error occurred');
+    console.error('Error during generating transaction', error);
+    res.status(500).json({ error: `Error during generating transaction: ${error}` });
   }
 });
 
@@ -105,17 +106,19 @@ apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
-  if (!guildId || !roleId || !code) return res.status(500).send('Invalid data');
+  if (!guildId || !roleId || !code)
+    return res.status(400).json({ error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}` });
 
   const guild = await findGuildById(guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+  if (!guild) return res.status(404).json({ error: 'Guild not found' });
 
   const role = guild.roles.find((r) => r.id === roleId);
-  if (!role) return res.status(404).send('Role not found');
+  if (!role) return res.status(404).json({ error: 'Role not found' });
 
   // Exchange the authorization code for an access token
   try {
     const access_token = await getDiscordAccessToken(code as string);
+    console.info(`Guild join access token obtained, adding member to the server with roles...`);
 
     const { data: user } = await discordApi.get('/users/@me', {
       headers: { Authorization: `Bearer ${access_token}` },
@@ -133,6 +136,8 @@ apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
 
+    console.info(`Successfully added user ${user.username} to guild ${guild.name} with role ${role.name}`);
+
     return res.json({
       title: guild.name,
       icon: guild.iconUrl,
@@ -141,7 +146,7 @@ apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
       type: 'completed',
     });
   } catch (error) {
-    console.error(`Error during OAuth2 process: ${error}`);
-    res.status(500).send('An error occurred');
+    console.error('Error while adding member to guild', error);
+    res.status(500).send({ error: `Error while adding member to guild: ${error}` });
   }
 });

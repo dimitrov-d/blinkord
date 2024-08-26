@@ -33,6 +33,7 @@ discordRouter.get('/login', (req: Request, res: Response) => {
 discordRouter.get('/login/callback', async (req: Request, res: Response) => {
   try {
     const accessToken = await getDiscordAccessToken(req.query.code as string);
+    console.info(`Login access token obtained, fetching user profile and guild data...`);
 
     const { data: user } = await discordApi.get('/users/@me', {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -56,6 +57,8 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
 
     const guildIds = ownerOrAdminGuilds.map((guild: any) => guild.id);
 
+    console.info(`Successfully fetched user guilds, ${ownerOrAdminGuilds.length} in total.`);
+
     // Generate a JWT token for authentication
     const userId = user.id;
     const username = user.username;
@@ -74,8 +77,8 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
       })),
     });
   } catch (error) {
-    console.error(`Error logging in with discord OAuth: ${error}`);
-    res.status(500).json({ error: `Failed to authenticate with Discord: ${error}` });
+    console.error('Error during OAuth callback', error);
+    res.status(500).json({ error: `Error during OAuth callback: ${error}` });
   }
 });
 
@@ -86,9 +89,12 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
  */
 discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) => {
   try {
-    const { data: roles } = await discordApi.get(`/guilds/${req.params.guildId}/roles`, {
+    const guildId = req.params.guildId;
+    const { data: roles } = await discordApi.get(`/guilds/${guildId}/roles`, {
       headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
     });
+
+    console.info(`Fetched ${roles.length} roles for guild ${guildId}`);
 
     const blinkordRolePosition = roles.find((r) => r.tags?.bot_id === env.DISCORD_CLIENT_ID)?.position;
 
@@ -100,7 +106,7 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
       blinkordRolePosition,
     });
   } catch (error) {
-    console.error(`Error fetching server roles: ${error}`);
+    console.error('Error fetching server roles', error);
     res.status(500).json({ error: `Unable to get server roles: ${error}` });
   }
 });
@@ -118,16 +124,18 @@ discordRouter.post('/guilds', authenticate, async (req: Request, res: Response) 
   const { address, data } = req.body;
 
   if (!data.name || !data.roles?.length) {
-    return res.status(400).send({ message: 'Invalid guild data provided' });
+    return res.status(400).send({ error: 'Invalid guild data provided' });
   }
   data.address = address;
+  console.info(`Going to create guild: ${JSON.stringify(data)}`);
 
   try {
     await insertGuild(new Guild(data));
+    console.info(`Guild ${data.id} inserted successfully`);
     return res.status(201).json(data);
   } catch (error) {
-    console.error(`Error saving guild: ${error}`);
-    return res.status(500).json({ message: `Failed to save guild and roles` });
+    console.error('Error saving guild', error);
+    return res.status(500).json({ error: `Failed to save guild and roles` });
   }
 });
 
@@ -150,11 +158,12 @@ discordRouter.patch('/guilds/:guildId', authenticate, async (req: Request, res: 
 
   data.address = address;
 
+  console.info(`Going to update guild: ${JSON.stringify(data)}`);
   try {
     await updateGuild(guildId, data);
     return res.status(200).json(data);
   } catch (error) {
-    console.error(`Error updating guild: ${error}`);
-    return res.status(500).json({ message: `Failed to update guild and roles` });
+    console.error('Error updating guild', error);
+    return res.status(500).json({ error: `Failed to update guild and roles` });
   }
 });
