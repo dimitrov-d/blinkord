@@ -10,18 +10,20 @@ export const discordRouter = express.Router();
 
 /**
  * Returns a Discord OAuth URL for logging in
- * @param {boolean} owner - If the login is done by a server owner or member, based on client-side context
+ * @param {boolean} owner - If the login is done by a server owner or member, based on client-side context. Leave empty if not owner.
  * If it is an owner, the login scope is guilds, for members it is guilds.join
+ * @returns { url: string }
  */
 discordRouter.get('/login', (req: Request, res: Response) =>
   res.json({
-    url: `https://discord.com/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify guilds${req.query.owner ? '' : '.join'}&state=123`,
+    url: `https://discord.com/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify+guilds${req.query.owner ? '' : '.join'}`,
   }),
 );
 
 /**
  * Callback after an owner has logged in. Returns the user's id, username and guilds they are owner/admin of
  * @param {string} code - Query param with OAuth grant code provided after completing discord OAuth flow
+ * @returns { userId: string, username: string, guilds: Guild[]}
  */
 discordRouter.get('/login/callback', async (req: Request, res: Response) => {
   try {
@@ -66,6 +68,7 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
 /**
  * Get the roles of a guild through the API with Bot credentials
  * @param {string} guildId - Path parameter representing ID of the guild
+ * @returns { blinkRolePosition: number, roles: { id: string, name: string, position: number}[]}
  */
 discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) => {
   try {
@@ -73,7 +76,15 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
       headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
     });
 
-    return res.json(roles.filter((r) => !r.managed && r.name !== '@everyone').map(({ id, name }) => ({ id, name })));
+    const blinkordRolePosition = roles.find((r) => r.tags?.bot_id === env.DISCORD_CLIENT_ID)?.position;
+
+    return res.json({
+      roles: roles
+        .filter((r) => !r.managed && r.name !== '@everyone')
+        .sort((a, b) => b.position - a.position)
+        .map(({ id, name, position }) => ({ id, name, position })),
+      blinkordRolePosition,
+    });
   } catch (error) {
     console.error(`Error fetching server roles: ${error}`);
     res.status(500).json({ error: `Unable to get server roles: ${error}` });
@@ -81,12 +92,13 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
 });
 
 /**
- * Creates a new guild in the database.
+ * Creates a new guild in the database, or edits an existing guild.
  * The wallet signature is verified to make the user is really the owner of that wallet.
  * @param {string} message - The message which was signed
  * @param {string} signature - The signature after signing the message
  * @param {string} address - The address from the connected wallet on the client
  * @param {Guild} guild - The guild data which will be stored in the database
+ * @returns {Guild}
  */
 discordRouter.post('/guilds', async (req: Request, res: Response) => {
   const { message, signature, address, guild } = req.body as {

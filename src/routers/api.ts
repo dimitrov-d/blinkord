@@ -15,6 +15,7 @@ const BASE_URL = env.APP_BASE_URL;
  * Returns an action based on data for a given guild
  * @param {string} guildId - Path parameter representing ID of the guild
  * @param {string} code - Query param representing Discord OAuth code grant
+ * @returns {[Action](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
  */
 apiRouter.get('/:guildId', async (req: Request, res: Response) => {
   const { guildId } = req.params;
@@ -41,6 +42,7 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
       actions: guild.roles.map(({ id, name, amount }) => ({
         label: `${name} (${amount} SOL)`,
         href: `${BASE_URL}/api/${guildId}/buy?roleId=${id}&code=${code}`,
+        parameters: [{ name: 'test' }],
       })),
     },
     disabled: !code,
@@ -55,6 +57,7 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
  * @param {string} guildId - Path parameter representing ID of the guild
  * @param {string} code - Query param representing Discord OAuth code grant
  * @param {string} roleId - Query param representing the role that the user selected and wants to buy
+ * @returns {[Action POST response](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
  */
 apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
@@ -97,6 +100,7 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
  * @param {string} guildId - Path parameter representing ID of the guild
  * @param {string} code - Query param representing Discord OAuth code grant
  * @param {string} roleId - Query param representing the role that the user bought successfully
+ * @returns {[Completed action](https://docs.dialect.to/documentation/actions/specification/action-chaining)}
  */
 apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
