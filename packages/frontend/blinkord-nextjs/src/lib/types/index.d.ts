@@ -113,3 +113,14 @@ declare type ServerFormData = {
   details: string;
   roles: string[];
 };
+
+export interface BlinkAction {
+  title: string;
+  description: string;
+  fields: string[];
+}
+
+export interface BlinkProps {
+  action: BlinkAction;
+  websiteText: string;
+}
