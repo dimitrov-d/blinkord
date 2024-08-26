@@ -1,10 +1,11 @@
 import express, { Request, Response } from 'express';
-import { saveGuild, saveRole } from '../database/database';
+import jwt from 'jsonwebtoken';
+import { findGuildById, insertGuild, saveRole, updateGuild } from '../database/database';
 import { Guild } from '../database/entities/guild';
 import { Role } from '../database/entities/role';
-import { verifySignature } from '../services/transaction';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
+import { authenticate } from '../middleware/auth';
 
 export const discordRouter = express.Router();
 
@@ -14,16 +15,20 @@ export const discordRouter = express.Router();
  * If it is an owner, the login scope is guilds, for members it is guilds.join
  * @returns { url: string }
  */
-discordRouter.get('/login', (req: Request, res: Response) =>
-  res.json({
-    url: `https://discord.com/oauth2/authorize?client_id=${env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify+guilds${req.query.owner ? '' : '.join'}`,
-  }),
-);
+discordRouter.get('/login', (req: Request, res: Response) => {
+  const clientId = env.DISCORD_CLIENT_ID;
+  const redirectUri = encodeURIComponent(env.DISCORD_REDIRECT_URI);
+  const isJoin = req.query.owner ? '' : '.join';
+
+  return res.json({
+    url: `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify+guilds${isJoin}`,
+  });
+});
 
 /**
- * Callback after an owner has logged in. Returns the user's id, username and guilds they are owner/admin of
+ * Callback after an owner has logged in. Returns a JWT token with the user's id, username, and guild IDs they are owner/admin of
  * @param {string} code - Query param with OAuth grant code provided after completing discord OAuth flow
- * @returns { userId: string, username: string, guilds: Guild[]}
+ * @returns { token: string, userId: string, username: string, guilds: Guild[]}
  */
 discordRouter.get('/login/callback', async (req: Request, res: Response) => {
   try {
@@ -32,6 +37,7 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
     const { data: user } = await discordApi.get('/users/@me', {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+
     // Fetch the user's guilds
     const getGuilds = async (Authorization: string) => {
       const { data: guilds } = await discordApi.get('/users/@me/guilds', {
@@ -48,10 +54,18 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
     // Filter guilds where the user is the owner or admin
     const ownerOrAdminGuilds = userGuilds.filter((guild: any) => guild.owner || (guild.permissions & 0x8) === 0x8);
 
-    // Return the user data and filtered guilds with info if bot is in
+    const guildIds = ownerOrAdminGuilds.map((guild: any) => guild.id);
+
+    // Generate a JWT token for authentication
+    const userId = user.id;
+    const username = user.username;
+    const token = jwt.sign({ userId, username, guildIds }, env.JWT_SECRET);
+
+    // Return the token, user data and filtered guilds with info if bot is in
     return res.json({
-      userId: user.id,
-      username: user.username,
+      token,
+      userId,
+      username,
       guilds: ownerOrAdminGuilds.map(({ id, name, icon }) => ({
         id,
         name,
@@ -92,34 +106,58 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
 });
 
 /**
- * Creates a new guild in the database, or edits an existing guild.
+ * Creates a new guild in the database
  * The wallet signature is verified to make the user is really the owner of that wallet.
  * @param {string} message - The message which was signed
  * @param {string} signature - The signature after signing the message
  * @param {string} address - The address from the connected wallet on the client
- * @param {Guild} guild - The guild data which will be stored in the database
+ * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.post('/guilds', async (req: Request, res: Response) => {
-  const { message, signature, address, guild } = req.body as {
-    message: string;
-    signature: string;
-    address: string;
-    guild: Guild;
-  };
+discordRouter.post('/guilds', authenticate, async (req: Request, res: Response) => {
+  const { address, data } = req.body;
 
-  // Verify that the signature is valid, to prove that the user is truly owner of the payout wallet address
-  if (!verifySignature(address, message, signature)) return res.status(401).send('Invalid signature');
-  guild.address = address;
+  data.address = address;
 
   try {
-    await saveGuild(new Guild(guild));
+    const guild = await insertGuild(new Guild(data));
 
-    await Promise.all(guild.roles.map((role) => saveRole(new Role(role))));
+    await Promise.all(data.roles.map((role: Partial<Role>) => saveRole(new Role(role))));
 
-    return res.status(201).json(guild);
+    return res.status(201).json(guild.raw);
   } catch (error) {
     console.error(`Error saving guild: ${error}`);
     return res.status(500).json({ message: `Failed to save guild and roles: ${error}` });
+  }
+});
+
+/**
+ * Updates an existing guild in the database
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} message - The message which was signed
+ * @param {string} signature - The signature after signing the message
+ * @param {string} address - The address from the connected wallet on the client
+ * @param {Guild} data - The guild data which will be stored in the database
+ * @returns {Guild}
+ */
+discordRouter.patch('/guilds/:guildId', authenticate, async (req: Request, res: Response) => {
+  const { address, data } = req.body;
+
+  const guildId = req.params.guildId;
+
+  const guild = await findGuildById(guildId);
+  if (!guild) return res.status(404).send('Guild not found');
+
+  data.address = address;
+
+  try {
+    const updatedGuild = await updateGuild(guildId, data);
+
+    await Promise.all(data.roles.map((role: Partial<Role>) => saveRole(new Role(role))));
+
+    return res.status(200).json(updatedGuild.raw);
+  } catch (error) {
+    console.error(`Error updating guild: ${error}`);
+    return res.status(500).json({ message: `Failed to update guild and roles: ${error}` });
   }
 });

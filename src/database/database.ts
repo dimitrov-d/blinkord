@@ -29,8 +29,12 @@ export async function initializeDatabase() {
   roleRepository = dataSource.getRepository(Role);
 }
 
-export async function saveGuild(guild: Guild) {
-  await guildRepository.save(guild);
+export async function insertGuild(guild: Guild) {
+  return await guildRepository.insert(guild);
+}
+
+export async function updateGuild(guildId: string, data: Guild) {
+  return await guildRepository.update(guildId, data);
 }
 
 export async function saveRole(role: Role) {
