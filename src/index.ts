@@ -2,11 +2,14 @@ import express, { Request, Response } from 'express';
 import { apiRouter } from './routers/api';
 import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
+import helmet from 'helmet';
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
+
+initializeDatabase();
 
 const app = express();
 app.use(express.json());
-initializeDatabase();
+app.use(helmet());
 
 app.get('/actions.json', (req: Request, res: Response) =>
   res.json({

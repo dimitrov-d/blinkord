@@ -2,12 +2,16 @@ import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { findGuildById, insertGuild, updateGuild } from '../database/database';
 import { Guild } from '../database/entities/guild';
-import { Role } from '../database/entities/role';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { authenticate } from '../middleware/auth';
 
 export const discordRouter = express.Router();
+discordRouter.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 /**
  * Returns a Discord OAuth URL for logging in
