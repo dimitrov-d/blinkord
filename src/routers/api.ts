@@ -5,12 +5,13 @@ import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
 import { findGuildById } from '../database/database';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
+// import { BlinksightsClient } from 'blinksights-sdk';
 
 export const apiRouter = express.Router();
-
 apiRouter.use(actionCorsMiddleware({}));
 
 const BASE_URL = env.APP_BASE_URL;
+// const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
 /**
  * Returns an action based on data for a given guild
@@ -50,6 +51,9 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
     error: code ? null : { message: `Discord login required, visit ${BASE_URL}/blinkord/${guildId}` },
   };
 
+  // Blinksights tracking API call fails
+  // const response = blinkSights.createActionGetResponseV1(req.url, payload);
+  // return res.json(response);
   return res.json(payload);
 });
 
@@ -76,6 +80,7 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   try {
     const transaction = await generateSendTransaction(req.body.account, role.amount, guild.address);
 
+    // blinkSights.trackActionV2(req.body.account, req.url);
     return res.json(
       await createPostResponse({
         fields: {
