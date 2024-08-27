@@ -1,20 +1,26 @@
 require('dotenv').config();
 
-// Environment variables populated from .env
-const env = {
-  DISCORD_BOT_TOKEN: null,
-  DISCORD_CLIENT_ID: null,
-  DISCORD_CLIENT_SECRET: null,
-  DISCORD_REDIRECT_URI: null,
+// Define the keys for the environment variables as a constant array
+const envKeys = [
+  'DISCORD_BOT_TOKEN',
+  'DISCORD_CLIENT_ID',
+  'DISCORD_CLIENT_SECRET',
+  'DISCORD_REDIRECT_URI',
+  'APP_BASE_URL',
+  'JWT_SECRET',
+  'DATABASE_HOST',
+  'DATABASE_USER',
+  'DATABASE_PASSWORD',
+  'BLINKSIGHTS_API_KEY',
+] as const;
 
-  APP_BASE_URL: null,
-  JWT_SECRET: null,
-
-  DATABASE_HOST: null,
-  DATABASE_USER: null,
-  DATABASE_PASSWORD: null,
-};
-
-Object.keys(env).forEach((key) => (env[key] = process.env[key]));
+// Initialize the env object using a dynamic mapping based on env keys
+const env = envKeys.reduce(
+  (acc, key) => {
+    acc[key] = process.env[key];
+    return acc;
+  },
+  {} as Record<(typeof envKeys)[number], string>,
+);
 
 export default env;
