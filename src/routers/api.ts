@@ -7,6 +7,7 @@ import { findGuildById } from '../database/database';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
 
 export const apiRouter = express.Router();
+
 apiRouter.use(actionCorsMiddleware({}));
 
 const BASE_URL = env.APP_BASE_URL;
@@ -63,7 +64,8 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
-  if (!guildId || !code || !roleId) return res.status(400).json({ error: 'Invalid role purchase data' });
+  if (!guildId || !roleId || !code)
+    return res.status(400).json({ error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}` });
 
   const guild = await findGuildById(guildId);
   if (!guild) return res.status(404).json({ error: 'Guild not found' });
@@ -102,7 +104,10 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
  * @param {string} roleId - Query param representing the role that the user bought successfully
  * @returns {[Completed action](https://docs.dialect.to/documentation/actions/specification/action-chaining)}
  */
-apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
+apiRouter.post('/:guildId/confirm', express.text({ type: 'text/plain' }), async (req: Request, res: Response) => {
+  // For some reason the subsequent `PostNextActionLink` sends the request with Content-Type text/plain
+  req.body = JSON.parse(req.body);
+
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
@@ -141,12 +146,21 @@ apiRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
     return res.json({
       title: guild.name,
       icon: guild.iconUrl,
-      description: guild.description,
+      description: `https://solscan.io/tx/${req.body.signature}`,
       label: `Role ${role.name} obtained`,
       type: 'completed',
     });
   } catch (error) {
     console.error('Error while adding member to guild', error);
-    res.status(500).send({ error: `Error while adding member to guild: ${error}` });
+    res.json({
+      title: guild.name,
+      icon: guild.iconUrl,
+      description: `https://solscan.io/tx/${req.body.signature}`,
+      label: null,
+      type: 'completed',
+      error: {
+        message: `An error occured. Contact the server owner and present the transaction in the description`,
+      },
+    });
   }
 });
