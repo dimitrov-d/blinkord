@@ -7,6 +7,12 @@ declare type SearchParamProps = {
 
 // ========================================
 
+declare type DiscordRole = {
+  id: string;
+  name: string;
+  amount: string; // Assuming it's a string representing a numeric value
+};
+
 declare type DiscordServer = {
   id: string;
   name: string;
@@ -124,3 +130,36 @@ export interface BlinkProps {
   action: BlinkAction;
   websiteText: string;
 }
+
+// API Function Types
+
+declare type GetDiscordLoginUrl = (owner: boolean) => Promise<string>;
+
+declare type HandleDiscordCallback = (code: string) => Promise<{
+  userId: string;
+  username: string;
+  guilds: DiscordServer[];
+  token: string;
+}>;
+
+declare type GetGuildRoles = (
+  guildId: string,
+  token: string
+) => Promise<{ blinkRolePosition: number; roles: DiscordRole[] }>;
+
+declare type CreateOrEditGuild = (
+  guildData: BlinkordServerSettings,
+  address: string,
+  message: string,
+  signature: string,
+  token: string
+) => Promise<DiscordServer>;
+
+declare type PatchGuild = (
+  guildId: string,
+  guildData: BlinkordServerSettings,
+  address: string,
+  message: string,
+  signature: string,
+  token: string
+) => Promise<DiscordServer>;

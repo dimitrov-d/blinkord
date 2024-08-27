@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogIn } from "lucide-react";
 import { mockServers } from "@/lib/mock-data/index";
+import { getDiscordLoginUrl } from "@/lib/actions/discord.actions";
 
 export default function OwnerFlow() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,8 +26,24 @@ export default function OwnerFlow() {
     setIsLoggedIn(true);
   };
 
-  const handleConnectDiscord = () => {
-    setDiscordConnected(true);
+  const handleConnectDiscord = async () => {
+    try {
+      const response = await fetch('/api/discord/getLoginUrl', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ owner: true }),
+      });
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+      console.log("Here is the data discord",data)
+    } catch (error) {
+      console.error("Failed to connect Discord", error);
+    }
   };
 
   const handleServerSelect = (serverId: string) => {
