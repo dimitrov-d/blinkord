@@ -43,6 +43,12 @@ export class Guild {
   @Column({ type: 'text' })
   details: string;
 
+  /**
+   * TLD of user domains, used to give discounts for buying roles
+   */
+  @Column({ type: 'text', nullable: true })
+  domainsTld: string;
+
   @OneToMany(() => Role, (role) => role.guild, { onDelete: 'CASCADE' })
   roles: Role[];
 }
