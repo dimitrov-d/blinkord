@@ -1,12 +1,17 @@
-import express from 'express';
-import { actionCorsMiddleware } from '@solana/actions';
+import express, { Request, Response } from 'express';
 import { apiRouter } from './routers/api';
+import { initializeDatabase } from './database/database';
+import { discordRouter } from './routers/discord';
+import helmet from 'helmet';
+require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
+
+initializeDatabase();
 
 const app = express();
 app.use(express.json());
-app.use(actionCorsMiddleware({}));
+app.use(helmet());
 
-app.get('/actions.json', (req, res) =>
+app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
     rules: [
       { pathPattern: '/*', apiPath: '/api/*' },
@@ -15,6 +20,7 @@ app.get('/actions.json', (req, res) =>
   }),
 );
 app.use('/api', apiRouter);
+app.use('/discord', discordRouter);
 
 const PORT = 8080;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));

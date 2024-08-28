@@ -1,57 +1,86 @@
-import express from 'express';
-import axios from 'axios';
-import qs from 'querystring';
-import { guilds } from '../guilds';
+import express, { Request, Response } from 'express';
 import { Action } from '@solana/actions-spec';
-import { createPostResponse } from '@solana/actions';
+import { actionCorsMiddleware, createPostResponse } from '@solana/actions';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
+import { findGuildById } from '../database/database';
+import { discordApi, getDiscordAccessToken } from '../services/oauth';
+// import { BlinksightsClient } from 'blinksights-sdk';
 
 export const apiRouter = express.Router();
+apiRouter.use(actionCorsMiddleware({}));
+
 const BASE_URL = env.APP_BASE_URL;
+// const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
-apiRouter.get('/:guildId', (req, res) => {
+/**
+ * Returns an action based on data for a given guild
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} code - Query param representing Discord OAuth code grant
+ * @returns {[Action](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
+ */
+apiRouter.get('/:guildId', async (req: Request, res: Response) => {
   const { guildId } = req.params;
-  if (!guildId) return res.status(500).send('Invalid data');
 
-  const guild = guilds.find((g) => g.id === guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+  const guild = await findGuildById(guildId);
+  if (!guild)
+    return res.json({
+      type: 'completed',
+      links: { actions: [] },
+      title: 'Not found',
+      icon: 'https://agentestudio.com/uploads/post/image/69/main_how_to_design_404_page.png',
+      description: 'Discord server not found',
+    });
+
+  console.info(`Sending action for guild ${guildId}`);
 
   const { code } = req.query;
   const payload: Action<'action'> = {
     type: 'action',
     label: null,
-    ...guild,
+    title: guild.name,
+    icon: guild.iconUrl,
+    description: guild.description,
     links: {
-      actions: guild.roles.map((role) => ({
-        label: `${role.name} (${role.amount} SOL)`,
-        href: `${BASE_URL}/api/${guildId}/buy?roleId=${role.id}&code=${code}`,
+      actions: guild.roles.map(({ id, name, amount }) => ({
+        label: `${name} (${amount} SOL)`,
+        href: `${BASE_URL}/api/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
     disabled: !code,
     error: code ? null : { message: `Discord login required, visit ${BASE_URL}/blinkord/${guildId}` },
   };
 
+  // Blinksights tracking API call fails
+  // const response = blinkSights.createActionGetResponseV1(req.url, payload);
+  // return res.json(response);
   return res.json(payload);
 });
 
-apiRouter.post('/:guildId/buy', async (req, res) => {
+/**
+ * Generates a transaction to send funds to the guild's wallet in order to obtain a role
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} code - Query param representing Discord OAuth code grant
+ * @param {string} roleId - Query param representing the role that the user selected and wants to buy
+ * @returns {[Action POST response](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
+ */
+apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
-  if (!guildId || !code || !roleId) return res.status(500).send('Invalid data');
+  if (!guildId || !roleId || !code)
+    return res.status(400).json({ error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}` });
 
-  const guild = guilds.find((g) => g.id === guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+  const guild = await findGuildById(guildId);
+  if (!guild) return res.status(404).json({ error: 'Guild not found' });
 
   const role = guild.roles.find((r) => r.id === roleId);
-  if (!role) return res.status(404).send('Role not found');
+  if (!role) return res.status(404).json({ error: 'Role not found' });
 
-  const { account } = req.body;
   try {
-    // TODO: Get recipient from DB guild
-    const transaction = await generateSendTransaction(account, role.amount, env.DEFAULT_RECIPIENT);
+    const transaction = await generateSendTransaction(req.body.account, role.amount, guild.address);
 
+    // blinkSights.trackActionV2(req.body.account, req.url);
     return res.json(
       await createPostResponse({
         fields: {
@@ -67,63 +96,76 @@ apiRouter.post('/:guildId/buy', async (req, res) => {
       }),
     );
   } catch (error) {
-    console.error(`Error during generating transaction: ${error}`);
-    res.status(500).send('An error occurred');
+    console.error('Error during generating transaction', error);
+    res.status(500).json({ error: `Error during generating transaction: ${error}` });
   }
 });
 
-apiRouter.post('/:guildId/confirm', async (req, res) => {
+/**
+ * A subsequent endpoint called after purchase TX was confirmed
+ * Uses Discord API to invite the user into a server and give them the role they bought
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @param {string} code - Query param representing Discord OAuth code grant
+ * @param {string} roleId - Query param representing the role that the user bought successfully
+ * @returns {[Completed action](https://docs.dialect.to/documentation/actions/specification/action-chaining)}
+ */
+apiRouter.post('/:guildId/confirm', express.text({ type: 'text/plain' }), async (req: Request, res: Response) => {
+  // For some reason the subsequent `PostNextActionLink` sends the request with Content-Type text/plain
+  req.body = JSON.parse(req.body);
+
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
-  if (!guildId || !roleId || !code) return res.status(500).send('Invalid data');
+  if (!guildId || !roleId || !code)
+    return res.status(400).json({ error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}` });
 
-  const guild = guilds.find((g) => g.id === guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+  const guild = await findGuildById(guildId);
+  if (!guild) return res.status(404).json({ error: 'Guild not found' });
 
   const role = guild.roles.find((r) => r.id === roleId);
-  if (!role) return res.status(404).send('Role not found');
+  if (!role) return res.status(404).json({ error: 'Role not found' });
 
   // Exchange the authorization code for an access token
   try {
-    const tokenResponse = await axios.post(
-      'https://discord.com/api/oauth2/token',
-      qs.stringify({
-        client_id: env.DISCORD_CLIENT_ID,
-        client_secret: env.DISCORD_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code: code.toString(),
-        redirect_uri: env.DISCORD_REDIRECT_URI,
-      }),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
-    );
+    const access_token = await getDiscordAccessToken(code as string);
+    console.info(`Guild join access token obtained, adding member to the server with roles...`);
 
-    const accessToken = tokenResponse.data.access_token;
-
-    const { data: user } = await axios.get('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
+    const { data: user } = await discordApi.get('/users/@me', {
+      headers: { Authorization: `Bearer ${access_token}` },
     });
 
-    await axios.put(
-      `https://discord.com/api/guilds/${guildId}/members/${user.id}`,
-      { access_token: accessToken, roles: [roleId] },
+    await discordApi.put(
+      `/guilds/${guildId}/members/${user.id}`,
+      { access_token, roles: [roleId] },
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
 
-    await axios.put(
-      `https://discord.com/api/guilds/${guildId}/members/${user.id}/roles/${roleId}`,
+    await discordApi.put(
+      `/guilds/${guildId}/members/${user.id}/roles/${roleId}`,
       {},
       { headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` } },
     );
 
-    const payload: Action<'completed'> = {
-      ...guild,
+    console.info(`Successfully added user ${user.username} to guild ${guild.name} with role ${role.name}`);
+
+    return res.json({
+      title: guild.name,
+      icon: guild.iconUrl,
+      description: `https://solscan.io/tx/${req.body.signature}`,
       label: `Role ${role.name} obtained`,
       type: 'completed',
-    };
-    return res.json(payload);
+    });
   } catch (error) {
-    console.error(`Error during OAuth2 process: ${error}`);
-    res.status(500).send('An error occurred');
+    console.error('Error while adding member to guild', error);
+    res.json({
+      title: guild.name,
+      icon: guild.iconUrl,
+      description: `https://solscan.io/tx/${req.body.signature}`,
+      label: null,
+      type: 'completed',
+      error: {
+        message: `An error occured. Contact the server owner and present the transaction in the description`,
+      },
+    });
   }
 });

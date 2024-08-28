@@ -1,4 +1,16 @@
-import { PublicKey, LAMPORTS_PER_SOL, SystemProgram, Transaction, Connection, clusterApiUrl } from '@solana/web3.js';
+import {
+  PublicKey,
+  LAMPORTS_PER_SOL,
+  SystemProgram,
+  Connection,
+  clusterApiUrl,
+  TransactionMessage,
+  VersionedTransaction,
+} from '@solana/web3.js';
+import nacl from 'tweetnacl';
+import { decodeUTF8 } from 'tweetnacl-util';
+// import { BlinksightsClient } from 'blinksights-sdk';
+// import env from './env';
 
 export async function generateSendTransaction(from: string, amount: number, recipient: string) {
   const fromPubkey = new PublicKey(from);
@@ -20,10 +32,33 @@ export async function generateSendTransaction(from: string, amount: number, reci
 
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
-  // Create a legacy transaction
-  return new Transaction({
-    feePayer: fromPubkey,
-    blockhash,
-    lastValidBlockHeight,
-  }).add(transferSolInstruction);
+  // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
+  // const trackingInstruction = blinkSights.getActionIdentityInstructionV2(fromPubkey.toString(), 'abc');
+
+  return new VersionedTransaction(
+    new TransactionMessage({
+      payerKey: fromPubkey,
+      recentBlockhash: blockhash,
+      instructions: [
+        transferSolInstruction,
+        //  trackingInstruction
+      ],
+    }).compileToV0Message(),
+  );
+}
+
+export function verifySignature(address: string, message: string, signature: string): boolean {
+  if (!message || !address || !signature) return false;
+
+  try {
+    return nacl.sign.detached.verify(
+      decodeUTF8(message),
+      // Buffer.from(signature).toString('base64')
+      Buffer.from(signature, 'base64'),
+      new PublicKey(address).toBytes(),
+    );
+  } catch (err) {
+    console.error(`Error verifying wallet signature: ${err}`);
+    return false;
+  }
 }
