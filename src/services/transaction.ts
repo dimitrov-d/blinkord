@@ -11,6 +11,8 @@ import nacl from 'tweetnacl';
 import { decodeUTF8 } from 'tweetnacl-util';
 import env from './env';
 import { getOwnedDomainsFromTld } from './alldomains';
+import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
+
 // import { BlinksightsClient } from 'blinksights-sdk';
 // import env from './env';
 
@@ -35,24 +37,21 @@ export async function generateSendTransaction(from: string, amount: number, guil
     throw new Error(`Insufficient balance: ${from}`);
   }
 
-  // Create an instruction to transfer native SOL from one wallet to another
-  const transferSolInstruction = SystemProgram.transfer({
-    fromPubkey,
-    toPubkey: toPubKey,
-    lamports,
-  });
-
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
   // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
   // const trackingInstruction = blinkSights.getActionIdentityInstructionV2(fromPubkey.toString(), 'abc');
+
+  const transferInstruction = guild.useSend
+    ? await getTransferSendInstruction(fromPubkey, toPubKey, lamports)
+    : getTransferSolInstruction(fromPubkey, toPubKey, lamports);
 
   return new VersionedTransaction(
     new TransactionMessage({
       payerKey: fromPubkey,
       recentBlockhash: blockhash,
       instructions: [
-        transferSolInstruction,
+        transferInstruction,
         //  trackingInstruction
       ],
     }).compileToV0Message(),
@@ -73,4 +72,24 @@ export function verifySignature(address: string, message: string, signature: str
     console.error(`Error verifying wallet signature: ${err}`);
     return false;
   }
+}
+
+async function getTransferSendInstruction(fromPubkey: PublicKey, toPubKey: PublicKey, lamports: number) {
+  const mintAddress = new PublicKey('SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa');
+  // Fetch or create associated token accounts for sender and recipient
+  const fromTokenAccount = await getAssociatedTokenAddress(mintAddress, fromPubkey);
+  const toTokenAccount = await getAssociatedTokenAddress(mintAddress, toPubKey);
+  // SEND token has 6 decimals, SOL has 9
+  lamports /= 10 ** 3;
+  // Create an instruction to transfer SEND token from one wallet to another
+  return createTransferInstruction(fromTokenAccount, toTokenAccount, fromPubkey, lamports);
+}
+
+function getTransferSolInstruction(fromPubkey: PublicKey, toPubKey: PublicKey, lamports: number) {
+  // Create an instruction to transfer native SOL from one wallet to another
+  return SystemProgram.transfer({
+    fromPubkey,
+    toPubkey: toPubKey,
+    lamports,
+  });
 }
