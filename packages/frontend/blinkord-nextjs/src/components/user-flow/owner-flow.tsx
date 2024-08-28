@@ -1,24 +1,34 @@
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogIn } from "lucide-react";
-import { useUserStore } from '@/lib/contexts/zustand/userStore';
+import { useUserStore } from "@/lib/contexts/zustand/userStore";
+import { handleDiscordCallback } from "@/lib/actions/discord.actions";
 
 export default function OwnerFlow() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [discordConnected, setDiscordConnected] = useState(false);
   const [selectedServer, setSelectedServer] = useState<string | null>(null);
   const [hasBot, setHasBot] = useState(false);
   const [guilds, setGuilds] = useState<any[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Zustand store hooks
+  const discordConnected = useUserStore((state) => state.discordConnected);
+  const discordDisconnected = useUserStore(
+    (state) => state.discordDisconnected
+  );
   const setToken = useUserStore((state) => state.setToken);
   const setUserData = useUserStore((state) => state.setUserData);
+  const setDiscordConnected = useUserStore(
+    (state) => state.setDiscordConnected
+  );
+  const setDiscordDisconnected = useUserStore(
+    (state) => state.setDiscordDisconnected
+  );
 
   useEffect(() => {
     const code = searchParams.get("code");
@@ -49,10 +59,10 @@ export default function OwnerFlow() {
 
   const handleConnectDiscord = async () => {
     try {
-      const response = await fetch('/api/discord/getLoginUrl', {
-        method: 'POST',
+      const response = await fetch("/api/discord/getLoginUrl", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ owner: true }),
       });
@@ -69,62 +79,62 @@ export default function OwnerFlow() {
 
   const handleCodeCallback = async (code: string) => {
     try {
-      const response = await fetch(`/api/discord/callback?code=${encodeURIComponent(code)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
+      const response = await fetch(
+        `/api/discord/callback?code=${encodeURIComponent(code)}`,
+        {
+          method: "GET",
+        }
+      );
+
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error from API:', errorData);
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        console.error("OAuth Callback Error:", errorData);
+        throw new Error(`OAuth Callback Error: ${errorData.error}`);
       }
-  
+
       const data = await response.json();
-  
-      if (!data.userId || !data.username || !data.guilds || !data.token) {
-        throw new Error('Incomplete data received from callback');
-      }
-  
-      console.log("JWT Token received:", data.token);  // Log the token here
-  
-      // Store the token in Zustand store and localStorage
       setToken(data.token);
-      localStorage.setItem('discordToken', data.token);
-  
+      localStorage.setItem("discordToken", data.token);
       setUserData(data);
       setDiscordConnected(true);
+
+      router.push("/dashboard");
     } catch (error) {
-      console.error("Failed to handle Discord callback", error);
+      console.error("Error in handleOAuthCallback:", error);
     }
   };
-  
+
   const fetchGuilds = async () => {
     const userData = useUserStore.getState().userData;
-    const token = useUserStore.getState().token || localStorage.getItem('discordToken');
+    const token =
+      useUserStore.getState().token || localStorage.getItem("discordToken");
 
     if (userData && userData.guilds && token) {
       try {
         console.log("User data:", userData);
         const guildsData = await Promise.all(
           userData.guilds.map(async (guild: any) => {
-            const response = await fetch(`/api/discord/guilds/${guild.id}/roles`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+            const response = await fetch(
+              `/api/discord/guilds/${guild.id}/roles`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
 
             if (!response.ok) {
               if (response.status === 401) {
                 console.warn("Token expired, prompting user to re-login.");
-                localStorage.removeItem('discordToken');
+                localStorage.removeItem("discordToken");
                 setIsLoggedIn(false);
                 setDiscordConnected(false);
               } else {
                 const errorData = await response.json();
-                console.error(`Failed to fetch roles for guild ${guild.id}:`, errorData);
+                console.error(
+                  `Failed to fetch roles for guild ${guild.id}:`,
+                  errorData
+                );
                 return { ...guild, roles: [] };
               }
             }
@@ -144,7 +154,8 @@ export default function OwnerFlow() {
 
   const handleServerSelect = (serverId: string) => {
     console.log("Server selected:", serverId);
-    const serverHasBot = guilds.find((guild) => guild.id === serverId)?.hasBot || false;
+    const serverHasBot =
+      guilds.find((guild) => guild.id === serverId)?.hasBot || false;
     console.log("Does server have bot?", serverHasBot);
     setSelectedServer(serverId);
     setHasBot(serverHasBot);
@@ -165,6 +176,23 @@ export default function OwnerFlow() {
                 className="w-full btn glow-on-hover flex items-center justify-center"
               >
                 Get Started
+              </button>
+            </div>
+          </div>
+        ) : discordDisconnected ? (
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">
+              Disconnected from Discord
+            </h2>
+            <p className="mb-4">
+              We couldn't connect to Discord. Please try connecting again.
+            </p>
+            <div className="flex flex-row items-center justify-center gap-8">
+              <button
+                onClick={handleConnectDiscord}
+                className="w-full btn glow-on-hover flex items-center justify-center"
+              >
+                <LogIn className="mr-2 h-4 w-4" /> Reconnect Discord
               </button>
             </div>
           </div>
@@ -200,7 +228,7 @@ export default function OwnerFlow() {
                         <div
                           className="absolute inset-0 bg-cover bg-center"
                           style={{
-                            backgroundImage: `url(${guild.icon || '/default-icon.png'})`,
+                            backgroundImage: `url(${guild.icon || "/default-icon.png"})`,
                             opacity: 0.3,
                           }}
                           aria-hidden="true"
@@ -219,7 +247,10 @@ export default function OwnerFlow() {
                             {guild.name}
                           </h3>
                           <p className="text-sm text-gray-400">
-                            Roles: {guild.roles.map((role: any) => role.name).join(', ')}
+                            Roles:{" "}
+                            {guild.roles
+                              .map((role: any) => role.name)
+                              .join(", ")}
                           </p>
                         </div>
                         <Button
