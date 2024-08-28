@@ -43,6 +43,18 @@ export class Guild {
   @Column({ type: 'text' })
   details: string;
 
+  /**
+   * If the guild owner wants to receive payment in SEND tokens
+   */
+  @Column({ type: 'boolean', default: false })
+  useSend: boolean;
+
+  /**
+   * TLD of user domains, used to give discounts for buying roles
+   */
+  @Column({ type: 'text', nullable: true })
+  domainsTld: string;
+
   @OneToMany(() => Role, (role) => role.guild, { onDelete: 'CASCADE' })
   roles: Role[];
 }

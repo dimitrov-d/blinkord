@@ -78,7 +78,7 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   if (!role) return res.status(404).json({ error: 'Role not found' });
 
   try {
-    const transaction = await generateSendTransaction(req.body.account, role.amount, guild.address);
+    const transaction = await generateSendTransaction(req.body.account, role.amount, guild);
 
     // blinkSights.trackActionV2(req.body.account, req.url);
     return res.json(
