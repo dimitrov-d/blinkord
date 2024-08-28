@@ -1,4 +1,5 @@
-import { DISCORD_API_BASE_URL } from '@/lib/utils';
+import { initializeDatabase, insertGuild, updateGuild } from '@/database/database';
+import { Guild } from '@/database/entities/guild';
 import env from '@/services/env';
 import { discordApi, getDiscordAccessToken } from '@/services/oauth';
 import jwt from 'jsonwebtoken';
@@ -78,73 +79,18 @@ export async function getGuildRoles(guildId: string, token: string) {
   };
 }
 
-// Create a new guild, sending the JWT token for authentication
-export async function createGuild(guildData: any, address: string, message: string, signature: string, token: string) {
-  try {
-    const response = await fetch(`${DISCORD_API_BASE_URL}/discord/guilds`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        data: guildData,
-        address,
-        message,
-        signature,
-      }),
-    });
+export async function createGuild(data: Partial<Guild>) {
+  await initializeDatabase();
+  console.info(`Going to create guild: ${JSON.stringify(data)}`);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Error creating guild:', errorData);
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('Guild created:', data);
-    return data;
-  } catch (error) {
-    console.error('Failed to create guild:', error);
-    throw error;
-  }
+  await insertGuild(new Guild(data));
+  console.info(`Guild ${data.id} inserted successfully`);
 }
 
-// Edit an existing guild using the JWT token for authentication
-export async function editGuild(
-  guildId: string,
-  guildData: any,
-  address: string,
-  message: string,
-  signature: string,
-  token: string,
-) {
-  try {
-    const response = await fetch(`${DISCORD_API_BASE_URL}/discord/guilds/${guildId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        data: guildData,
-        address,
-        message,
-        signature,
-      }),
-    });
+export async function editGuildData(guildId: string, data: Partial<Guild>) {
+  await initializeDatabase();
+  console.info(`Going to update guild: ${JSON.stringify(data)}`);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Error editing guild:', errorData);
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log('Guild edited:', data);
-    return data;
-  } catch (error) {
-    console.error('Failed to edit guild:', error);
-    throw error;
-  }
+  await updateGuild(guildId, data);
+  console.info(`Guild ${guildId} updated successfully`);
 }
