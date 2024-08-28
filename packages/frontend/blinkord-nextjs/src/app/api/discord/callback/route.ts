@@ -1,26 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleDiscordCallback } from "@/lib/actions/discord.actions";
+import { DISCORD_API_BASE_URL } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   try {
-    console.log("Request URL:", req.url);
-
-    // Directly use req.nextUrl to get searchParams, which is easier and less error-prone
     const code = req.nextUrl.searchParams.get("code");
 
     if (!code) {
+      console.error("Missing OAuth code in the request");
       return NextResponse.json({ error: "Missing code" }, { status: 400 });
     }
 
-    // Call your existing function to handle the OAuth callback
-    const data = await handleDiscordCallback(code);
+    if (!DISCORD_API_BASE_URL) {
+      console.error("DISCORD_API_BASE_URL is not defined");
+      throw new Error("DISCORD_API_BASE_URL is not defined");
+    }
 
-    return NextResponse.json(data);
+    const apiUrl = `${DISCORD_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`;
+    console.log(`Making request to: ${apiUrl}`);
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error(`Failed to handle callback: ${response.statusText}`);
+      const errorText = await response.text(); // Capture any error response body for debugging
+      console.error(`Error details: ${errorText}`);
+      return NextResponse.json(
+        { error: `Failed to handle callback: ${response.statusText}` },
+        { status: 500 }
+      );
+    }
+
+    const data = await response.json();
+    console.log("Callback data received:", data);
+    return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     console.error("Failed to handle Discord callback", error);
-    return NextResponse.json(
-      { error: "Failed to handle Discord callback", details: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

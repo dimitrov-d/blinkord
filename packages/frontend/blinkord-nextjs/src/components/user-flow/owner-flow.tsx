@@ -79,28 +79,25 @@ export default function OwnerFlow() {
 
   const handleCodeCallback = async (code: string) => {
     try {
-      const response = await fetch(
-        `/api/discord/callback?code=${encodeURIComponent(code)}`,
-        {
-          method: "GET",
-        }
-      );
+      const data = await handleDiscordCallback(code);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("OAuth Callback Error:", errorData);
-        throw new Error(`OAuth Callback Error: ${errorData.error}`);
+      if (!data.userId || !data.username || !data.guilds || !data.token) {
+        throw new Error('Incomplete data received from callback');
       }
 
-      const data = await response.json();
+      console.log("JWT Token received:", data.token);  // Log the token here
+
+      // Store the token in Zustand store and localStorage
       setToken(data.token);
-      localStorage.setItem("discordToken", data.token);
+      localStorage.setItem('discordToken', data.token);
+
       setUserData(data);
       setDiscordConnected(true);
 
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error in handleOAuthCallback:", error);
+      console.error("Failed to handle Discord callback", error);
+      setDiscordDisconnected(true);
     }
   };
 

@@ -24,31 +24,26 @@ export async function getDiscordLoginUrl(owner: boolean): Promise<string> {
 
 // Handle the Discord OAuth callback by calling the backend route
 export async function handleDiscordCallback(code: string) {
-  try {
-    const response = await fetch(
-      `/api/discord/callback?code=${encodeURIComponent(code)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Backend API error:", errorData);
-      throw new Error(
-        `Backend API error: ${response.status} ${response.statusText}`
-      );
+  const response = await fetch(
+    `/api/discord/callback?code=${encodeURIComponent(code)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
+  );
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error in handleDiscordCallback:", error);
-    throw error;
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error("Backend API error:", errorData);
+    throw new Error(
+      `Backend API error: ${response.status} ${response.statusText}`
+    );
   }
+
+  const data = await response.json();
+  return data;
 }
 
 // Get roles for a specific guild using the JWT token for authentication
