@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogIn } from "lucide-react";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
-import { handleDiscordCallback } from "@/lib/actions/discord.actions";
 
 export default function OwnerFlow() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedServer, setSelectedServer] = useState<string | null>(null);
   const [hasBot, setHasBot] = useState(false);
   const [guilds, setGuilds] = useState<any[]>([]);
+  const [callbackHandled, setCallbackHandled] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -32,9 +32,10 @@ export default function OwnerFlow() {
 
   useEffect(() => {
     const code = searchParams.get("code");
-    if (code) {
+    if (code && !callbackHandled) {
       console.log("OAuth code received:", code);
       handleCodeCallback(code);
+      setCallbackHandled(true);
     }
   }, [searchParams]);
 
@@ -79,65 +80,86 @@ export default function OwnerFlow() {
 
   const handleCodeCallback = async (code: string) => {
     try {
-      const data = await handleDiscordCallback(code);
+      const response = await fetch(
+        `/api/discord/login/callback?code=${encodeURIComponent(code)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (!data.userId || !data.username || !data.guilds || !data.token) {
-        throw new Error('Incomplete data received from callback');
+      console.log("Discord API response status:", response.status);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Discord API error:", errorData);
+        throw new Error(
+          `Discord API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      console.log("JWT Token received:", data.token);  // Log the token here
+      const data = await response.json();
+      console.log("Full Data received from Discord API:", data);
 
-      // Store the token in Zustand store and localStorage
-      setToken(data.token);
-      localStorage.setItem('discordToken', data.token);
-
-      setUserData(data);
-      setDiscordConnected(true);
-
-      router.push("/dashboard");
+      if (data.token) {
+        console.log("JWT Token:", data.token);
+        setToken(data.token);
+        localStorage.setItem("discordToken", data.token);
+        setUserData(data);
+        setDiscordConnected(true);
+      } else {
+        console.warn("No token received in the response.");
+      }
     } catch (error) {
-      console.error("Failed to handle Discord callback", error);
+      console.error("Error in handleCodeCallback:", error);
       setDiscordDisconnected(true);
     }
   };
 
   const fetchGuilds = async () => {
+    console.log("Starting fetchGuilds function");
     const userData = useUserStore.getState().userData;
+    console.log("Fetched userData from store:", userData);
     const token =
       useUserStore.getState().token || localStorage.getItem("discordToken");
-
+    console.log("Fetched token:", token);
+  
     if (userData && userData.guilds && token) {
       try {
-        console.log("User data:", userData);
+        console.log("User data and token are valid, proceeding to fetch guilds");
         const guildsData = await Promise.all(
           userData.guilds.map(async (guild: any) => {
+            const guildId = guild.id;
+            console.log(`Fetching roles for guild ${guildId}`);
             const response = await fetch(
-              `/api/discord/guilds/${guild.id}/roles`,
+              `/api/discord/guilds/${guildId}/roles`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
               }
             );
-
+  
+            console.log(`Response status for guild ${guildId}:`, response.status);
             if (!response.ok) {
+              const errorText = await response.text();
+              console.error(
+                `Failed to fetch roles for guild ${guildId}: ${response.statusText}`,
+                errorText
+              );
               if (response.status === 401) {
                 console.warn("Token expired, prompting user to re-login.");
                 localStorage.removeItem("discordToken");
                 setIsLoggedIn(false);
                 setDiscordConnected(false);
               } else {
-                const errorData = await response.json();
-                console.error(
-                  `Failed to fetch roles for guild ${guild.id}:`,
-                  errorData
-                );
                 return { ...guild, roles: [] };
               }
             }
-
+  
             const rolesData = await response.json();
-            console.log(`Roles for guild ${guild.id}:`, rolesData);
+            console.log(`Roles for guild ${guildId}:`, rolesData);
             return { ...guild, roles: rolesData.roles };
           })
         );
@@ -146,8 +168,11 @@ export default function OwnerFlow() {
       } catch (error) {
         console.error("Failed to fetch guilds or roles", error);
       }
+    } else {
+      console.log("User data, guilds, or token is missing");
     }
   };
+  
 
   const handleServerSelect = (serverId: string) => {
     console.log("Server selected:", serverId);
