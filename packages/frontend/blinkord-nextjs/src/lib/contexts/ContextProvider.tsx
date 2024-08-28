@@ -7,6 +7,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { FC, ReactNode, useCallback, useMemo } from "react";
 import { WalletModalProvider as ReactUIWalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import env from "@/services/env";
 
 export const WalletContextProvider: FC<{ children: ReactNode }> = ({
   children,
@@ -18,7 +19,7 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
   }, []);
 
   return (
-    <ConnectionProvider endpoint={process.env.NEXT_PUBLIC_HELIUS_URL!}>
+    <ConnectionProvider endpoint={process.env.NEXT_PUBLIC_SOLANA_RPC_URL}>
       <WalletProvider wallets={wallets} onError={onError} autoConnect={false}>
         <ReactUIWalletModalProvider>{children}</ReactUIWalletModalProvider>
       </WalletProvider>

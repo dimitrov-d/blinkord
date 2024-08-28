@@ -124,7 +124,7 @@ export default function OwnerFlow() {
     const token =
       useUserStore.getState().token || localStorage.getItem("discordToken");
     console.log("Fetched token:", token);
-  
+
     if (userData && userData.guilds && token) {
       try {
         console.log("User data and token are valid, proceeding to fetch guilds");
@@ -140,7 +140,7 @@ export default function OwnerFlow() {
                 },
               }
             );
-  
+
             console.log(`Response status for guild ${guildId}:`, response.status);
             if (!response.ok) {
               const errorText = await response.text();
@@ -157,7 +157,7 @@ export default function OwnerFlow() {
                 return { ...guild, roles: [] };
               }
             }
-  
+
             const rolesData = await response.json();
             console.log(`Roles for guild ${guildId}:`, rolesData);
             return { ...guild, roles: rolesData.roles };
@@ -172,7 +172,7 @@ export default function OwnerFlow() {
       console.log("User data, guilds, or token is missing");
     }
   };
-  
+
 
   const handleServerSelect = (serverId: string) => {
     console.log("Server selected:", serverId);
