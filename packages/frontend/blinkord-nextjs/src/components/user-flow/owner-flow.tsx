@@ -41,6 +41,7 @@ function OwnerFlow() {
       const response = await fetch("/api/discord/getLoginUrl", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // Omit this body when a member goes to blinkord.com/guild_id and logs in
         body: JSON.stringify({ owner: true }),
       });
 

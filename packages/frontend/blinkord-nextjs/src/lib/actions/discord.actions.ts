@@ -1,11 +1,11 @@
 import { DISCORD_API_BASE_URL } from "@/lib/utils";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
-import { DiscordRole } from '@/lib/types'
+import { DiscordRole } from "@/lib/types";
 
 // Fetch the Discord login URL for OAuth
 export async function getDiscordLoginUrl(owner: boolean): Promise<string> {
   const response = await fetch(
-    `${DISCORD_API_BASE_URL}/discord/login?owner=${owner}`,
+    `${DISCORD_API_BASE_URL}/discord/login${owner ? `?owner=${owner}` : ""}`,
     {
       method: "GET",
       headers: {
