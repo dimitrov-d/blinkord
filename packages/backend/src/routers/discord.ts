@@ -124,7 +124,7 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
  * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.post('/guilds', [verifySignature, verifyJwt], async (req: Request, res: Response) => {
+discordRouter.post('/guilds', [verifyJwt, verifySignature], async (req: Request, res: Response) => {
   const { address, data } = req.body;
 
   if (!data.name || !data.roles?.length) {
@@ -164,7 +164,7 @@ discordRouter.get('/guilds/:guildId', verifyJwt, async (req: Request, res: Respo
  * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.patch('/guilds/:guildId', [verifySignature, verifyJwt], async (req: Request, res: Response) => {
+discordRouter.patch('/guilds/:guildId', [verifyJwt, verifySignature], async (req: Request, res: Response) => {
   const { address, data } = req.body;
 
   const guildId = req.params.guildId;
