@@ -12,7 +12,7 @@ interface BlinkPreviewProps {
 
 export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ serverId, code }) => {
   const actionApiUrl = `https://blinkord.onrender.com/${serverId}?code=${code}`
-  const { adapter } = useActionSolanaWalletAdapter(process.env.NEXT_PUBLIC_SOLANA_RPC_URL!)
+  const { adapter } = useActionSolanaWalletAdapter(process.env.NEXT_PUBLIC_HELIUS_URL!)
   const { action } = useAction({ url: actionApiUrl, adapter })
 
   if (!action) return null

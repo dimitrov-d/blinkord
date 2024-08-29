@@ -19,7 +19,7 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
   }, []);
 
   return (
-    <ConnectionProvider endpoint={process.env.NEXT_PUBLIC_SOLANA_RPC_URL}>
+    <ConnectionProvider endpoint={process.env.NEXT_PUBLIC_HELIUS_URL}>
       <WalletProvider wallets={wallets} onError={onError} autoConnect={false}>
         <ReactUIWalletModalProvider>{children}</ReactUIWalletModalProvider>
       </WalletProvider>
