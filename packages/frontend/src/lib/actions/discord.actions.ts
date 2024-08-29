@@ -110,7 +110,7 @@ export async function createGuild(
 ) {
   try {
     const response = await fetch(`${DISCORD_API_BASE_URL}/discord/guilds`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

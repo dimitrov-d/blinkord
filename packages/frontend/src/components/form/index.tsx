@@ -68,9 +68,9 @@ function ServerForm({
           whileFocus={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300 }}
         />
-        {formErrors.name && (
+        {formErrors.title && (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-destructive text-sm mt-1">
-            {formErrors.name}
+            {formErrors.title}
           </motion.p>
         )}
       </MotionCardContent>
@@ -85,9 +85,9 @@ function ServerForm({
           whileFocus={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300 }}
         />
-        {formErrors.name && (
+        {formErrors.iconUrl && (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-destructive text-sm mt-1">
-            {formErrors.name}
+            {formErrors.iconUrl}
           </motion.p>
         )}
       </MotionCardContent>

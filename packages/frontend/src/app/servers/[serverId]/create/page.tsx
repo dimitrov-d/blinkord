@@ -29,14 +29,14 @@ export default function Panel() {
   const { signMessage, promptConnectWallet } = useWalletActions();
   const [formData, setFormData] = useState<ServerFormData>({
     id: serverId || "",
-    name: "",
+    title: "",
     iconUrl: "",
     description: "",
-    details: "",
+    // details: "",
     roles: [],
-    address: "",
-    message: "",
-    signature: "",
+    // address: "",
+    // message: "",
+    // signature: "",
   })
   const [DiscordRoles, setDiscordRoles] = useState<DiscordRole[]>([])
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof ServerFormData, string>>>({})
@@ -67,13 +67,13 @@ export default function Panel() {
 
     try {
       promptConnectWallet();
-      if (!formData.address) {
-        toast.error("Please connect your wallet to proceed.");
-        return;
-      }
+      // if (!formData.address) {
+      //   toast.error("Please connect your wallet to proceed.");
+      //   return;
+      // }
 
       const validatedFormData = serverFormSchema.parse(formData);
-      const message = JSON.stringify(validatedFormData);
+      const message = JSON.stringify(formData);
       const signature = await signMessage(message);
 
       if (signature) {
@@ -86,12 +86,12 @@ export default function Panel() {
               amount: role.price.toString(),
             })),
           },
-          address: formData.address,
+          address: wallet.publicKey,
           message,
-          signature: Buffer.from(signature, "base64").toString(),
+          signature
         };
 
-        const response = await fetch(`/api/discord/guilds/${serverId}/update`, {
+        const response = await fetch(`/api/discord/guilds`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${useUserStore.getState().token || localStorage.getItem("discordToken")}`,

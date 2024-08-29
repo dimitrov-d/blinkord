@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
     const guild = await createGuild(requestBody, token);
     return NextResponse.json(guild);
   } catch (error) {
-    console.error("Failed to update guild", error);
+    console.error("Failed to create guild", error);
     return NextResponse.json(
-      { error: "Failed to update guild" },
+      { error: "Failed to create guild" },
       { status: 500 }
     );
   }
