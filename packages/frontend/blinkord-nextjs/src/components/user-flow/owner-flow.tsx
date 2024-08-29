@@ -1,31 +1,36 @@
-// File: src/app/page.tsx (OwnerFlow component)
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogIn } from "lucide-react";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
+import { useSearchParams } from "next/navigation";
+import LoadingSpinner from "../loading";
 
-export default function OwnerFlow() {
+function SearchParamsHandler({ handleCodeCallback, callbackHandled }: { handleCodeCallback: (code: string) => void; callbackHandled: boolean; }) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code && !callbackHandled) {
+      handleCodeCallback(code);
+    }
+  }, [searchParams, callbackHandled, handleCodeCallback]);
+
+  return null;
+}
+
+function OwnerFlow() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [callbackHandled, setCallbackHandled] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Zustand store hooks
   const setToken = useUserStore((state) => state.setToken);
   const setUserData = useUserStore((state) => state.setUserData);
   const setDiscordConnected = useUserStore((state) => state.setDiscordConnected);
   const setDiscordDisconnected = useUserStore((state) => state.setDiscordDisconnected);
-
-  useEffect(() => {
-    const code = searchParams.get("code");
-    if (code && !callbackHandled) {
-      handleCodeCallback(code);
-      setCallbackHandled(true);
-    }
-  }, [searchParams, callbackHandled]);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -67,19 +72,24 @@ export default function OwnerFlow() {
         localStorage.setItem("discordToken", data.token);
         setUserData(data);
         setDiscordConnected(true);
-        router.push("/servers"); // Redirect to servers route after successful login
+        router.push("/servers");
       } else {
         console.warn("No token received in the response.");
       }
     } catch (error) {
       console.error("Error in handleCodeCallback:", error);
       setDiscordDisconnected(true);
+    } finally {
+      setCallbackHandled(true);
     }
   };
 
   return (
     <div className="flex flex-col">
       <main className="flex-grow container mx-auto px-4 py-8">
+        <Suspense fallback={<><LoadingSpinner /></>}>
+          <SearchParamsHandler handleCodeCallback={handleCodeCallback} callbackHandled={callbackHandled} />
+        </Suspense>
         {!isLoggedIn ? (
           <WelcomeScreen onLogin={handleLogin} />
         ) : (
@@ -112,3 +122,5 @@ function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
     </div>
   );
 }
+
+export default OwnerFlow;

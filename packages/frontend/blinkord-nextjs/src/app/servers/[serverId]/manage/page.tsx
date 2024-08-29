@@ -6,7 +6,7 @@ import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
-import { BotIcon, CopyIcon } from "lucide-react"
+import { BotIcon, CopyIcon, EyeIcon } from "lucide-react";
 import { useWalletActions } from "@/lib/hooks/useWalletActions"
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DiscordRole } from "@/lib/types"
@@ -16,6 +16,7 @@ import { MotionCard, MotionCardContent, MotionInput, MotionButton } from "@/comp
 import { AnimatePresence, motion } from "framer-motion"
 import { useUserStore } from "@/lib/contexts/zustand/userStore"
 import { Skeleton } from "@/components/ui/skeleton"
+import { BlinkPreview } from "@/components/blink/blink-display"
 
 export default function ManageServerPage() {
   const { serverId } = useParams()
@@ -24,6 +25,7 @@ export default function ManageServerPage() {
   const [walletAddress, setWalletAddress] = useState("")
   const [customUrl, setCustomUrl] = useState("")
   const [serverName, setServerName] = useState("")
+  const [showBlinkPreview, setShowBlinkPreview] = useState(false);
   const router = useRouter()
   const token = useUserStore((state) => state.token) || localStorage.getItem("discordToken")
   const discordClientId = useUserStore((state) => state.discordClientId)
@@ -31,7 +33,7 @@ export default function ManageServerPage() {
     roles: true,
     botStatus: true,
     customUrl: true,
-    serverName: true, // To be Implemented
+    serverName: true,
   })
   const { toast } = useToast()
   const { wallet, signMessage } = useWalletActions()
@@ -65,6 +67,10 @@ export default function ManageServerPage() {
 
     fetchData()
   }, [serverId, toast])
+
+  const toggleBlinkPreview = () => {
+    setShowBlinkPreview((prev) => !prev);
+  };
 
   const handleInstallBot = async () => {
     if (typeof serverId !== 'string') {
@@ -133,7 +139,7 @@ export default function ManageServerPage() {
     })
   }
 
-  return (
+ return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -149,99 +155,62 @@ export default function ManageServerPage() {
         Manage Server: {serverId}
       </motion.h1>
 
-      <AnimatePresence>
-        {loading.botStatus ? (
-          <MotionCard
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <MotionCardContent className="p-4">
-              <Skeleton className="h-6 w-3/4 mb-2" />
-              <Skeleton className="h-4 w-full mb-4" />
-              <Skeleton className="h-10 w-1/3" />
-            </MotionCardContent>
-          </MotionCard>
-        ) : !botInstalled && (
-          <MotionCard
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="bg-blue-50 border-blue-200"
-          >
-            <MotionCardContent className="p-4">
-              <div className="flex items-center">
-                <BotIcon className="h-6 w-6 text-blue-500 mr-2" />
-                <h2 className="text-xl font-semibold text-blue-700">Install Blinkord Bot</h2>
-              </div>
-              <p className="mt-2 text-blue-600">To configure paid Discord roles, you need to install the Blinkord bot on your server.</p>
-              <MotionButton
-                onClick={handleInstallBot}
-                className="mt-4 bg-blue-500 hover:bg-blue-600"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Install Bot
-              </MotionButton>
-            </MotionCardContent>
-          </MotionCard>
-        )}
-      </AnimatePresence>
+      {/* Main content in two columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column: Blink Preview */}
 
-      <MotionCard
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-      >
-        <MotionCardContent className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Configure Paid Discord Roles</h2>
-          <Separator className="my-4" />
-          {loading.roles ? (
-            Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="flex items-center justify-between py-4 border-b last:border-b-0">
-                <Skeleton className="h-6 w-1/3" />
-                <Skeleton className="h-10 w-32" />
-              </div>
-            ))
-          ) : discordRoles.length > 0 ? (
-            discordRoles.map((discordRole, index) => (
-              <motion.div
-                key={discordRole.id}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: index * 0.1, duration: 0.3 }}
-                className="flex items-center justify-between py-4 border-b last:border-b-0"
-              >
-                <div className="flex items-center">
-                  <Switch
-                    checked={discordRole.enabled}
-                    onCheckedChange={() => handleDiscordRoleToggle(discordRole.id)}
-                    className="mr-4"
-                  />
-                  <h3 className="text-lg font-medium">{discordRole.name}</h3>
+        <MotionCard
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <MotionCardContent className="p-6">
+            <h2 className="text-2xl font-semibold mb-4">Configure Paid Discord Roles</h2>
+            <Separator className="my-4" />
+            {loading.roles ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="flex items-center justify-between py-4 border-b last:border-b-0">
+                  <Skeleton className="h-6 w-1/3" />
+                  <Skeleton className="h-10 w-32" />
                 </div>
-                <div className="flex items-center">
-                  <MotionInput
-                    type="number"
-                    placeholder="Price in SOL"
-                    value={discordRole.price || ''}
-                    onChange={(e) => handleDiscordRolePriceChange(discordRole.id, parseFloat(e.target.value))}
-                    className="w-32 mr-2"
-                    disabled={!discordRole.enabled}
-                    whileFocus={{ scale: 1.05 }}
-                  />
-                  <span className="text-gray-600">SOL</span>
-                </div>
-              </motion.div>
-            ))
-          ) : (
-            <p className="text-gray-600">No Discord roles available for this server.</p>
-          )}
-        </MotionCardContent>
-      </MotionCard>
-
+              ))
+            ) : discordRoles.length > 0 ? (
+              discordRoles.map((discordRole, index) => (
+                <motion.div
+                  key={discordRole.id}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: index * 0.1, duration: 0.3 }}
+                  className="flex items-center justify-between py-4 border-b last:border-b-0"
+                >
+                  <div className="flex items-center">
+                    <Switch
+                      checked={discordRole.enabled}
+                      onCheckedChange={() => handleDiscordRoleToggle(discordRole.id)}
+                      className="mr-4"
+                    />
+                    <h3 className="text-lg font-medium">{discordRole.name}</h3>
+                  </div>
+                  <div className="flex items-center">
+                    <MotionInput
+                      type="number"
+                      placeholder="Price in SOL"
+                      value={discordRole.price || ''}
+                      onChange={(e) => handleDiscordRolePriceChange(discordRole.id, parseFloat(e.target.value))}
+                      className="w-32 mr-2"
+                      disabled={!discordRole.enabled}
+                      whileFocus={{ scale: 1.05 }}
+                    />
+                    <span className="text-gray-600">SOL</span>
+                  </div>
+                </motion.div>
+              ))
+              
+            ) : (
+              <p className="text-gray-600">No Discord roles available for this server.</p>
+            )}
+          </MotionCardContent>
+          
       <MotionCard
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -269,6 +238,9 @@ export default function ManageServerPage() {
           </div>
         </MotionCardContent>
       </MotionCard>
+
+
+
 
       <MotionCard
         initial={{ y: 20, opacity: 0 }}
@@ -303,12 +275,18 @@ export default function ManageServerPage() {
             </div>
           )}
         </MotionCardContent>
-      </MotionCard>
+      </MotionCard>        </MotionCard>
+        {/* Right Column: Discord Roles Configuration */}
+        <BlinkPreview serverId={Array.isArray(serverId) ? serverId[0] : serverId} code="123" />
+
+      </div>
+
+
 
       <MotionButton
         onClick={() => handleSaveConfiguration(serverId as string, discordRoles, token as string, router)}
         disabled={!botInstalled || loading.roles || loading.botStatus || loading.customUrl}
-        className="w-full bg-green-500 hover:bg-green-600"
+        className="w-full bg-indigo-500 hover:bg-indigo-600 hover:cursor-pointer"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         initial={{ y: 20, opacity: 0 }}
