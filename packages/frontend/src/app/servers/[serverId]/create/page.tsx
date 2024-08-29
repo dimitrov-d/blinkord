@@ -80,7 +80,7 @@ export default function Panel() {
         const payload = {
           data: {
             ...validatedFormData,
-            DiscordRoles: DiscordRoles.filter((role) => role.enabled).map((role) => ({
+            roles: DiscordRoles.filter((role) => role.enabled).map((role) => ({
               id: role.id,
               name: role.name,
               amount: role.price.toString(),

@@ -115,7 +115,7 @@ function WelcomeScreen({ onLogin }: { onLogin: () => void }) {
 function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
   return (
     <div className="text-center">
-      <h2 className="text-2xl font-bold mb-4">Connect Discord</h2>
+      <h2 className="text-2xl font-bold mb-4">Welcome to Blinkord!</h2>
       <p className="mb-4">To continue, you need to connect your Discord account.</p>
       <Button onClick={onConnect} className="w-full btn glow-on-hover">
         <LogIn className="mr-2 h-4 w-4" /> Connect Discord

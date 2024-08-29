@@ -80,7 +80,7 @@ function ServerForm({
         <MotionInput
           id="name"
           placeholder="Enter an image URL for your blink"
-          value={formData.title}
+          value={formData.iconUrl}
           onChange={(e) => handleInputChange("iconUrl", e.target.value)}
           whileFocus={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300 }}

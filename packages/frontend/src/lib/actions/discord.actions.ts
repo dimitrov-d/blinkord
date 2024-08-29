@@ -19,7 +19,9 @@ export async function getDiscordLoginUrl(owner: boolean): Promise<string> {
   console.log("Raw response from Discord API:", responseText);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch Discord login URL: ${response.statusText}`);
+    throw new Error(
+      `Failed to fetch Discord login URL: ${response.statusText}`
+    );
   }
 
   try {
@@ -103,10 +105,7 @@ export async function getGuild(guildId: string, token: string) {
 
 // Create a new guild, sending the JWT token for authentication
 export async function createGuild(
-  guildData: any,
-  address: string,
-  message: string,
-  signature: string,
+  payload: { data: any; message: string; signature: string; address: string },
   token: string
 ) {
   try {
@@ -116,12 +115,7 @@ export async function createGuild(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        data: guildData,
-        address,
-        message,
-        signature,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -139,13 +133,10 @@ export async function createGuild(
   }
 }
 
-// Edit an existing guild using the JWT token for authentication
+// Edit an existing guild using the JWT token and signature  for authentication
 export async function editGuild(
   guildId: string,
-  guildData: any,
-  address: string,
-  message: string,
-  signature: string,
+  payload: { data: any; message: string; signature: string; address: string },
   token: string
 ) {
   try {
@@ -157,12 +148,7 @@ export async function editGuild(
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          data: guildData,
-          address,
-          message,
-          signature,
-        }),
+        body: JSON.stringify(payload),
       }
     );
 
@@ -181,10 +167,13 @@ export async function editGuild(
   }
 }
 
-
 // Fetch roles for a given guild
-export const fetchRoles = async (guildId: string, setRoles: (roles: DiscordRole[]) => void) => {
-  const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+export const fetchRoles = async (
+  guildId: string,
+  setRoles: (roles: DiscordRole[]) => void
+) => {
+  const token =
+    useUserStore.getState().token || localStorage.getItem("discordToken");
 
   try {
     const response = await fetch(`/api/discord/guilds/${guildId}/roles`, {
@@ -192,20 +181,32 @@ export const fetchRoles = async (guildId: string, setRoles: (roles: DiscordRole[
     });
 
     if (!response.ok) {
-      console.error(`Failed to fetch roles for guild ${guildId}: ${response.statusText}`);
+      console.error(
+        `Failed to fetch roles for guild ${guildId}: ${response.statusText}`
+      );
       return;
     }
 
     const rolesData = await response.json();
-    setRoles(rolesData.roles.map((role: Omit<DiscordRole, "price" | "enabled">) => ({ ...role, price: 0, enabled: false })));
+    setRoles(
+      rolesData.roles.map((role: Omit<DiscordRole, "price" | "enabled">) => ({
+        ...role,
+        price: 0,
+        enabled: false,
+      }))
+    );
   } catch (error) {
     console.error(`Error fetching roles for guild ${guildId}`, error);
   }
 };
 
 // Check if the bot is installed on the guild
-export const checkBotInstallation = async (guildId: string, setBotInstalled: (installed: boolean) => void) => {
-  const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+export const checkBotInstallation = async (
+  guildId: string,
+  setBotInstalled: (installed: boolean) => void
+) => {
+  const token =
+    useUserStore.getState().token || localStorage.getItem("discordToken");
 
   try {
     const response = await fetch(`/api/discord/guilds/${guildId}/bot-status`, {
@@ -213,7 +214,9 @@ export const checkBotInstallation = async (guildId: string, setBotInstalled: (in
     });
 
     if (!response.ok) {
-      console.error(`Failed to check bot status for guild ${guildId}: ${response.statusText}`);
+      console.error(
+        `Failed to check bot status for guild ${guildId}: ${response.statusText}`
+      );
       return;
     }
 
@@ -225,7 +228,10 @@ export const checkBotInstallation = async (guildId: string, setBotInstalled: (in
 };
 
 // Generate a custom URL for the guild
-export const generateCustomUrl = (guildId: string, setCustomUrl: (url: string) => void) => {
+export const generateCustomUrl = (
+  guildId: string,
+  setCustomUrl: (url: string) => void
+) => {
   setCustomUrl(`https://blinkord.com/${guildId}`);
 };
 
@@ -237,7 +243,9 @@ export const handleSaveConfiguration = async (
   router: any
 ) => {
   try {
-    const DiscordRolesToSave = DiscordRoles.filter((DiscordRole) => DiscordRole.price > 0);
+    const DiscordRolesToSave = DiscordRoles.filter(
+      (DiscordRole) => DiscordRole.price > 0
+    );
 
     const response = await fetch(`/api/discord/guilds/${serverId}/configure`, {
       method: "POST",
@@ -255,6 +263,8 @@ export const handleSaveConfiguration = async (
     router.push(`/servers/${serverId}/edit`);
   } catch (error) {
     console.error("Error saving configuration:", error);
-    alert("An error occurred while saving the configuration. Please try again.");
+    alert(
+      "An error occurred while saving the configuration. Please try again."
+    );
   }
 };
