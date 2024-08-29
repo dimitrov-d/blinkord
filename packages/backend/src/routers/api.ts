@@ -13,6 +13,13 @@ apiRouter.use(actionCorsMiddleware({}));
 const BASE_URL = env.APP_BASE_URL;
 // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
+apiRouter.get('/', async (req: Request, res: Response) => res.json({
+  type: 'completed',
+  title: 'Use Blinkord',
+  label: 'Go to https://blinkord.com',
+  icon: `https://blinkord.com/banner.png`,
+  description: 'Create shareable links for premium channels on your Discord server!',
+}));
 /**
  * Returns an action based on data for a given guild
  * @param {string} guildId - Path parameter representing ID of the guild
@@ -48,7 +55,11 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
       })),
     },
     disabled: !code,
-    error: code ? null : { message: `Discord login required, visit ${BASE_URL}/blinkord/${guildId}` },
+    error: code
+      ? null
+      : {
+          message: `Discord login required, visit ${BASE_URL}/blinkord/${guildId}`,
+        },
   };
 
   // Blinksights tracking API call fails
@@ -69,7 +80,9 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { guildId } = req.params;
 
   if (!guildId || !roleId || !code)
-    return res.status(400).json({ error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}` });
+    return res.status(400).json({
+      error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}`,
+    });
 
   const guild = await findGuildById(guildId);
   if (!guild) return res.status(404).json({ error: 'Guild not found' });
@@ -117,7 +130,9 @@ apiRouter.post('/:guildId/confirm', express.text({ type: 'text/plain' }), async 
   const { guildId } = req.params;
 
   if (!guildId || !roleId || !code)
-    return res.status(400).json({ error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}` });
+    return res.status(400).json({
+      error: `Invalid role purchase data: guildId=${guildId}, roleId=${roleId}`,
+    });
 
   const guild = await findGuildById(guildId);
   if (!guild) return res.status(404).json({ error: 'Guild not found' });

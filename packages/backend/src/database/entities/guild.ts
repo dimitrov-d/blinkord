@@ -40,7 +40,7 @@ export class Guild {
   /**
    * Details of the server, with custom description of the whole server and the roles
    */
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   details: string;
 
   /**
