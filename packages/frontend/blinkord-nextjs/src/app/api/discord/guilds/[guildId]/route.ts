@@ -8,7 +8,6 @@ export async function GET(
   try {
     const guildId = params.guildId;
     const token = req.headers.get("Authorization")?.split(" ")[1];
-    console.log({ guildId });
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -81,9 +81,7 @@ export default function Servers() {
     });
 
     const guild = await response.json();
-
-    const guildExists = !!guild?.id;
-    if (guildExists) {
+    if (guild?.id) {
       router.push(`/servers/${guildId}/manage`);
     } else {
       router.push(`/servers/${guildId}/edit`);
