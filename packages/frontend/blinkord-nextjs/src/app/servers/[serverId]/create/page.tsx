@@ -128,7 +128,7 @@ export default function Panel() {
       setIsLoading(false);
     }
   };
- 
+
   return (
     <div className="space-y-6 p-6 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 min-h-screen">
       <motion.div
@@ -138,7 +138,7 @@ export default function Panel() {
         className="flex items-center space-x-2 mb-6"
       >
         <ServerIcon className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold text-primary">Create Server: {serverId}</h1>
+        <h1 className="text-3xl font-bold text-primary">Create a Blink for your Discord</h1>
       </motion.div>
       <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
         <MotionCard
@@ -148,7 +148,7 @@ export default function Panel() {
           transition={{ duration: 0.5 }}
         >
           <CardHeader>
-            <CardTitle>Server Details</CardTitle>
+            <CardTitle>Blink Details</CardTitle>
           </CardHeader>
           <MotionCardContent>
             <ServerForm

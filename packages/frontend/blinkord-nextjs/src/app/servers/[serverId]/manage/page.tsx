@@ -120,13 +120,13 @@ export default function ManageServerPage() {
   }
 
   const handleDiscordRolePriceChange = (discordRoleId: string, price: number) => {
-    setDiscordRoles(prevDiscordRoles => prevDiscordRoles.map(discordRole => 
+    setDiscordRoles(prevDiscordRoles => prevDiscordRoles.map(discordRole =>
       discordRole.id === discordRoleId ? { ...discordRole, price } : discordRole
     ))
   }
 
   const handleDiscordRoleToggle = (discordRoleId: string) => {
-    setDiscordRoles(prevDiscordRoles => prevDiscordRoles.map(discordRole => 
+    setDiscordRoles(prevDiscordRoles => prevDiscordRoles.map(discordRole =>
       discordRole.id === discordRoleId ? { ...discordRole, enabled: !discordRole.enabled } : discordRole
     ))
   }
@@ -139,7 +139,7 @@ export default function ManageServerPage() {
     })
   }
 
- return (
+  return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -205,77 +205,77 @@ export default function ManageServerPage() {
                   </div>
                 </motion.div>
               ))
-              
+
             ) : (
               <p className="text-gray-600">No Discord roles available for this server.</p>
             )}
           </MotionCardContent>
-          
-      <MotionCard
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        <MotionCardContent className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Wallet Configuration</h2>
-          <Separator className="my-4" />
-          <div className="flex items-center justify-between">
-            <MotionInput
-              type="text"
-              placeholder="Wallet Address"
-              value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
-              className="flex-grow mr-4"
-              whileFocus={{ scale: 1.05 }}
-            />
-            <MotionButton
-              onClick={() => signMessage("Verify wallet ownership")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Verify Wallet
-            </MotionButton>
-          </div>
-        </MotionCardContent>
-      </MotionCard>
+
+          <MotionCard
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <MotionCardContent className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Wallet Configuration</h2>
+              <Separator className="my-4" />
+              <div className="flex items-center justify-between">
+                <MotionInput
+                  type="text"
+                  placeholder="Wallet Address"
+                  value={walletAddress}
+                  onChange={(e) => setWalletAddress(e.target.value)}
+                  className="flex-grow mr-4"
+                  whileFocus={{ scale: 1.05 }}
+                />
+                <MotionButton
+                  onClick={() => signMessage("Verify wallet ownership")}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Verify Wallet
+                </MotionButton>
+              </div>
+            </MotionCardContent>
+          </MotionCard>
 
 
 
 
-      <MotionCard
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-      >
-        <MotionCardContent className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Custom URL</h2>
-          <Separator className="my-4" />
-          {loading.customUrl ? (
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-10 w-3/4 mr-4" />
-              <Skeleton className="h-10 w-24" />
-            </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <MotionInput
-                type="text"
-                value={customUrl}
-                readOnly
-                className="flex-grow mr-4"
-                whileFocus={{ scale: 1.05 }}
-              />
-              <MotionButton
-                onClick={copyCustomUrl}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <CopyIcon className="mr-2 h-4 w-4" />
-                Copy URL
-              </MotionButton>
-            </div>
-          )}
-        </MotionCardContent>
-      </MotionCard>        </MotionCard>
+          <MotionCard
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <MotionCardContent className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">Your custom URL</h2>
+              <Separator className="my-4" />
+              {loading.customUrl ? (
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-10 w-3/4 mr-4" />
+                  <Skeleton className="h-10 w-24" />
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <MotionInput
+                    type="text"
+                    value={customUrl}
+                    readOnly
+                    className="flex-grow mr-4"
+                    whileFocus={{ scale: 1.05 }}
+                  />
+                  <MotionButton
+                    onClick={copyCustomUrl}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <CopyIcon className="mr-2 h-4 w-4" />
+                    Copy URL
+                  </MotionButton>
+                </div>
+              )}
+            </MotionCardContent>
+          </MotionCard>        </MotionCard>
         {/* Right Column: Discord Roles Configuration */}
         <BlinkPreview serverId={Array.isArray(serverId) ? serverId[0] : serverId} code="123" />
 

@@ -1,15 +1,15 @@
 import { create } from 'zustand';
 
 interface BlinkFormData {
-    title: string;
-    description: string;
-    fields: string[];
-    image: string;
-    stylePreset: string;
-    serverId: string;
-    code: string;
-  }
-  
+  title: string;
+  description: string;
+  fields: string[];
+  iconUrl: string;
+  stylePreset: string;
+  serverId: string;
+  code: string;
+}
+
 
 interface BlinkStore {
   formData: BlinkFormData;
@@ -22,10 +22,10 @@ export const useBlinkStore = create<BlinkStore>((set) => ({
     title: '',
     description: '',
     fields: ['Field 1'],
-    image: '/placeholder.svg',
+    iconUrl: '',
     stylePreset: 'default',
     serverId: '',
-    code: '', 
+    code: '',
   },
   setFormData: (key, value) =>
     set((state) => ({
