@@ -10,6 +10,7 @@ initializeDatabase();
 const app = express();
 app.use(express.json());
 app.use(helmet());
+app.use(express.static(require('path').join(__dirname, 'public')));
 
 app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
@@ -19,6 +20,7 @@ app.get('/actions.json', (req: Request, res: Response) =>
     ],
   }),
 );
+
 app.use('/api', apiRouter);
 app.use('/discord', discordRouter);
 
