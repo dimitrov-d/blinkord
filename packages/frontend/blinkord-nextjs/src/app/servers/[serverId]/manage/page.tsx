@@ -1,0 +1,322 @@
+'use client'
+
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Switch } from "@/components/ui/switch"
+import { BotIcon, CopyIcon } from "lucide-react"
+import { useWalletActions } from "@/lib/hooks/useWalletActions"
+import { useWallet } from '@solana/wallet-adapter-react'
+import { DiscordRole } from "@/lib/types"
+import { fetchRoles, checkBotInstallation, generateCustomUrl, handleSaveConfiguration } from "@/lib/actions/discord.actions"
+import { useToast } from "@/components/ui/use-toast"
+import { MotionCard, MotionCardContent, MotionInput, MotionButton } from "@/components/motion"
+import { AnimatePresence, motion } from "framer-motion"
+import { useUserStore } from "@/lib/contexts/zustand/userStore"
+import { Skeleton } from "@/components/ui/skeleton"
+
+export default function ManageServerPage() {
+  const { serverId } = useParams()
+  const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([])
+  const [botInstalled, setBotInstalled] = useState(false)
+  const [walletAddress, setWalletAddress] = useState("")
+  const [customUrl, setCustomUrl] = useState("")
+  const [serverName, setServerName] = useState("")
+  const router = useRouter()
+  const token = useUserStore((state) => state.token) || localStorage.getItem("discordToken")
+  const discordClientId = useUserStore((state) => state.discordClientId)
+  const [loading, setLoading] = useState({
+    roles: true,
+    botStatus: true,
+    customUrl: true,
+    serverName: true, // To be Implemented
+  })
+  const { toast } = useToast()
+  const { wallet, signMessage } = useWalletActions()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (typeof serverId === "string") {
+        try {
+          await Promise.all([
+            fetchRoles(serverId, setDiscordRoles),
+            checkBotInstallation(serverId, setBotInstalled),
+            generateCustomUrl(serverId, setCustomUrl)
+          ])
+        } catch (error) {
+          console.error("Error fetching data:", error)
+          toast({
+            title: "Error",
+            description: "Failed to fetch server data. Please try again.",
+            variant: "destructive",
+          })
+        } finally {
+          setLoading({
+            roles: false,
+            botStatus: false,
+            customUrl: false,
+            serverName: false,
+          })
+        }
+      }
+    }
+
+    fetchData()
+  }, [serverId, toast])
+
+  const handleInstallBot = async () => {
+    if (typeof serverId !== 'string') {
+      console.error("Invalid serverId")
+      return
+    }
+
+    const botInstallWindow = window.open(
+      `https://discord.com/oauth2/authorize?client_id=${discordClientId}&permissions=8&scope=bot%20applications.commands&guild_id=${serverId}`,
+      "_blank"
+    )
+
+    if (!botInstallWindow) {
+      console.error("Failed to open bot install window")
+      return
+    }
+
+    const checkBotInstall = setInterval(async () => {
+      if (botInstallWindow.closed) {
+        clearInterval(checkBotInstall)
+        try {
+          await checkBotInstallation(serverId, setBotInstalled)
+          if (botInstalled) {
+            toast({
+              title: "Success!",
+              description: "Bot successfully installed!",
+            })
+          } else {
+            toast({
+              title: "Installation Failed",
+              description: "Bot installation failed. Please try again.",
+              variant: "destructive",
+            })
+          }
+        } catch (error) {
+          console.error("Error checking bot installation:", error)
+          toast({
+            title: "Error",
+            description: "Failed to verify bot installation. Please try again.",
+            variant: "destructive",
+          })
+        } finally {
+          setLoading(prev => ({ ...prev, botStatus: false }))
+        }
+      }
+    }, 1000)
+  }
+
+  const handleDiscordRolePriceChange = (discordRoleId: string, price: number) => {
+    setDiscordRoles(prevDiscordRoles => prevDiscordRoles.map(discordRole => 
+      discordRole.id === discordRoleId ? { ...discordRole, price } : discordRole
+    ))
+  }
+
+  const handleDiscordRoleToggle = (discordRoleId: string) => {
+    setDiscordRoles(prevDiscordRoles => prevDiscordRoles.map(discordRole => 
+      discordRole.id === discordRoleId ? { ...discordRole, enabled: !discordRole.enabled } : discordRole
+    ))
+  }
+
+  const copyCustomUrl = () => {
+    navigator.clipboard.writeText(customUrl)
+    toast({
+      title: "URL Copied!",
+      description: "Custom URL has been copied to clipboard.",
+    })
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <motion.h1
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="text-3xl font-bold"
+      >
+        Manage Server: {serverId}
+      </motion.h1>
+
+      <AnimatePresence>
+        {loading.botStatus ? (
+          <MotionCard
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <MotionCardContent className="p-4">
+              <Skeleton className="h-6 w-3/4 mb-2" />
+              <Skeleton className="h-4 w-full mb-4" />
+              <Skeleton className="h-10 w-1/3" />
+            </MotionCardContent>
+          </MotionCard>
+        ) : !botInstalled && (
+          <MotionCard
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-blue-50 border-blue-200"
+          >
+            <MotionCardContent className="p-4">
+              <div className="flex items-center">
+                <BotIcon className="h-6 w-6 text-blue-500 mr-2" />
+                <h2 className="text-xl font-semibold text-blue-700">Install Blinkord Bot</h2>
+              </div>
+              <p className="mt-2 text-blue-600">To configure paid Discord roles, you need to install the Blinkord bot on your server.</p>
+              <MotionButton
+                onClick={handleInstallBot}
+                className="mt-4 bg-blue-500 hover:bg-blue-600"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Install Bot
+              </MotionButton>
+            </MotionCardContent>
+          </MotionCard>
+        )}
+      </AnimatePresence>
+
+      <MotionCard
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <MotionCardContent className="p-6">
+          <h2 className="text-2xl font-semibold mb-4">Configure Paid Discord Roles</h2>
+          <Separator className="my-4" />
+          {loading.roles ? (
+            Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="flex items-center justify-between py-4 border-b last:border-b-0">
+                <Skeleton className="h-6 w-1/3" />
+                <Skeleton className="h-10 w-32" />
+              </div>
+            ))
+          ) : discordRoles.length > 0 ? (
+            discordRoles.map((discordRole, index) => (
+              <motion.div
+                key={discordRole.id}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: index * 0.1, duration: 0.3 }}
+                className="flex items-center justify-between py-4 border-b last:border-b-0"
+              >
+                <div className="flex items-center">
+                  <Switch
+                    checked={discordRole.enabled}
+                    onCheckedChange={() => handleDiscordRoleToggle(discordRole.id)}
+                    className="mr-4"
+                  />
+                  <h3 className="text-lg font-medium">{discordRole.name}</h3>
+                </div>
+                <div className="flex items-center">
+                  <MotionInput
+                    type="number"
+                    placeholder="Price in SOL"
+                    value={discordRole.price || ''}
+                    onChange={(e) => handleDiscordRolePriceChange(discordRole.id, parseFloat(e.target.value))}
+                    className="w-32 mr-2"
+                    disabled={!discordRole.enabled}
+                    whileFocus={{ scale: 1.05 }}
+                  />
+                  <span className="text-gray-600">SOL</span>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <p className="text-gray-600">No Discord roles available for this server.</p>
+          )}
+        </MotionCardContent>
+      </MotionCard>
+
+      <MotionCard
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
+        <MotionCardContent className="p-6">
+          <h2 className="text-2xl font-semibold mb-4">Wallet Configuration</h2>
+          <Separator className="my-4" />
+          <div className="flex items-center justify-between">
+            <MotionInput
+              type="text"
+              placeholder="Wallet Address"
+              value={walletAddress}
+              onChange={(e) => setWalletAddress(e.target.value)}
+              className="flex-grow mr-4"
+              whileFocus={{ scale: 1.05 }}
+            />
+            <MotionButton
+              onClick={() => signMessage("Verify wallet ownership")}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Verify Wallet
+            </MotionButton>
+          </div>
+        </MotionCardContent>
+      </MotionCard>
+
+      <MotionCard
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        <MotionCardContent className="p-6">
+          <h2 className="text-2xl font-semibold mb-4">Custom URL</h2>
+          <Separator className="my-4" />
+          {loading.customUrl ? (
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-10 w-3/4 mr-4" />
+              <Skeleton className="h-10 w-24" />
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <MotionInput
+                type="text"
+                value={customUrl}
+                readOnly
+                className="flex-grow mr-4"
+                whileFocus={{ scale: 1.05 }}
+              />
+              <MotionButton
+                onClick={copyCustomUrl}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <CopyIcon className="mr-2 h-4 w-4" />
+                Copy URL
+              </MotionButton>
+            </div>
+          )}
+        </MotionCardContent>
+      </MotionCard>
+
+      <MotionButton
+        onClick={() => handleSaveConfiguration(serverId as string, discordRoles, token as string, router)}
+        disabled={!botInstalled || loading.roles || loading.botStatus || loading.customUrl}
+        className="w-full bg-green-500 hover:bg-green-600"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+      >
+        Save Configuration
+      </MotionButton>
+    </motion.div>
+  )
+}

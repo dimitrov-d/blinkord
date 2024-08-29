@@ -1,4 +1,6 @@
 import { DISCORD_API_BASE_URL } from "@/lib/utils";
+import { useUserStore } from "@/lib/contexts/zustand/userStore";
+import { DiscordRole } from '@/lib/types'
 
 // Fetch the Discord login URL for OAuth
 export async function getDiscordLoginUrl(owner: boolean): Promise<string> {
@@ -165,3 +167,81 @@ export async function editGuild(
     throw error;
   }
 }
+
+
+// Fetch roles for a given guild
+export const fetchRoles = async (guildId: string, setRoles: (roles: DiscordRole[]) => void) => {
+  const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+
+  try {
+    const response = await fetch(`/api/discord/guilds/${guildId}/roles`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      console.error(`Failed to fetch roles for guild ${guildId}: ${response.statusText}`);
+      return;
+    }
+
+    const rolesData = await response.json();
+    setRoles(rolesData.roles.map((role: Omit<DiscordRole, "price" | "enabled">) => ({ ...role, price: 0, enabled: false })));
+  } catch (error) {
+    console.error(`Error fetching roles for guild ${guildId}`, error);
+  }
+};
+
+// Check if the bot is installed on the guild
+export const checkBotInstallation = async (guildId: string, setBotInstalled: (installed: boolean) => void) => {
+  const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+
+  try {
+    const response = await fetch(`/api/discord/guilds/${guildId}/bot-status`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      console.error(`Failed to check bot status for guild ${guildId}: ${response.statusText}`);
+      return;
+    }
+
+    const botStatus = await response.json();
+    setBotInstalled(botStatus.installed);
+  } catch (error) {
+    console.error(`Error checking bot status for guild ${guildId}`, error);
+  }
+};
+
+// Generate a custom URL for the guild
+export const generateCustomUrl = (guildId: string, setCustomUrl: (url: string) => void) => {
+  setCustomUrl(`https://blinkord.com/${guildId}`);
+};
+
+// Function to save the configuration
+export const handleSaveConfiguration = async (
+  serverId: string,
+  DiscordRoles: DiscordRole[],
+  token: string,
+  router: any
+) => {
+  try {
+    const DiscordRolesToSave = DiscordRoles.filter((DiscordRole) => DiscordRole.price > 0);
+
+    const response = await fetch(`/api/discord/guilds/${serverId}/configure`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ DiscordRoles: DiscordRolesToSave }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to save configuration: ${response.statusText}`);
+    }
+
+    router.push(`/servers/${serverId}/edit`);
+  } catch (error) {
+    console.error("Error saving configuration:", error);
+    alert("An error occurred while saving the configuration. Please try again.");
+  }
+};
