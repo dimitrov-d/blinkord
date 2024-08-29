@@ -1,16 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Guild } from '../database/entities/guild';
-import { verifySignature } from '../services/transaction';
+import { isCorrectSignature as isValidSignature } from '../services/transaction';
 import env from '../services/env';
 
 /**
- * Middleware to verify JWT token and user ownership
- * @param {Request} req - body must be of type { message: string; signature: string; address: string; data: Guild; }
+ * Middleware to verify JWT token from Authorization header
+ * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyJwt = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Token not provided' });
 
@@ -20,7 +20,15 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
   } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });
   }
+};
 
+/**
+ * Middleware to verify message signature and wallet address ownership
+ * @param {Request} req - body must be of type { message: string; signature: string; address: string; data: Guild; }
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+export const verifySignature = async (req: Request, res: Response, next: NextFunction) => {
   // Verify signature and ownership
   const { message, signature, address, data } = req.body as {
     message: string;
@@ -29,7 +37,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     data: Guild;
   };
 
-  if (!verifySignature(address, message, signature)) {
+  if (!isValidSignature(address, message, signature)) {
     return res.status(401).json({ error: 'Invalid signature' });
   }
 
