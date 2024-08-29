@@ -20,6 +20,7 @@ export const verifyJwt = async (req: Request, res: Response, next: NextFunction)
   } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });
   }
+  next();
 };
 
 /**
