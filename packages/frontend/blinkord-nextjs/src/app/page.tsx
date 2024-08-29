@@ -1,4 +1,6 @@
 import OwnerFlow from "@/components/user-flow/owner-flow";
+import Image from "next/image";
+import Link from "next/link";
 
 const Index: React.FC = async () => {
   return (

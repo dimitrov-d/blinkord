@@ -9,6 +9,7 @@ interface UserState {
   setUserData: (userData: any) => void;
   setDiscordConnected: (connected: boolean) => void;
   setDiscordDisconnected: (disconnected: boolean) => void;
+  discordClientId: string;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -20,4 +21,5 @@ export const useUserStore = create<UserState>((set) => ({
   setUserData: (userData) => set({ userData }),
   setDiscordConnected: (connected) => set({ discordConnected: connected }),
   setDiscordDisconnected: (disconnected) => set({ discordDisconnected: disconnected }),
+  discordClientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || '',
 }));

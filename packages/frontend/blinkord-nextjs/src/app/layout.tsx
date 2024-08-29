@@ -26,20 +26,16 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <LayoutWrapper>
+<LayoutWrapper>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body
-          className={cn(
-            "min-h-screen font-sans antialiased ",
-            fontSans.variable
-          )}
-        >
-          <div className="absolute z-1 inset-0 h-screen w-full items-center bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
-          <AppBar />
-          <div className="relative z-10 p-4">{children}</div>
-
-          <Footer />
+        <body className={cn("min-h-screen font-sans antialiased", fontSans.variable)}>
+          <div className="fixed inset-0 h-screen w-full items-center bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"/>          
+          <div className="relative z-10 flex min-h-screen flex-col">
+            <AppBar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
           <Toaster position="bottom-right" />
         </body>
       </html>
