@@ -84,8 +84,21 @@ export async function getGuildRoles(guildId: string, token: string) {
       },
     }
   );
-  const data = await response.json();
-  return data; // { blinkRolePosition, roles }
+  return await response.json(); // { blinkRolePosition, roles }
+}
+
+export async function getGuild(guildId: string, token: string) {
+  const response = await fetch(
+    `${DISCORD_API_BASE_URL}/discord/guilds/${guildId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return await response.json();
 }
 
 // Create a new guild, sending the JWT token for authentication

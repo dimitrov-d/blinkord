@@ -74,12 +74,19 @@ export default function Servers() {
     }
   };
 
-  const handleServerSelect = (serverId: string) => {
-    const serverHasBot = guilds.find((guild) => guild.id === serverId)?.hasBot || false;
-    if (serverHasBot) {
-      router.push(`/servers/${serverId}/manage`);
+  const handleServerSelect = async (guildId: string) => {
+    const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+    const response = await fetch(`/api/discord/guilds/${guildId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const guild = await response.json();
+
+    const guildExists = !!guild?.id;
+    if (guildExists) {
+      router.push(`/servers/${guildId}/manage`);
     } else {
-      router.push(`/servers/${serverId}/edit`);
+      router.push(`/servers/${guildId}/edit`);
     }
   };
 
@@ -88,13 +95,13 @@ export default function Servers() {
     const height = 700;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
-  
+
     const popup = window.open(
       `https://discord.com/oauth2/authorize?client_id=${discordClientId}&permissions=268435457&integration_type=0&scope=bot+applications.commands&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code&guild_id=${serverId}`,
       "discordAuthPopup",
       `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`
     );
-  
+
     // Set up a listener to handle the redirect completion
     const popupInterval = setInterval(() => {
       if (!popup || popup.closed) {
@@ -105,10 +112,10 @@ export default function Servers() {
           if (popup.location.href.includes("http://localhost:3000")) {
             // Redirect main window to the desired location
             window.location.href = popup.location.href;
-  
+
             // Close the popup
             popup.close();
-  
+
             // Clear the interval
             clearInterval(popupInterval);
           }
@@ -118,12 +125,12 @@ export default function Servers() {
       }
     }, 100);
   };
-  
-  
+
+
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <motion.h1 
+      <motion.h1
         className="text-5xl font-bold text-center mb-16"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -134,7 +141,7 @@ export default function Servers() {
       {isFetchingGuilds ? (
         <LoadingSpinner />
       ) : (
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,7 +155,7 @@ export default function Servers() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Card className="h-auto border-0 overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="h-32 relative">
+                <div className="h-32 relative">
                   {guild.image ? (
                     <Image
                       src={guild.image}
@@ -186,11 +193,10 @@ export default function Servers() {
                   </div>
                   <Button
                     variant="secondary"
-                    className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
-                      guild.hasBot 
-                        ? "bg-cyan-400 hover:bg-cyan-600 text-white" 
-                        : "bg-purple-500 hover:bg-purple-600 text-white"
-                    }`}
+                    className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
+                      ? "bg-cyan-400 hover:bg-cyan-600 text-white"
+                      : "bg-purple-500 hover:bg-purple-600 text-white"
+                      }`}
                     onClick={() => guild.hasBot ? handleServerSelect(guild.id) : handleInstallBot(guild.id)}
                   >
                     {guild.hasBot ? "Manage" : "Setup"}
