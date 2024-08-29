@@ -27,12 +27,12 @@ import ServerForm from "@/components/form"
 export default function Panel() {
   const { serverId } = useParams<{ serverId: string }>()
   const { signMessage, promptConnectWallet } = useWalletActions();
-  const selectedGuildTitle = useUserStore((state) => state.selectedGuildTitle);
+  const selectedGuildName = useUserStore((state) => state.selectedGuildName);
   const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
 
   const [formData, setFormData] = useState<ServerFormData>({
     id: serverId || "",
-    title: "",
+    name: "",
     iconUrl: "",
     description: "",
     // details: "",
@@ -48,14 +48,14 @@ export default function Panel() {
   const wallet = useWallet()
 
   useEffect(() => {
-    if (selectedGuildTitle || selectedGuildImage) {
+    if (selectedGuildName || selectedGuildImage) {
       setFormData((prev) => ({
         ...prev,
-        name: selectedGuildTitle || prev.title,
+        name: selectedGuildName || prev.name,
         iconUrl: selectedGuildImage || prev.iconUrl,
       }));
     }
-  }, [selectedGuildTitle, selectedGuildImage]);
+  }, [selectedGuildName, selectedGuildImage]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,7 +155,7 @@ export default function Panel() {
         className="flex items-center space-x-2 mb-6"
       >
         <ServerIcon className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold text-primary">Create a Blink for your Discord</h1>
+        <h1 className="text-3xl font-bold text-primary">Create a Blink for {selectedGuildName}</h1>
       </motion.div>
       <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
         <MotionCard

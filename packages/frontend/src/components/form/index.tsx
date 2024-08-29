@@ -51,18 +51,18 @@ function ServerForm({
     <form onSubmit={onSubmit} className="space-y-6">
       {/* Blink Title Field */}
       <MotionCardContent initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <Label htmlFor="title">Blink Title</Label>
+        <Label htmlFor="name">Blink Title</Label>
         <MotionInput
-          id="title"
+          id="name"
           placeholder="Enter a title for your blink"
-          value={formData.title}
-          onChange={(e) => handleInputChange('title', e.target.value)}
+          value={formData.name}
+          onChange={(e) => handleInputChange('name', e.target.value)}
           whileFocus={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 300 }}
         />
-        {formErrors.title && (
+        {formErrors.name && (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-destructive text-sm mt-1">
-            {formErrors.title}
+            {formErrors.name}
           </motion.p>
         )}
       </MotionCardContent>

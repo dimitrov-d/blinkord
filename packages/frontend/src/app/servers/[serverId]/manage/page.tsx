@@ -37,7 +37,7 @@ export default function ManageServerPage() {
   })
   const { toast } = useToast()
   const { wallet, signMessage } = useWalletActions()
-  const selectedGuildTitle = useUserStore((state) => state.selectedGuildTitle);
+  const selectedGuildName = useUserStore((state) => state.selectedGuildName);
   const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
 
 
@@ -155,7 +155,7 @@ export default function ManageServerPage() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-bold"
       >
-        Manage Server: {selectedGuildTitle}
+        Manage Server: {selectedGuildName}
       </motion.h1>
 
       {/* Main content in two columns */}

@@ -6,13 +6,13 @@ interface UserState {
   discordConnected: boolean;
   discordDisconnected: boolean;
   discordClientId: number;
-  selectedGuildTitle: string | null;
+  selectedGuildName: string | null;
   selectedGuildImage: string | null;
   setToken: (token: string) => void;
   setUserData: (userData: any) => void;
   setDiscordConnected: (connected: boolean) => void;
   setDiscordDisconnected: (disconnected: boolean) => void;
-  setSelectedGuild: (title: string | null, image: string | null) => void;
+  setSelectedGuild: (name: string | null, image: string | null) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -21,11 +21,11 @@ export const useUserStore = create<UserState>((set) => ({
   discordConnected: false,
   discordDisconnected: false,
   discordClientId: 1277276051592052787,
-  selectedGuildTitle: null,
+  selectedGuildName: null,
   selectedGuildImage: null,
   setToken: (token) => set({ token }),
   setUserData: (userData) => set({ userData }),
   setDiscordConnected: (connected) => set({ discordConnected: connected }),
   setDiscordDisconnected: (disconnected) => set({ discordDisconnected: disconnected }),
-  setSelectedGuild: (title, image) => set({ selectedGuildTitle: title, selectedGuildImage: image }),
+  setSelectedGuild: (name, image) => set({ selectedGuildName: name, selectedGuildImage: image }),
 }));
