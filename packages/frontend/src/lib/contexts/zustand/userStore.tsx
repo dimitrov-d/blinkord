@@ -21,5 +21,5 @@ export const useUserStore = create<UserState>((set) => ({
   setUserData: (userData) => set({ userData }),
   setDiscordConnected: (connected) => set({ discordConnected: connected }),
   setDiscordDisconnected: (disconnected) => set({ discordDisconnected: disconnected }),
-  discordClientId: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || '',
+  discordClientId: 1277276051592052787,
 }));

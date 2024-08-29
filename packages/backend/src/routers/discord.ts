@@ -4,7 +4,7 @@ import { findGuildById, insertGuild, updateGuild } from '../database/database';
 import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
-import { authenticate } from '../middleware/auth';
+import { verifySignature, verifyJwt } from '../middleware/auth';
 
 export const discordRouter = express.Router();
 discordRouter.use((req, res, next) => {
@@ -124,7 +124,7 @@ discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) 
  * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.post('/guilds', authenticate, async (req: Request, res: Response) => {
+discordRouter.post('/guilds', [verifySignature, verifyJwt], async (req: Request, res: Response) => {
   const { address, data } = req.body;
 
   if (!data.name || !data.roles?.length) {
@@ -144,6 +144,18 @@ discordRouter.post('/guilds', authenticate, async (req: Request, res: Response) 
 });
 
 /**
+ * Get a guild from the database
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @returns {Guild}
+ */
+discordRouter.get('/guilds/:guildId', verifyJwt, async (req: Request, res: Response) => {
+  const guildId = req.params.guildId;
+
+  const guild = await findGuildById(guildId);
+  return res.json({ guild });
+});
+
+/**
  * Updates an existing guild in the database
  * @param {string} guildId - Path parameter representing ID of the guild
  * @param {string} message - The message which was signed
@@ -152,7 +164,7 @@ discordRouter.post('/guilds', authenticate, async (req: Request, res: Response) 
  * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.patch('/guilds/:guildId', authenticate, async (req: Request, res: Response) => {
+discordRouter.patch('/guilds/:guildId', [verifySignature, verifyJwt], async (req: Request, res: Response) => {
   const { address, data } = req.body;
 
   const guildId = req.params.guildId;

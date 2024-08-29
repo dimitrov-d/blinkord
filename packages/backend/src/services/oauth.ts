@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'querystring';
-import env from '../services/env';
+import env from './env';
 
 export const discordApi = axios.create({ baseURL: 'https://discord.com/api/v10' });
 

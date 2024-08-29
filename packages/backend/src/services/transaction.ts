@@ -58,7 +58,7 @@ export async function generateSendTransaction(from: string, amount: number, guil
   );
 }
 
-export function verifySignature(address: string, message: string, signature: string): boolean {
+export function isCorrectSignature(address: string, message: string, signature: string): boolean {
   if (!message || !address || !signature) return false;
 
   try {
