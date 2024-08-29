@@ -42,7 +42,7 @@ export const verifySignature = async (req: Request, res: Response, next: NextFun
     return res.status(401).json({ error: 'Invalid signature' });
   }
 
-  if (!req['user'].guildIds?.includes(data?.id)) {
+  if (!req['user']?.guildIds?.includes(data?.id)) {
     return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
   }
 
