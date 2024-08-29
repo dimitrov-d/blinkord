@@ -27,6 +27,9 @@ import ServerForm from "@/components/form"
 export default function Panel() {
   const { serverId } = useParams<{ serverId: string }>()
   const { signMessage, promptConnectWallet } = useWalletActions();
+  const selectedGuildTitle = useUserStore((state) => state.selectedGuildTitle);
+  const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
+
   const [formData, setFormData] = useState<ServerFormData>({
     id: serverId || "",
     title: "",
@@ -43,6 +46,16 @@ export default function Panel() {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const wallet = useWallet()
+
+  useEffect(() => {
+    if (selectedGuildTitle || selectedGuildImage) {
+      setFormData((prev) => ({
+        ...prev,
+        name: selectedGuildTitle || prev.title,
+        iconUrl: selectedGuildImage || prev.iconUrl,
+      }));
+    }
+  }, [selectedGuildTitle, selectedGuildImage]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,6 +102,8 @@ export default function Panel() {
           address: wallet.publicKey,
           message,
           signature
+          // no need for base64 here?
+          // signature: Buffer.from(signature, "base64").toString(),
         };
 
         const response = await fetch(`/api/discord/guilds`, {
@@ -103,6 +118,7 @@ export default function Panel() {
         if (response.ok) {
           toast.success("Server created successfully");
           router.push(`/servers/${serverId}/success`);
+          // I need to create this view for success
         } else {
           toast.error("Error creating server");
         }
@@ -119,6 +135,7 @@ export default function Panel() {
           }
         });
         setFormErrors(errors);
+        console.log(errors);
         toast.error("Please fix the form errors");
       } else {
         console.error("Unexpected error:", error);

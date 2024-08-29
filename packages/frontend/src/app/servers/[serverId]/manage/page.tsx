@@ -37,6 +37,9 @@ export default function ManageServerPage() {
   })
   const { toast } = useToast()
   const { wallet, signMessage } = useWalletActions()
+  const selectedGuildTitle = useUserStore((state) => state.selectedGuildTitle);
+  const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -152,7 +155,7 @@ export default function ManageServerPage() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-bold"
       >
-        Manage Server: {serverId}
+        Manage Server: {selectedGuildTitle}
       </motion.h1>
 
       {/* Main content in two columns */}

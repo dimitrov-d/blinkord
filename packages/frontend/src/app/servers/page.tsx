@@ -36,16 +36,20 @@ export default function Servers() {
   const fetchGuilds = async () => {
     setIsFetchingGuilds(true);
     const userData = useUserStore.getState().userData;
-    const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+    const token =
+      useUserStore.getState().token || localStorage.getItem("discordToken");
 
     if (userData && userData.guilds && token) {
       try {
         const guildsData = await Promise.all(
           userData.guilds.map(async (guild: Guild) => {
             if (guild.hasBot) {
-              const response = await fetch(`/api/discord/guilds/${guild.id}/roles`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
+              const response = await fetch(
+                `/api/discord/guilds/${guild.id}/roles`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
 
               if (!response.ok) {
                 if (response.status === 401) {
@@ -74,19 +78,25 @@ export default function Servers() {
     }
   };
 
-  const handleServerSelect = async (guildId: string) => {
+  const handleServerSelect = async (guildId: string, guildName: string, guildImage: string | null) => {
     const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+    const setSelectedGuild = useUserStore.getState().setSelectedGuild;
+
+    setSelectedGuild(guildName, guildImage);
+
     const response = await fetch(`/api/discord/guilds/${guildId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     const guild = await response.json();
+
     if (guild?.id) {
       router.push(`/servers/${guildId}/manage`);
     } else {
       router.push(`/servers/${guildId}/create`);
     }
   };
+
 
   const handleInstallBot = (serverId: string) => {
     const width = 700;
@@ -123,8 +133,6 @@ export default function Servers() {
       }
     }, 100);
   };
-
-
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -190,15 +198,15 @@ export default function Servers() {
                     </p>
                   </div>
                   <Button
-                    variant="secondary"
-                    className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
-                      ? "bg-cyan-400 hover:bg-cyan-600 text-white"
-                      : "bg-purple-500 hover:bg-purple-600 text-white"
-                      }`}
-                    onClick={() => guild.hasBot ? handleServerSelect(guild.id) : handleInstallBot(guild.id)}
-                  >
-                    {guild.hasBot ? "Manage" : "Setup"}
-                  </Button>
+  variant="secondary"
+  className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
+    guild.hasBot ? "bg-cyan-400 hover:bg-cyan-600 text-white" : "bg-purple-500 hover:bg-purple-600 text-white"
+  }`}
+  onClick={() => guild.hasBot ? handleServerSelect(guild.id, guild.name, guild.image) : handleInstallBot(guild.id)}
+>
+  {guild.hasBot ? "Manage" : "Setup"}
+</Button>
+
                 </CardContent>
               </Card>
             </motion.div>
