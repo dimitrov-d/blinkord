@@ -84,7 +84,7 @@ export default function Servers() {
     if (guild?.id) {
       router.push(`/servers/${guildId}/manage`);
     } else {
-      router.push(`/servers/${guildId}/edit`);
+      router.push(`/servers/${guildId}/create`);
     }
   };
 
