@@ -1,6 +1,6 @@
 "use client";
 
-import axios, { AxiosProgressEvent, CancelTokenSource } from "axios";
+// import axios, { AxiosProgressEvent, CancelTokenSource } from "axios";
 import {
   AudioWaveform,
   File,
@@ -18,7 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface FileUploadProgress {
   progress: number;
   File: File;
-  source: CancelTokenSource | null;
+  source: any //CancelTokenSource | null;
 }
 
 enum FileTypes {
@@ -95,56 +95,56 @@ export default function ImageUpload() {
 
   // feel free to mode all these functions to separate utils
   // here is just for simplicity
-  const onUploadProgress = (
-    progressEvent: AxiosProgressEvent,
-    file: File,
-    cancelSource: CancelTokenSource
-  ) => {
-    const progress = Math.round(
-      (progressEvent.loaded / (progressEvent.total ?? 0)) * 100
-    );
+  // const onUploadProgress = (
+  //   progressEvent: AxiosProgressEvent,
+  //   file: File,
+  //   cancelSource: CancelTokenSource
+  // ) => {
+  //   const progress = Math.round(
+  //     (progressEvent.loaded / (progressEvent.total ?? 0)) * 100
+  //   );
 
-    if (progress === 100) {
-      setUploadedFiles((prevUploadedFiles) => {
-        return [...prevUploadedFiles, file];
-      });
+  //   if (progress === 100) {
+  //     setUploadedFiles((prevUploadedFiles) => {
+  //       return [...prevUploadedFiles, file];
+  //     });
 
-      setFilesToUpload((prevUploadProgress) => {
-        return prevUploadProgress.filter((item) => item.File !== file);
-      });
+  //     setFilesToUpload((prevUploadProgress) => {
+  //       return prevUploadProgress.filter((item) => item.File !== file);
+  //     });
 
-      return;
-    }
+  //     return;
+  //   }
 
-    setFilesToUpload((prevUploadProgress) => {
-      return prevUploadProgress.map((item) => {
-        if (item.File.name === file.name) {
-          return {
-            ...item,
-            progress,
-            source: cancelSource,
-          };
-        } else {
-          return item;
-        }
-      });
-    });
-  };
+  //   setFilesToUpload((prevUploadProgress) => {
+  //     return prevUploadProgress.map((item) => {
+  //       if (item.File.name === file.name) {
+  //         return {
+  //           ...item,
+  //           progress,
+  //           source: cancelSource,
+  //         };
+  //       } else {
+  //         return item;
+  //       }
+  //     });
+  //   });
+  // };
 
-  const uploadImageToCloudinary = async (
-    formData: FormData,
-    onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
-    cancelSource: CancelTokenSource
-  ) => {
-    return axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
-      formData,
-      {
-        onUploadProgress,
-        cancelToken: cancelSource.token,
-      }
-    );
-  };
+  // const uploadImageToCloudinary = async (
+  //   formData: FormData,
+  //   onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
+  //   cancelSource: CancelTokenSource
+  // ) => {
+  //   return axios.post(
+  //     `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+  //     formData,
+  //     {
+  //       onUploadProgress,
+  //       cancelToken: cancelSource.token,
+  //     }
+  //   );
+  // };
 
   const removeFile = (file: File) => {
     setFilesToUpload((prevUploadProgress) => {

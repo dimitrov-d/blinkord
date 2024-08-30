@@ -8,11 +8,11 @@ const BlinkMock = () => {
 
   return (
     <Card className="w-full h-auto text-white">
-        
+
       <CardContent className="p-6">
         <div className="flex items-center mb-4">
           <img
-            src={formData.image || "/placeholder.svg"}
+            src={formData.iconUrl || "/placeholder.svg"}
             alt="Website icon"
             width={100}
             height={100}
