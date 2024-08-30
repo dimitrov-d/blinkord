@@ -1,24 +1,22 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useRouter, useParams } from "next/navigation";
+import { useSearchParams, useParams } from "next/navigation";
 import { BlinkDisplay } from "@/components/blink/blink-display";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon, AlertTriangleIcon } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon, AlertTriangleIcon } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function BlinkPage() {
   const searchParams = useSearchParams();
-  const { serverId } = useParams<{ serverId: string }>()
+  const { serverId } = useParams<{ serverId: string }>();
   const code = searchParams.get("code") || "";
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -27,10 +25,13 @@ export default function BlinkPage() {
     if (!code) {
       const authenticateUser = async () => {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-          });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+            }
+          );
 
           const data = await response.json();
           if (data.url) {
@@ -53,46 +54,66 @@ export default function BlinkPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container max-w-4xl"
+        className="container max-w-6xl" // Adjusted container width to be larger
       >
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">
-              Welcome to Blinkord
-            </CardTitle>
-            <CardDescription className="text-center">
-              You're one step away from unlocking exclusive content and
-              features on your favorite Discord servers!
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!isAuthenticated && (
-              <Alert className="mb-4">
-                <InfoIcon className="h-4 w-4" />
-                <AlertTitle>Authentication Required</AlertTitle>
-                <AlertDescription>
-                  Please authenticate with Discord to proceed with purchasing
-                  premium access.
-                </AlertDescription>
-              </Alert>
-            )}
-            {isAuthenticated && (
-              <>
-                <div className="mb-6">
-                  <BlinkDisplay serverId={serverId} code={code} />
-                </div>
-                <Alert variant="default" className="mb-4">
-                  <AlertTriangleIcon className="h-4 w-4" />
-                  <AlertTitle>Ready to Purchase</AlertTitle>
-                  <AlertDescription>
-                    Your Discord is authenticated. Use the interface below to
-                    purchase premium access using SOL.
-                  </AlertDescription>
-                </Alert>
-              </>
-            )}
-          </CardContent>
-        </Card>
+        <div className="flex flex-col md:flex-row items-start space-y-8 md:space-y-0 md:space-x-8 mt-16"> {/* Adjusted layout to be side by side */}
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex-1"
+          >
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-center">
+                  Welcome to Blinkord
+                </CardTitle>
+                <CardDescription className="text-center">
+                  You're one step away from unlocking exclusive content and
+                  features on your favorite Discord servers!
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex-1"
+          >
+            <Card className="w-full">
+              <CardContent>
+                {isAuthenticated ? (
+                  <>
+                    <div className="mb-4">
+                      <Alert variant="default" className="mb-4">
+                        <AlertTriangleIcon className="h-4 w-4" />
+                        <AlertTitle>Ready to Purchase</AlertTitle>
+                        <AlertDescription>
+                          Your Discord is authenticated. Use the interface below
+                          to purchase premium access using SOL.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                    <div className="mb-6">
+                      <BlinkDisplay serverId={serverId} code={code} />
+                    </div>
+                  </>
+                ) : (
+                  <Alert className="mb-4">
+                    <InfoIcon className="h-4 w-4" />
+                    <AlertTitle>Authentication Required</AlertTitle>
+                    <AlertDescription>
+                      Please authenticate with Discord to proceed with
+                      purchasing premium access.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );
