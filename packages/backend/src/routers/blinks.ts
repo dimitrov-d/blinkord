@@ -54,7 +54,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     links: {
       actions: guild.roles.map(({ id, name, amount }) => ({
         label: `${name} (${amount} SOL)`,
-        href: `${BASE_URL}/api/${guildId}/buy?roleId=${id}&code=${code}`,
+        href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
     disabled: !code,
@@ -105,7 +105,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
           links: {
             next: {
               type: 'post',
-              href: `${BASE_URL}/api/${guildId}/confirm?roleId=${role.id}&code=${code}`,
+              href: `${BASE_URL}/blinks/${guildId}/confirm?roleId=${role.id}&code=${code}`,
             },
           },
         },

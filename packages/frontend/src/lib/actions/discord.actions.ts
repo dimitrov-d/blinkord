@@ -174,9 +174,10 @@ export const fetchRoles = async (
     useUserStore.getState().token || localStorage.getItem("discordToken");
 
   try {
-    const response = await fetch(`/api/discord/guilds/${guildId}/roles`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${guildId}/roles`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
     if (!response.ok) {
       console.error(

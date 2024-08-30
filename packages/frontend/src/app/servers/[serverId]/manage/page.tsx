@@ -128,23 +128,6 @@ export default function ManageServerPage() {
     setShowBlinkPreview((prev) => !prev);
   };
 
-  const handleInstallBot = async () => {
-    if (typeof serverId !== "string") {
-      console.error("Invalid serverId");
-      return;
-    }
-
-    const botInstallWindow = window.open(
-      `https://discord.com/oauth2/authorize?client_id=${discordClientId}&permissions=8&scope=bot%20applications.commands&guild_id=${serverId}`,
-      "_blank"
-    );
-
-    if (!botInstallWindow) {
-      console.error("Failed to open bot install window");
-      return;
-    }
-  };
-
   const handleDiscordRolePriceChange = (
     discordRoleId: string,
     price: number

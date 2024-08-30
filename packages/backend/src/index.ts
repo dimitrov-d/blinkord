@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { blinksRouter } from './routers/api';
+import { blinksRouter } from './routers/blinks';
 import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
 import helmet from 'helmet';
