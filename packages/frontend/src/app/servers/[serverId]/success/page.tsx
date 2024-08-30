@@ -188,23 +188,6 @@ export default function SuccessPage() {
             </div>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          className="bg-white rounded-lg shadow-lg p-6 w-full"
-        >
-          <h2 className="text-2xl font-semibold mb-4 text-navy-900">
-            Your Blink Preview
-          </h2>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <BlinkDisplay
-              serverId={searchParams.get("serverId") || ""}
-              code={searchParams.get("code") || ""}
-            />
-          </div>
-        </motion.div>
       </motion.div>
     </div>
   );

@@ -198,33 +198,6 @@ export const fetchRoles = async (
   }
 };
 
-// Check if the bot is installed on the guild
-export const checkBotInstallation = async (
-  guildId: string,
-  setBotInstalled: (installed: boolean) => void
-) => {
-  const token =
-    useUserStore.getState().token || localStorage.getItem("discordToken");
-
-  try {
-    const response = await fetch(`/api/discord/guilds/${guildId}/bot-status`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response.ok) {
-      console.error(
-        `Failed to check bot status for guild ${guildId}: ${response.statusText}`
-      );
-      return;
-    }
-
-    const botStatus = await response.json();
-    setBotInstalled(botStatus.installed);
-  } catch (error) {
-    console.error(`Error checking bot status for guild ${guildId}`, error);
-  }
-};
-
 // Generate a custom URL for the guild
 export const generateCustomUrl = (
   guildId: string,

@@ -3,6 +3,7 @@ import { apiRouter } from './routers/api';
 import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
 import helmet from 'helmet';
+import { actionCorsMiddleware } from '@solana/actions';
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
 
 initializeDatabase();
@@ -11,6 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(express.static(require('path').join(__dirname, 'public')));
+app.use(actionCorsMiddleware({}));
 
 app.get('/actions.json', (req: Request, res: Response) =>
   res.json({

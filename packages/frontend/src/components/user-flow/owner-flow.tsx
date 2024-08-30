@@ -43,11 +43,9 @@ function OwnerFlow() {
 
   const handleConnectDiscord = async () => {
     try {
-      const response = await fetch("/api/discord/getLoginUrl", {
-        method: "POST",
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login?owner=true`, {
+        method: "GET",
         headers: { "Content-Type": "application/json" },
-        // Omit this body when a member goes to blinkord.com/guild_id and logs in
-        body: JSON.stringify({ owner: true }),
       });
 
       const data = await response.json();
@@ -63,13 +61,12 @@ function OwnerFlow() {
     code: string,
     searchParams: URLSearchParams
   ) => {
+    if (callbackHandled) return; // Prevent multiple calls
+
     try {
       const response = await fetch(
-        `/api/discord/login/callback?code=${encodeURIComponent(code)}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`,
+        { headers: { "Content-Type": "application/json" }, }
       );
 
       if (!response.ok) {

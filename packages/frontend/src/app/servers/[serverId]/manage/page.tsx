@@ -12,7 +12,6 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { DiscordRole } from "@/lib/types";
 import {
   fetchRoles,
-  checkBotInstallation,
   generateCustomUrl,
   handleSaveConfiguration,
 } from "@/lib/actions/discord.actions";
@@ -102,7 +101,6 @@ export default function ManageServerPage() {
         try {
           await Promise.all([
             fetchRoles(serverId, setDiscordRoles),
-            checkBotInstallation(serverId, setBotInstalled),
             generateCustomUrl(serverId, setCustomUrl),
           ]);
         } catch (error) {
@@ -145,36 +143,6 @@ export default function ManageServerPage() {
       console.error("Failed to open bot install window");
       return;
     }
-
-    const checkBotInstall = setInterval(async () => {
-      if (botInstallWindow.closed) {
-        clearInterval(checkBotInstall);
-        try {
-          await checkBotInstallation(serverId, setBotInstalled);
-          if (botInstalled) {
-            toast({
-              title: "Success!",
-              description: "Bot successfully installed!",
-            });
-          } else {
-            toast({
-              title: "Installation Failed",
-              description: "Bot installation failed. Please try again.",
-              variant: "destructive",
-            });
-          }
-        } catch (error) {
-          console.error("Error checking bot installation:", error);
-          toast({
-            title: "Error",
-            description: "Failed to verify bot installation. Please try again.",
-            variant: "destructive",
-          });
-        } finally {
-          setLoading((prev) => ({ ...prev, botStatus: false }));
-        }
-      }
-    }, 1000);
   };
 
   const handleDiscordRolePriceChange = (
@@ -264,95 +232,6 @@ export default function ManageServerPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
-          <MotionCardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">
-              Configure Paid Discord Roles
-            </h2>
-            <Separator className="my-4" />
-            {loading.roles ? (
-              Array.from({ length: 3 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between py-4 border-b last:border-b-0"
-                >
-                  <Skeleton className="h-6 w-1/3" />
-                  <Skeleton className="h-10 w-32" />
-                </div>
-              ))
-            ) : discordRoles.length > 0 ? (
-              discordRoles.map((discordRole, index) => (
-                <motion.div
-                  key={discordRole.id}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.3 }}
-                  className="flex items-center justify-between py-4 border-b last:border-b-0"
-                >
-                  <div className="flex items-center">
-                    <Switch
-                      checked={discordRole.enabled}
-                      onCheckedChange={() =>
-                        handleDiscordRoleToggle(discordRole.id)
-                      }
-                      className="mr-4"
-                    />
-                    <h3 className="text-lg font-medium">{discordRole.name}</h3>
-                  </div>
-                  <div className="flex items-center">
-                    <MotionInput
-                      type="number"
-                      placeholder="Price in SOL"
-                      value={discordRole.price || ""}
-                      onChange={(e) =>
-                        handleDiscordRolePriceChange(
-                          discordRole.id,
-                          parseFloat(e.target.value)
-                        )
-                      }
-                      className="w-32 mr-2"
-                      disabled={!discordRole.enabled}
-                      whileFocus={{ scale: 1.05 }}
-                    />
-                    <span className="text-gray-600">SOL</span>
-                  </div>
-                </motion.div>
-              ))
-            ) : (
-              <p className="text-gray-600">
-                No Discord roles available for this server.
-              </p>
-            )}
-          </MotionCardContent>
-
-          <MotionCard
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <MotionCardContent className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">
-                Wallet Configuration
-              </h2>
-              <Separator className="my-4" />
-              <div className="flex items-center justify-between">
-                <MotionInput
-                  type="text"
-                  placeholder="Wallet Address"
-                  value={walletAddress}
-                  onChange={(e) => setWalletAddress(e.target.value)}
-                  className="flex-grow mr-4"
-                  whileFocus={{ scale: 1.05 }}
-                />
-                <MotionButton
-                  onClick={() => signMessage("Verify wallet ownership")}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Verify Wallet
-                </MotionButton>
-              </div>
-            </MotionCardContent>
-          </MotionCard>
 
           <MotionCard
             initial={{ y: 20, opacity: 0 }}
@@ -396,31 +275,6 @@ export default function ManageServerPage() {
           code="123"
         />
       </div>
-
-      <MotionButton
-        onClick={() =>
-          handleSaveConfiguration(
-            serverId as string,
-            discordRoles,
-            token as string,
-            router
-          )
-        }
-        disabled={
-          !botInstalled ||
-          loading.roles ||
-          loading.botStatus ||
-          loading.customUrl
-        }
-        className="w-full bg-indigo-500 hover:bg-indigo-600 hover:cursor-pointer"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-      >
-        Save Configuration
-      </MotionButton>
     </motion.div>
   );
 }

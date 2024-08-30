@@ -75,7 +75,7 @@ export default function Panel() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
       promptConnectWallet();
@@ -105,7 +105,7 @@ export default function Panel() {
           // signature: Buffer.from(signature, "base64").toString(),
         };
 
-        const response = await fetch(`/api/discord/guilds`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${useUserStore.getState().token || localStorage.getItem("discordToken")}`,

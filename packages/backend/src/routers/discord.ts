@@ -5,10 +5,8 @@ import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { verifySignature, verifyJwt } from '../middleware/auth';
-import { actionCorsMiddleware } from '@solana/actions';
 
 export const discordRouter = express.Router();
-discordRouter.use(actionCorsMiddleware({}));
 
 /**
  * Returns a Discord OAuth URL for logging in

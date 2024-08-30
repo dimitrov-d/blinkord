@@ -36,46 +36,11 @@ export default function Servers() {
   const fetchGuilds = async () => {
     setIsFetchingGuilds(true);
     const userData = useUserStore.getState().userData;
-    const token =
-      useUserStore.getState().token || localStorage.getItem("discordToken");
 
-    if (userData && userData.guilds && token) {
-      try {
-        const guildsData = await Promise.all(
-          userData.guilds.map(async (guild: Guild) => {
-            if (guild.hasBot) {
-              const response = await fetch(
-                `/api/discord/guilds/${guild.id}/roles`,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-              );
-
-              if (!response.ok) {
-                if (response.status === 401) {
-                  localStorage.removeItem("discordToken");
-                  setIsLoggedIn(false);
-                } else {
-                  return { ...guild, roles: [] };
-                }
-              }
-
-              const rolesData = await response.json();
-              return { ...guild, roles: rolesData.roles };
-            } else {
-              return { ...guild, roles: [] };
-            }
-          })
-        );
-        setGuilds(guildsData);
-      } catch (error) {
-        console.error("Failed to fetch guilds or roles", error);
-      } finally {
-        setIsFetchingGuilds(false);
-      }
-    } else {
-      setIsFetchingGuilds(false);
+    if (userData?.guilds) {
+      setGuilds(userData.guilds);
     }
+    setIsFetchingGuilds(false);
   };
 
   const handleServerSelect = async (
@@ -89,13 +54,13 @@ export default function Servers() {
 
     setSelectedGuild(guildId, guildName, guildImage);
 
-    const response = await fetch(`/api/discord/guilds/${guildId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${guildId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    const guild = await response.json();
+    const data = await response.json();
 
-    if (guild?.id) {
+    if (data?.guild?.id) {
       router.push(`/servers/${guildId}/manage`);
     } else {
       router.push(`/servers/${guildId}/create`);
@@ -109,7 +74,7 @@ export default function Servers() {
     const top = (window.innerHeight - height) / 2;
 
     const popup = window.open(
-      `https://discord.com/oauth2/authorize?client_id=${discordClientId}&permissions=268435457&integration_type=0&scope=bot+applications.commands&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code&guild_id=${serverId}`,
+      `https://discord.com/oauth2/authorize?client_id=1277276051592052787&permissions=268435457&integration_type=0&scope=bot+applications.commands&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code&guild_id=${serverId}`,
       "discordAuthPopup",
       `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`
     );
@@ -203,11 +168,10 @@ export default function Servers() {
                   </div>
                   <Button
                     variant="secondary"
-                    className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
-                      guild.hasBot
-                        ? "bg-cyan-400 hover:bg-cyan-600 text-white"
-                        : "bg-purple-500 hover:bg-purple-600 text-white"
-                    }`}
+                    className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
+                      ? "bg-cyan-400 hover:bg-cyan-600 text-white"
+                      : "bg-purple-500 hover:bg-purple-600 text-white"
+                      }`}
                     onClick={() =>
                       guild.hasBot
                         ? handleServerSelect(guild.id, guild.name, guild.image)

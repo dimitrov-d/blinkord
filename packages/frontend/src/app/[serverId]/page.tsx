@@ -21,21 +21,22 @@ export default function BlinkPage() {
   const router = useRouter();
   const serverId = searchParams.get("serverId") || "";
   const code = searchParams.get("code") || "";
+  const [routePath, setRoutePath] = useState("");
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     if (!code) {
       const authenticateUser = async () => {
         try {
-          const response = await fetch("/api/discord/getLoginUrl", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ owner: false }),
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
           });
 
           const data = await response.json();
           if (data.url) {
-            window.location.href = data.url;
+            window.location.href = `${data.url}&state=${window.location.pathname}`;
           }
         } catch (error) {
           console.error("Failed to connect to Discord", error);

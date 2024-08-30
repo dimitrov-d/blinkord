@@ -1,14 +1,13 @@
 import express, { Request, Response } from 'express';
 import { Action } from '@solana/actions-spec';
-import { actionCorsMiddleware, createPostResponse } from '@solana/actions';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
 import { findGuildById } from '../database/database';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
+import { createPostResponse } from '@solana/actions';
 // import { BlinksightsClient } from 'blinksights-sdk';
 
 export const apiRouter = express.Router();
-apiRouter.use(actionCorsMiddleware({}));
 
 const BASE_URL = env.APP_BASE_URL;
 // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
@@ -16,8 +15,9 @@ const BASE_URL = env.APP_BASE_URL;
 apiRouter.get('/', async (req: Request, res: Response) => res.json({
   type: 'completed',
   title: 'Use Blinkord',
+  disabled: true,
   label: 'Go to https://blinkord.com',
-  icon: `https://blinkord.com/banner.png`,
+  icon: `${process.env.NEXT_PUBLIC_API_BASE_URL}/banner.png`,
   description: 'Create shareable links for premium channels on your Discord server!',
 }));
 /**
