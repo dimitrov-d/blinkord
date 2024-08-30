@@ -18,8 +18,8 @@ blinksRouter.get('/', async (req: Request, res: Response) =>
     title: 'Use Blinkord',
     disabled: true,
     label: 'Go to https://blinkord.com',
-    icon: `https://blinkord.vercel.app/banner.png`,
-    description: 'Create shareable links for premium roles on your Discord server!',
+    icon: `https://blinkord.com/banner.png`,
+    description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
     error: { message: 'Go to https://blinkord.com to get started' },
   } as Action<'action'>),
 );
