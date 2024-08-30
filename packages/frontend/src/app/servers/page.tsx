@@ -78,11 +78,16 @@ export default function Servers() {
     }
   };
 
-  const handleServerSelect = async (guildId: string, guildName: string, guildImage: string | null) => {
-    const token = useUserStore.getState().token || localStorage.getItem("discordToken");
+  const handleServerSelect = async (
+    guildId: string,
+    guildName: string,
+    guildImage: string | null
+  ) => {
+    const token =
+      useUserStore.getState().token || localStorage.getItem("discordToken");
     const setSelectedGuild = useUserStore.getState().setSelectedGuild;
 
-    setSelectedGuild(guildName, guildImage);
+    setSelectedGuild(guildId, guildName, guildImage);
 
     const response = await fetch(`/api/discord/guilds/${guildId}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -96,7 +101,6 @@ export default function Servers() {
       router.push(`/servers/${guildId}/create`);
     }
   };
-
 
   const handleInstallBot = (serverId: string) => {
     const width = 700;
@@ -198,15 +202,20 @@ export default function Servers() {
                     </p>
                   </div>
                   <Button
-  variant="secondary"
-  className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
-    guild.hasBot ? "bg-cyan-400 hover:bg-cyan-600 text-white" : "bg-purple-500 hover:bg-purple-600 text-white"
-  }`}
-  onClick={() => guild.hasBot ? handleServerSelect(guild.id, guild.name, guild.image) : handleInstallBot(guild.id)}
->
-  {guild.hasBot ? "Manage" : "Setup"}
-</Button>
-
+                    variant="secondary"
+                    className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
+                      guild.hasBot
+                        ? "bg-cyan-400 hover:bg-cyan-600 text-white"
+                        : "bg-purple-500 hover:bg-purple-600 text-white"
+                    }`}
+                    onClick={() =>
+                      guild.hasBot
+                        ? handleServerSelect(guild.id, guild.name, guild.image)
+                        : handleInstallBot(guild.id)
+                    }
+                  >
+                    {guild.hasBot ? "Manage" : "Setup"}
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>

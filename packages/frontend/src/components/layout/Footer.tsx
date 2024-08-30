@@ -22,7 +22,7 @@ export default function Footer() {
             height={20}
           />
           <span className="text-white text-sm">
-            © 2023 Blinkord. All rights reserved.
+            © 2024 Blinkord. All rights reserved.
           </span>
         </div>
       </div>

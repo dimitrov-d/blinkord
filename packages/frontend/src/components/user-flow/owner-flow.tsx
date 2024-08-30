@@ -2,14 +2,9 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useSearchParams } from "next/navigation";
 import LoadingSpinner from "../loading";
-import { motion } from "framer-motion";
-import { LogIn } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import DiscordLogo3D from "../discord-3rf";
 import { ConnectDiscordScreen } from "./hero";
 
@@ -17,7 +12,7 @@ function SearchParamsHandler({
   handleCodeCallback,
   callbackHandled,
 }: {
-  handleCodeCallback: (code: string) => void;
+  handleCodeCallback: (code: string, searchParams: URLSearchParams) => void;
   callbackHandled: boolean;
 }) {
   const searchParams = useSearchParams();
@@ -25,7 +20,7 @@ function SearchParamsHandler({
   useEffect(() => {
     const code = searchParams.get("code");
     if (code && !callbackHandled) {
-      handleCodeCallback(code);
+      handleCodeCallback(code, searchParams);
     }
   }, [searchParams, callbackHandled, handleCodeCallback]);
 
@@ -64,7 +59,10 @@ function OwnerFlow() {
     }
   };
 
-  const handleCodeCallback = async (code: string) => {
+  const handleCodeCallback = async (
+    code: string,
+    searchParams: URLSearchParams
+  ) => {
     try {
       const response = await fetch(
         `/api/discord/login/callback?code=${encodeURIComponent(code)}`,
@@ -88,7 +86,16 @@ function OwnerFlow() {
         localStorage.setItem("discordToken", data.token);
         setUserData(data);
         setDiscordConnected(true);
-        router.push("/servers");
+
+        // Determine where to redirect the user
+        const serverId = searchParams.get("serverId");
+        if (serverId) {
+          // Redirect to the Blink page
+          router.push(`/blink/${serverId}?code=${code}`);
+        } else {
+          // Default redirection for owners or other flows
+          router.push("/servers");
+        }
       } else {
         console.warn("No token received in the response.");
       }

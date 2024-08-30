@@ -1,31 +1,28 @@
-'use client'
+"use client";
 
-import { useState, useEffect, Suspense } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Switch } from "@/components/ui/switch"
-import { BlinkDisplay } from "@/components/blink/blink-display"
-import { BlinkCardSkeleton } from "@/components/skeletons/blink-skeleton"
-import { ServerFormSkeleton } from "@/components/skeletons/server-form"
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { BlinkDisplay } from "@/components/blink/blink-display";
+import { BlinkCardSkeleton } from "@/components/skeletons/blink-skeleton";
+import { ServerFormSkeleton } from "@/components/skeletons/server-form";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
-import { SaveIcon, ServerIcon } from "lucide-react"
-import { z } from "zod"
-import { useUserStore } from "@/lib/contexts/zustand/userStore"
-import { useWallet } from "@solana/wallet-adapter-react"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
-import { DiscordRole } from '@/lib/types/index'
-import { fetchRoles } from "@/lib/actions/discord.actions"
-import { ServerFormData, serverFormSchema } from "@/lib/zod-validation"
-import { ServerFormProps } from '@/lib/types'
-import { MotionCard, MotionCardContent } from "@/components/motion"
-import BlinkMock from "@/components/blink/blink-builder"
-import ServerForm from "@/components/form"
+import { SaveIcon, ServerIcon } from "lucide-react";
+import { z } from "zod";
+import { useUserStore } from "@/lib/contexts/zustand/userStore";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { toast } from "sonner";
+import { DiscordRole } from "@/lib/types/index";
+import { fetchRoles } from "@/lib/actions/discord.actions";
+import { ServerFormData, serverFormSchema } from "@/lib/zod-validation";
+import { MotionCard, MotionCardContent } from "@/components/motion";
+import ServerForm from "@/components/form";
 
 export default function Panel() {
-  const { serverId } = useParams<{ serverId: string }>()
+  const { serverId } = useParams<{ serverId: string }>();
   const { signMessage, promptConnectWallet } = useWalletActions();
   const selectedGuildName = useUserStore((state) => state.selectedGuildName);
   const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
@@ -40,12 +37,14 @@ export default function Panel() {
     // address: "",
     // message: "",
     // signature: "",
-  })
-  const [DiscordRoles, setDiscordRoles] = useState<DiscordRole[]>([])
-  const [formErrors, setFormErrors] = useState<Partial<Record<keyof ServerFormData, string>>>({})
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
-  const wallet = useWallet()
+  });
+  const [DiscordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
+  const [formErrors, setFormErrors] = useState<
+    Partial<Record<keyof ServerFormData, string>>
+  >({});
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const wallet = useWallet();
 
   useEffect(() => {
     if (selectedGuildName || selectedGuildImage) {
@@ -61,18 +60,18 @@ export default function Panel() {
     const fetchData = async () => {
       if (serverId) {
         try {
-          await fetchRoles(serverId, setDiscordRoles)
+          await fetchRoles(serverId, setDiscordRoles);
         } catch (error) {
-          console.error("Error fetching roles:", error)
-          toast.error("Failed to fetch server roles")
+          console.error("Error fetching roles:", error);
+          toast.error("Failed to fetch server roles");
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       }
-    }
+    };
 
-    fetchData()
-  }, [serverId])
+    fetchData();
+  }, [serverId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -101,7 +100,7 @@ export default function Panel() {
           },
           address: wallet.publicKey,
           message,
-          signature
+          signature,
           // no need for base64 here?
           // signature: Buffer.from(signature, "base64").toString(),
         };
@@ -155,7 +154,9 @@ export default function Panel() {
         className="flex items-center space-x-2 mb-6"
       >
         <ServerIcon className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold text-primary">Create a Blink for {selectedGuildName}</h1>
+        <h1 className="text-3xl font-bold text-primary">
+          Create a Blink for {selectedGuildName}
+        </h1>
       </motion.div>
       <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
         <MotionCard
@@ -179,7 +180,8 @@ export default function Panel() {
             />
           </MotionCardContent>
         </MotionCard>
-        <MotionCard
+        {/* Blink Preview commented out */}
+        {/* <MotionCard
           className="flex-1"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -203,8 +205,8 @@ export default function Panel() {
               )}
             </Suspense>
           </MotionCardContent>
-        </MotionCard>
+        </MotionCard> */}
       </div>
     </div>
-  )
+  );
 }

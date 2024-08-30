@@ -24,7 +24,11 @@ export function useWalletActions() {
   };
 
   // Send a transaction using the connected wallet
-  const sendTransaction = async (transactionData: { message: string; signature: string; address: string }) => {
+  const sendTransaction = async (transactionData: {
+    message: string;
+    signature: string;
+    address: string;
+  }) => {
     promptConnectWallet();
     if (!wallet.connected) return { success: false };
     const result = await sendTransactionWithWallet(wallet, transactionData);
