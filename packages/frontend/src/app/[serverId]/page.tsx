@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { BlinkDisplay } from "@/components/blink/blink-display";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,10 +18,8 @@ import { motion } from "framer-motion";
 
 export default function BlinkPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const serverId = searchParams.get("serverId") || "";
+  const { serverId } = useParams<{ serverId: string }>()
   const code = searchParams.get("code") || "";
-  const [routePath, setRoutePath] = useState("");
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -36,7 +34,7 @@ export default function BlinkPage() {
 
           const data = await response.json();
           if (data.url) {
-            window.location.href = `${data.url}&state=${window.location.pathname}`;
+            window.location.href = `${data.url}&state=${serverId}`;
           }
         } catch (error) {
           console.error("Failed to connect to Discord", error);
@@ -94,11 +92,6 @@ export default function BlinkPage() {
               </>
             )}
           </CardContent>
-          <CardFooter>
-            <Button className="w-full" disabled={!isAuthenticated}>
-              Purchase Premium Access
-            </Button>
-          </CardFooter>
         </Card>
       </motion.div>
     </div>

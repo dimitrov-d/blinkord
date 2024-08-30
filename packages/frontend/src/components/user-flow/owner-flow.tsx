@@ -63,6 +63,11 @@ function OwnerFlow() {
   ) => {
     if (callbackHandled) return; // Prevent multiple calls
 
+    const serverId = searchParams.get("state");
+    if (serverId) {
+      // Redirect to the Blink page
+      return router.push(`${serverId}?code=${code}`);
+    }
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`,
@@ -84,15 +89,8 @@ function OwnerFlow() {
         setUserData(data);
         setDiscordConnected(true);
 
-        // Determine where to redirect the user
-        const serverId = searchParams.get("serverId");
-        if (serverId) {
-          // Redirect to the Blink page
-          router.push(`/blink/${serverId}?code=${code}`);
-        } else {
-          // Default redirection for owners or other flows
-          router.push("/servers");
-        }
+        // Default redirection for owners or other flows
+        router.push("/servers");
       } else {
         console.warn("No token received in the response.");
       }

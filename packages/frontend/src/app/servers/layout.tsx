@@ -2,7 +2,7 @@
 
 import { useRouter, useParams, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Settings2Icon, DollarSignIcon, ChevronLeftIcon } from "lucide-react"
+import { Settings2Icon, DollarSignIcon, ChevronLeftIcon, EyeIcon, SettingsIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function ServersLayout({ children }: { children: React.ReactNode }) {
@@ -38,8 +38,8 @@ export default function ServersLayout({ children }: { children: React.ReactNode 
                     : "bg-white text-gray-900 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-600"
                 )}
               >
-                <Settings2Icon className="mr-2 h-4 w-4" />
-                Manage Server
+                <EyeIcon className="mr-2 h-4 w-4" />
+                Preview Blink
               </Button>
               <Button
                 variant="ghost"
@@ -51,8 +51,8 @@ export default function ServersLayout({ children }: { children: React.ReactNode 
                     : "bg-white text-gray-900 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-600"
                 )}
               >
-                <DollarSignIcon className="mr-2 h-4 w-4" />
-                Create Paid Roles
+                <SettingsIcon className="mr-2 h-4 w-4" />
+                Configure Blink Info
               </Button>
             </div>
           </div>
