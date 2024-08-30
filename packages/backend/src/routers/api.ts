@@ -17,7 +17,7 @@ apiRouter.get('/', async (req: Request, res: Response) => res.json({
   title: 'Use Blinkord',
   disabled: true,
   label: 'Go to https://blinkord.com',
-  icon: `${process.env.NEXT_PUBLIC_API_BASE_URL}/banner.png`,
+  icon: `${BASE_URL}/banner.png`,
   description: 'Create shareable links for premium channels on your Discord server!',
 }));
 /**
@@ -58,7 +58,7 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
     error: code
       ? null
       : {
-          message: `Discord login required, visit ${BASE_URL}/blinkord/${guildId}`,
+          message: `Discord login required, visit ${BASE_URL}/${guildId}`,
         },
   };
 
