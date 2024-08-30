@@ -14,8 +14,14 @@ app.use(helmet());
 app.use(actionCorsMiddleware({}));
 app.use((req, res, next) => {
   // Redirect API URL to website
-  if (req.hostname === 'api.blinkord.com') {
-    return res.redirect(301, 'https://blinkord.com');
+  if (req.hostname === 'api.blinkord.com' && req.path === '/') {
+    const userAgent = req.headers['user-agent'] || '';
+    // Basic check for common browser user-agent strings
+    const isBrowser = /Mozilla|Chrome|Safari|Edge|Opera/.test(userAgent);
+
+    if (isBrowser) {
+      return res.redirect(301, 'https://blinkord.com');
+    }
   }
   next();
 });
