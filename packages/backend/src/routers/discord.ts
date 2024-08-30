@@ -7,8 +7,12 @@ import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { verifySignature, verifyJwt } from '../middleware/auth';
 
 export const discordRouter = express.Router();
+
 discordRouter.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:*');
+  const origin = req.headers.origin;
+  if (['http://localhost:3000', 'https://blinkord.com'].includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
@@ -23,6 +27,7 @@ discordRouter.get('/login', (req: Request, res: Response) => {
   const clientId = env.DISCORD_CLIENT_ID;
   const redirectUri = encodeURIComponent(env.DISCORD_REDIRECT_URI);
   const isJoin = req.query.owner ? '' : '.join';
+  if (isJoin)
 
   return res.json({
     url: `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify+guilds${isJoin}`,

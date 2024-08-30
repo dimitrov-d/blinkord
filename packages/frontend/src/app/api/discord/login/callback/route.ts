@@ -13,7 +13,6 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await handleDiscordCallback(code);
-    console.log("Callback data received:", data);
     return NextResponse.json(data, { status: 200 });
   } catch (error: any) {
     console.error("Failed to handle Discord callback", error);

@@ -8,9 +8,7 @@ export async function getDiscordLoginUrl(owner: boolean): Promise<string> {
     `${DISCORD_API_BASE_URL}/discord/login${owner ? `?owner=${owner}` : ""}`,
     {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     }
   );
 
