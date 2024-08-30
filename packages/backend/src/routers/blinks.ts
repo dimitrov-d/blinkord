@@ -58,11 +58,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
       })),
     },
     disabled: !code,
-    error: code
-      ? null
-      : {
-          message: `Discord login required, visit blinkord.com/${guildId}`,
-        },
+    error: code ? null : { message: `Discord login required, visit blinkord.com/${guildId}` },
   };
 
   // Blinksights tracking API call fails
@@ -125,10 +121,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
  * @param {string} roleId - Query param representing the role that the user bought successfully
  * @returns {[Completed action](https://docs.dialect.to/documentation/actions/specification/action-chaining)}
  */
-blinksRouter.post('/:guildId/confirm', express.text({ type: 'text/plain' }), async (req: Request, res: Response) => {
-  // For some reason the subsequent `PostNextActionLink` sends the request with Content-Type text/plain
-  req.body = JSON.parse(req.body);
-
+blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 

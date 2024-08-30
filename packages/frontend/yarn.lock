@@ -223,7 +223,7 @@
     "@babel/helper-validator-identifier" "^7.24.7"
     to-fast-properties "^2.0.0"
 
-"@dialectlabs/blinks@^0.9.2":
+"@dialectlabs/blinks@^0.9.3":
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/@dialectlabs/blinks/-/blinks-0.9.3.tgz#bfb7810385220e5370a76f735d7a122a52145326"
   integrity sha512-eJYMYxd5nSuyc/yBCVDNru2zU+Vc+ngK+0pwwks7t2OqbMErswY2GGeM/xPsfOWFveUZN55dloP0W0t8kA1s/Q==

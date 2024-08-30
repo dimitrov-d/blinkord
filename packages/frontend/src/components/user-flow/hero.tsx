@@ -135,7 +135,7 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          Create shareable links that grant instant access to exclusive roles
+          Create shareable links that grant access to exclusive discord roles
           with just a few clicks.
         </motion.p>
         <motion.div
