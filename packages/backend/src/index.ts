@@ -11,14 +11,13 @@ initializeDatabase();
 const app = express();
 app.use(express.json());
 app.use(helmet());
-app.use(express.static(require('path').join(__dirname, 'public')));
 app.use(actionCorsMiddleware({}));
 
 app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
     rules: [
-      { pathPattern: '/*', apiPath: '/api/*' },
-      { pathPattern: '/api/**', apiPath: '/api/**' },
+      { pathPattern: '/', apiPath: '/api/' },
+      { pathPattern: '/api/*', apiPath: 'https://blinkord.onrender.com/api/*' },
     ],
   }),
 );
