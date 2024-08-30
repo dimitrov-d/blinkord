@@ -65,7 +65,7 @@ export default function ManageServerPage() {
         <div className="w-full max-w-7xl">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-semibold">
-              No Blinkord Paid Servers Set Up
+              No <span className="highlight-cyan">Blinkord</span> Servers Set Up
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
@@ -81,8 +81,9 @@ export default function ManageServerPage() {
             <p className="text-gray-600 text-center max-w-md">
               You haven't created Discord paid roles for your server{" "}
               <span className="font-semibold">{selectedGuildName}</span>. Please
-              go back and create a paid role in Create Paid Roles or go back to
-              the Servers page to select a guild to manage.
+              go back and create a paid role in{" "}
+              <span className="highlight-cyan">Create Paid Roles</span> or go
+              back to the Servers page to select a guild to manage.
             </p>
           </CardContent>
           <CardFooter className="flex justify-center">
