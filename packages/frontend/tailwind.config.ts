@@ -18,9 +18,20 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        excon: ["Excon", "sans-serif"],
+      },
       colors: {
         "builderz-green": "#14f195",
         "builderz-blue": "#00ffd5",
+        "neon-blue": "#00ffff",
+        "neon-pink": "#ff00ff",
+        "neon-green": "#00ff00",
+        "neon-purple": "#bf00ff",
+        "neon-yellow": "#ffff00",
+        "neon-orange": "#ff6600",
+        "neon-cyan": "#00ffff",
+        "neon-magenta": "#ff00ff",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

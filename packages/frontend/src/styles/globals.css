@@ -2,7 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font Face Definitions */
+@font-face {
+  font-family: "Excon";
+  font-weight: 100;
+  src: url("/fonts/Excon-Thin.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 300;
+  src: url("/fonts/Excon-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 400;
+  src: url("/fonts/Excon-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 500;
+  src: url("/fonts/Excon-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 700;
+  src: url("/fonts/Excon-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 900;
+  src: url("/fonts/Excon-Black.otf") format("opentype");
+}
+
 @layer base {
+  body {
+    font-family: "Excon", sans-serif;
+  }
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -312,4 +352,25 @@ body::-webkit-scrollbar-thumb {
     radial-gradient(at 8% 16%, #c3ccde 0px, transparent 50%),
     radial-gradient(at 85% 28%, #b2abeb 0px, transparent 50%),
     radial-gradient(at 81% 66%, #ccd2e0 0px, transparent 50%);
+}
+
+.highlight-cyan {
+  background-color: #00f9ff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: black;
+}
+
+.highlight-green {
+  background-color: #00ffd5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: black;
+}
+
+.highlight-blue {
+  background-color: #002bff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: black;
 }

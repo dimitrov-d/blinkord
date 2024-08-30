@@ -1,6 +1,6 @@
 "use client";
-import Brand from "../../../public/images/builderz-black.svg";
-import BrandW from "../../../public/images/builderz-white.svg";
+import Brand from "../../../public/images/blinkord-black.png";
+import BrandW from "../../../public/images/blinkord-white.png";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";

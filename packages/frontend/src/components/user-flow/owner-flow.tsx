@@ -3,12 +3,23 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useSearchParams } from "next/navigation";
 import LoadingSpinner from "../loading";
+import { motion } from "framer-motion";
+import { LogIn } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import DiscordLogo3D from "../discord-3rf";
+import { ConnectDiscordScreen } from "./hero";
 
-function SearchParamsHandler({ handleCodeCallback, callbackHandled }: { handleCodeCallback: (code: string) => void; callbackHandled: boolean; }) {
+function SearchParamsHandler({
+  handleCodeCallback,
+  callbackHandled,
+}: {
+  handleCodeCallback: (code: string) => void;
+  callbackHandled: boolean;
+}) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -22,19 +33,18 @@ function SearchParamsHandler({ handleCodeCallback, callbackHandled }: { handleCo
 }
 
 function OwnerFlow() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [callbackHandled, setCallbackHandled] = useState(false);
   const router = useRouter();
 
   // Zustand store hooks
   const setToken = useUserStore((state) => state.setToken);
   const setUserData = useUserStore((state) => state.setUserData);
-  const setDiscordConnected = useUserStore((state) => state.setDiscordConnected);
-  const setDiscordDisconnected = useUserStore((state) => state.setDiscordDisconnected);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+  const setDiscordConnected = useUserStore(
+    (state) => state.setDiscordConnected
+  );
+  const setDiscordDisconnected = useUserStore(
+    (state) => state.setDiscordDisconnected
+  );
 
   const handleConnectDiscord = async () => {
     try {
@@ -56,15 +66,20 @@ function OwnerFlow() {
 
   const handleCodeCallback = async (code: string) => {
     try {
-      const response = await fetch(`/api/discord/login/callback?code=${encodeURIComponent(code)}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `/api/discord/login/callback?code=${encodeURIComponent(code)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Discord API error:", errorData);
-        throw new Error(`Discord API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `Discord API error: ${response.status} ${response.statusText}`
+        );
       }
 
       const data = await response.json();
@@ -87,39 +102,22 @@ function OwnerFlow() {
 
   return (
     <div className="flex flex-col">
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <Suspense fallback={<><LoadingSpinner /></>}>
-          <SearchParamsHandler handleCodeCallback={handleCodeCallback} callbackHandled={callbackHandled} />
+      <main className="flex container mx-auto px-4 py-8 z-1">
+        <Suspense
+          fallback={
+            <>
+              <LoadingSpinner />
+            </>
+          }
+        >
+          <SearchParamsHandler
+            handleCodeCallback={handleCodeCallback}
+            callbackHandled={callbackHandled}
+          />
         </Suspense>
-        {!isLoggedIn ? (
-          <WelcomeScreen onLogin={handleLogin} />
-        ) : (
-          <ConnectDiscordScreen onConnect={handleConnectDiscord} />
-        )}
+        <ConnectDiscordScreen onConnect={handleConnectDiscord} />
+        <DiscordLogo3D />
       </main>
-    </div>
-  );
-}
-
-function WelcomeScreen({ onLogin }: { onLogin: () => void }) {
-  return (
-    <div className="text-center">
-      <p className="mb-4">Create shareable links for premium Discord channels.</p>
-      <Button onClick={onLogin} className="w-full btn glow-on-hover">
-        Get Started
-      </Button>
-    </div>
-  );
-}
-
-function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
-  return (
-    <div className="text-center">
-      <h2 className="text-2xl font-bold mb-4">Welcome to Blinkord!</h2>
-      <p className="mb-4">To continue, you need to connect your Discord account.</p>
-      <Button onClick={onConnect} className="w-full btn glow-on-hover">
-        <LogIn className="mr-2 h-4 w-4" /> Connect Discord
-      </Button>
     </div>
   );
 }
