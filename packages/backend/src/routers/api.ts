@@ -7,12 +7,12 @@ import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { createPostResponse } from '@solana/actions';
 // import { BlinksightsClient } from 'blinksights-sdk';
 
-export const apiRouter = express.Router();
+export const blinksRouter = express.Router();
 
 const BASE_URL = env.APP_BASE_URL;
 // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
-apiRouter.get('/', async (req: Request, res: Response) =>
+blinksRouter.get('/', async (req: Request, res: Response) =>
   res.json({
     type: 'action',
     title: 'Use Blinkord',
@@ -29,7 +29,7 @@ apiRouter.get('/', async (req: Request, res: Response) =>
  * @param {string} code - Query param representing Discord OAuth code grant
  * @returns {[Action](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
  */
-apiRouter.get('/:guildId', async (req: Request, res: Response) => {
+blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
   const { guildId } = req.params;
 
   const guild = await findGuildById(guildId);
@@ -78,7 +78,7 @@ apiRouter.get('/:guildId', async (req: Request, res: Response) => {
  * @param {string} roleId - Query param representing the role that the user selected and wants to buy
  * @returns {[Action POST response](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
  */
-apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
+blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const { code, roleId } = req.query;
   const { guildId } = req.params;
 
@@ -125,7 +125,7 @@ apiRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
  * @param {string} roleId - Query param representing the role that the user bought successfully
  * @returns {[Completed action](https://docs.dialect.to/documentation/actions/specification/action-chaining)}
  */
-apiRouter.post('/:guildId/confirm', express.text({ type: 'text/plain' }), async (req: Request, res: Response) => {
+blinksRouter.post('/:guildId/confirm', express.text({ type: 'text/plain' }), async (req: Request, res: Response) => {
   // For some reason the subsequent `PostNextActionLink` sends the request with Content-Type text/plain
   req.body = JSON.parse(req.body);
 

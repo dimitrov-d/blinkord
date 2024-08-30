@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { apiRouter } from './routers/api';
+import { blinksRouter } from './routers/api';
 import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
 import helmet from 'helmet';
@@ -12,17 +12,24 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(actionCorsMiddleware({}));
+app.use((req, res, next) => {
+  // Redirect API URL to website
+  if (req.hostname === 'api.blinkord.com') {
+    return res.redirect(301, 'https://blinkord.com');
+  }
+  next();
+});
 
 app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
     rules: [
-      { pathPattern: '/', apiPath: '/api/' },
-      { pathPattern: '/api/**', apiPath: 'https://blinkord.onrender.com/api/**' },
+      { pathPattern: '/', apiPath: '/blinks/' },
+      { pathPattern: '/blinks/**', apiPath: 'https://api.blinkord.com/blinks/**' },
     ],
   }),
 );
 
-app.use('/api', apiRouter);
+app.use('/blinks', blinksRouter);
 app.use('/discord', discordRouter);
 
 const PORT = 8080;

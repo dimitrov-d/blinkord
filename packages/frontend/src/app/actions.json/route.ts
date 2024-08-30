@@ -5,7 +5,7 @@ export const GET = async () => {
     rules: [
       {
         pathPattern: "/**",
-        apiPath: "https://blinkord.onrender.com/api/**",
+        apiPath: "https://api.blinkord.com/blinks/**",
       },
     ],
   };
