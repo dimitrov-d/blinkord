@@ -1,28 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import { BlinkPreview } from "@/components/blink/blink-display";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
-import { CopyIcon, CheckIcon } from "lucide-react";
+import { CopyIcon } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
-import { BlinkDisplay } from "@/components/blink/blink-display";
+import { MotionInput, MotionButton } from "@/components/motion";
+import { Separator } from "@/components/ui/separator";
 
 export default function SuccessPage() {
   const [blinkUrl, setBlinkUrl] = useState("");
-  const [copied, setCopied] = useState(false);
-  const searchParams = useSearchParams();
+  const [serverId, setServerId] = useState("");
+  const [customUrl, setCustomUrl] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
-    const serverId = searchParams.get("serverId");
-    const code = searchParams.get("code");
-    if (serverId && code) {
-      setBlinkUrl(`${window.location.origin}/blink/${serverId}?code=${code}`);
+    // Set the serverId based on the URL path
+    const id = window.location.pathname.split('/')?.at(-2);
+    if (id) setServerId(id);
+  }, []);
+
+  useEffect(() => {
+    // Only proceed if serverId is set
+    if (!serverId) {
+      return;
     }
+
+    setBlinkUrl(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/${serverId}`);
+    setCustomUrl(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/${serverId}`);
 
     const shootConfetti = () => {
       const defaults = {
@@ -54,33 +62,28 @@ export default function SuccessPage() {
     const timer = setInterval(shootConfetti, 3000);
 
     return () => clearInterval(timer);
-  }, [searchParams]);
+  }, [serverId]);
 
   const handleShare = (platform: string) => {
     if (platform === "discord") {
-      // Implement Discord sharing logic here
-      console.log("Sharing on Discord");
-    } else if (platform === "whatsapp") {
       window.open(
-        `https://wa.me/?text=${encodeURIComponent(blinkUrl)}`,
+        `https://discord.com/channels/${serverId}`,
         "_blank"
       );
-    } else if (platform === "telegram") {
+    } else if (platform === "twitter") {
       window.open(
-        `https://t.me/share/url?url=${encodeURIComponent(blinkUrl)}`,
+        `https://twitter.com/intent/tweet?text=Check%20out%20this%20Blink!%20${encodeURIComponent(blinkUrl)}`,
         "_blank"
       );
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(blinkUrl);
-    setCopied(true);
+  const copyCustomUrl = () => {
+    navigator.clipboard.writeText(customUrl);
     toast({
-      title: "Copied to clipboard!",
-      description: "The Blink URL has been copied to your clipboard.",
+      title: "Custom URL Copied!",
+      description: "The custom URL has been copied to your clipboard.",
     });
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -112,27 +115,64 @@ export default function SuccessPage() {
             </h2>
             <div className="mb-6 bg-gray-100 p-4 rounded-lg">
               <BlinkPreview
-                serverId={searchParams.get("serverId") || ""}
-                code={searchParams.get("code") || ""}
+                serverId={serverId}
+                code={''}
               />
             </div>
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <Button
-                onClick={handleCopy}
-                className="w-full sm:w-auto flex items-center justify-center bg-white text-navy-900 border border-navy-900"
-                variant="outline"
-              >
-                {copied ? (
-                  <CheckIcon className="mr-2 h-4 w-4" />
-                ) : (
-                  <CopyIcon className="mr-2 h-4 w-4" />
-                )}
-                {copied ? "Copied!" : "Copy Link"}
-              </Button>
+          </motion.div>
 
+          <motion.div
+            initial={{ x: 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="bg-white rounded-lg shadow-lg p-6"
+          >
+            <h2 className="text-2xl font-semibold mb-4 text-navy-900">
+              Your custom blink URL
+            </h2>
+            <Separator className="my-4" />
+            <div className="flex items-center justify-between">
+              <MotionInput
+                type="text"
+                value={customUrl}
+                readOnly
+                className="flex-grow mr-4"
+                whileFocus={{ scale: 1.05 }}
+              />
+              <MotionButton
+                onClick={copyCustomUrl}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <CopyIcon className="mr-2 h-4 w-4" />
+                Copy URL
+              </MotionButton>
+            </div>
+            <Separator className="my-4" />
+
+            <h2 className="text-2xl font-semibold mb-4 text-navy-900">
+              Share Your Blink
+            </h2>
+            <p className="mb-6 text-gray-600">
+              Share the URL with other people so they can gain access to your Discord's premium roles
+            </p>
+            <div className="flex flex-col space-y-4">
+              <Button
+                onClick={() => handleShare("twitter")}
+                className="bg-[#1DA1F2] hover:bg-[#0D8BF2] text-white"
+              >
+                <Image
+                  src="/images/twitter.png"
+                  alt="Twitter"
+                  width={24}
+                  height={24}
+                  className="mr-2"
+                />
+                Share on Twitter
+              </Button>
               <Button
                 onClick={() => handleShare("discord")}
-                className="w-full sm:w-auto bg-[#5865F2] hover:bg-[#4752C4] text-white"
+                className="bg-[#5865F2] hover:bg-[#4752C4] text-white"
               >
                 <Image
                   src="/images/discord.svg"
@@ -146,47 +186,6 @@ export default function SuccessPage() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="bg-white rounded-lg shadow-lg p-6"
-          >
-            <h2 className="text-2xl font-semibold mb-4 text-navy-900">
-              Share Your Blink
-            </h2>
-            <p className="mb-6 text-gray-600">
-              Share your Blink with friends and family on other platforms:
-            </p>
-            <div className="flex flex-col space-y-4">
-              <Button
-                onClick={() => handleShare("whatsapp")}
-                className="bg-[#25D366] hover:bg-[#128C7E] text-white"
-              >
-                <Image
-                  src="/images/whatsapp.png"
-                  alt="WhatsApp"
-                  width={24}
-                  height={24}
-                  className="mr-2"
-                />
-                Share on WhatsApp
-              </Button>
-              <Button
-                onClick={() => handleShare("telegram")}
-                className="bg-[#0088cc] hover:bg-[#0077b5] text-white"
-              >
-                <Image
-                  src="/images/telegram.png"
-                  alt="Telegram"
-                  width={24}
-                  height={24}
-                  className="mr-2"
-                />
-                Share on Telegram
-              </Button>
-            </div>
-          </motion.div>
         </div>
       </motion.div>
     </div>

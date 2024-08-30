@@ -61,7 +61,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     error: code
       ? null
       : {
-          message: `Discord login required, visit ${BASE_URL}/${guildId}`,
+          message: `Discord login required, visit blinkord.com/${guildId}`,
         },
   };
 

@@ -28,20 +28,16 @@ export const useUserStore = create<UserState>((set) => ({
   discordClientId: 1277276051592052787,
   selectedGuildName: null,
   selectedGuildImage: null,
-  selectedGuildId: null, // Initialize this
-  setToken: (token) => set({ token }),
+  selectedGuildId: null,
+  setToken: (token) => set({ token, discordConnected: !!token }),
   setUserData: (userData) => set({ userData }),
   setDiscordConnected: (connected) => set({ discordConnected: connected }),
   setDiscordDisconnected: (disconnected) =>
     set({ discordDisconnected: disconnected }),
-  setSelectedGuild: (
-    id: string | null,
-    name: string | null,
-    image: string | null
-  ) =>
+  setSelectedGuild: (id, name, image) =>
     set({
       selectedGuildId: id,
       selectedGuildName: name,
       selectedGuildImage: image,
-    }), // Updated to match the interface
+    }),
 }));

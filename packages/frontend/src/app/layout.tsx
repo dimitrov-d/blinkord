@@ -12,20 +12,20 @@ require("@solana/wallet-adapter-react-ui/styles.css");
 export const metadata: Metadata = {
   title: "Blinkord - Seamless Premium Access for Discord Servers",
   description:
-    "Blinkord simplifies premium access for your Discord server. Create shareable links that unlock exclusive channels. Secure payments in SOL via Solana Actions.",
+    "Blinkord simplifies premium access for your Discord server. Create shareable links that unlock exclusive roles. Secure payments in SOL via Solana Actions.",
   keywords: [
     "Discord server premium access",
     "Monetize Discord server",
     "Solana payments",
     "Custom links for Discord",
-    "Premium Discord channels",
+    "Premium Discord roles",
     "Secure payments in SOL",
     "Discord OAuth integration",
   ],
   openGraph: {
     title: "Blinkord - Seamless Premium Access for Discord Servers",
     description:
-      "Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server channels instantly. Powered by Solana for fast, secure transactions.",
+      "Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server roles instantly. Powered by Solana for fast, secure transactions.",
     url: "https://blinkord.com",
     type: "website",
     images: [
@@ -73,7 +73,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
           <meta
             property="og:description"
-            content="Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server channels instantly. Powered by Solana for fast, secure transactions."
+            content="Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server roles instantly. Powered by Solana for fast, secure transactions."
           />
           <meta property="og:url" content="https://blinkord.com" />
           <meta property="og:type" content="website" />

@@ -58,11 +58,11 @@ export default function BlinkPage() {
         <Card className="w-full">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">
-              Welcome to Premium Access
+              Welcome to Blinkord
             </CardTitle>
             <CardDescription className="text-center">
               You're one step away from unlocking exclusive content and
-              features!
+              features on your favorite Discord servers!
             </CardDescription>
           </CardHeader>
           <CardContent>
