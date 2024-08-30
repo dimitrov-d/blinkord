@@ -70,9 +70,9 @@ export default function SuccessPage() {
         `https://discord.com/channels/${serverId}`,
         "_blank"
       );
-    } else if (platform === "twitter") {
+    } else if (platform === "x") {
       window.open(
-        `https://twitter.com/intent/tweet?text=Check%20out%20this%20Blink!%20${encodeURIComponent(blinkUrl)}`,
+        `https://twitter.com/intent/tweet?text=Check%20out%20my%20Blink!%20${encodeURIComponent(blinkUrl)}`,
         "_blank"
       );
     }
@@ -92,7 +92,7 @@ export default function SuccessPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-4xl w-full"
+        className="max-w-5xl w-full"
       >
         <motion.h1
           initial={{ scale: 0.9 }}
@@ -103,12 +103,12 @@ export default function SuccessPage() {
           Blink Created Successfully! 🎉
         </motion.h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8">
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-white rounded-lg shadow-lg p-6"
+            className="bg-white rounded-lg shadow-lg p-4 md:p-6"
           >
             <h2 className="text-2xl font-semibold mb-4 text-navy-900">
               Your Blink
@@ -125,10 +125,10 @@ export default function SuccessPage() {
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="bg-white rounded-lg shadow-lg p-6"
+            className="bg-white rounded-lg shadow-lg p-4 md:p-6"
           >
             <h2 className="text-2xl font-semibold mb-4 text-navy-900">
-              Your custom blink URL
+              Your custom Blink URL
             </h2>
             <Separator className="my-4" />
             <div className="flex items-center justify-between">
@@ -158,17 +158,17 @@ export default function SuccessPage() {
             </p>
             <div className="flex flex-col space-y-4">
               <Button
-                onClick={() => handleShare("twitter")}
-                className="bg-[#1DA1F2] hover:bg-[#0D8BF2] text-white"
+                onClick={() => handleShare("x")}
+                className="bg-[#000000] hover:bg-[#231F1F] text-white"
               >
                 <Image
-                  src="/images/twitter.png"
-                  alt="Twitter"
+                  src="/images/x.webp"
+                  alt="X"
                   width={24}
                   height={24}
                   className="mr-2"
                 />
-                Share on Twitter
+                Spread the word
               </Button>
               <Button
                 onClick={() => handleShare("discord")}

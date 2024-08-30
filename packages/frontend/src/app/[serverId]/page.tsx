@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "next/navigation";
 import { BlinkDisplay } from "@/components/blink/blink-display";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon, AlertTriangleIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -13,6 +13,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import Image from "next/image";
 
 export default function BlinkPage() {
   const searchParams = useSearchParams();
@@ -54,9 +55,9 @@ export default function BlinkPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container max-w-6xl" // Adjusted container width to be larger
+        className="container max-w-6xl"
       >
-        <div className="flex flex-col md:flex-row items-start space-y-8 md:space-y-0 md:space-x-8 mt-16"> {/* Adjusted layout to be side by side */}
+        <div className="flex flex-col md:flex-row items-start space-y-8 md:space-y-0 md:space-x-8 mt-16">
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -74,6 +75,16 @@ export default function BlinkPage() {
                 </CardDescription>
               </CardHeader>
             </Card>
+            <div className="mt-8">
+              <Image
+                src="/helmet.svg"
+                alt="Illustration"
+                width={400}
+                height={400}
+                style={{ margin: 'auto' }}
+                className="rounded-lg full"
+              />
+            </div>
           </motion.div>
 
           <motion.div
@@ -82,24 +93,12 @@ export default function BlinkPage() {
             transition={{ duration: 0.5 }}
             className="flex-1"
           >
-            <Card className="w-full">
+            <Card className="w-full h-auto">
               <CardContent>
                 {isAuthenticated ? (
-                  <>
-                    <div className="mb-4">
-                      <Alert variant="default" className="mb-4">
-                        <AlertTriangleIcon className="h-4 w-4" />
-                        <AlertTitle>Ready to Purchase</AlertTitle>
-                        <AlertDescription>
-                          Your Discord is authenticated. Use the interface below
-                          to purchase premium access using SOL.
-                        </AlertDescription>
-                      </Alert>
-                    </div>
-                    <div className="mb-6">
-                      <BlinkDisplay serverId={serverId} code={code} />
-                    </div>
-                  </>
+                  <div className="mb-6">
+                    <BlinkDisplay serverId={serverId} code={code} />
+                  </div>
                 ) : (
                   <Alert className="mb-4">
                     <InfoIcon className="h-4 w-4" />
