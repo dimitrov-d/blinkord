@@ -27,8 +27,6 @@ discordRouter.get('/login', (req: Request, res: Response) => {
   const clientId = env.DISCORD_CLIENT_ID;
   const redirectUri = encodeURIComponent(env.DISCORD_REDIRECT_URI);
   const isJoin = req.query.owner ? '' : '.join';
-  if (isJoin)
-
   return res.json({
     url: `https://discord.com/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify+guilds${isJoin}`,
   });
