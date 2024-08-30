@@ -1,0 +1,376 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font Face Definitions */
+@font-face {
+  font-family: "Excon";
+  font-weight: 100;
+  src: url("/fonts/Excon-Thin.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 300;
+  src: url("/fonts/Excon-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 400;
+  src: url("/fonts/Excon-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 500;
+  src: url("/fonts/Excon-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 700;
+  src: url("/fonts/Excon-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Excon";
+  font-weight: 900;
+  src: url("/fonts/Excon-Black.otf") format("opentype");
+}
+
+@layer base {
+  body {
+    font-family: "Excon", sans-serif;
+  }
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Navigation link styles */
+.navLink {
+  list-style-type: none;
+}
+
+/* Active navigation link */
+.active {
+  @apply text-[#43b083] dark:text-[#14F195];
+}
+
+/* Custom Wallet Button */
+.mymultibutton {
+  @apply bg-black text-white hover:text-black hover:bg-builderz-blue !important;
+  border: 1px solid black !important;
+}
+
+/* Body styles */
+body {
+  @apply text-black dark:text-white selection:bg-builderz-blue selection:text-white selection:px-4 dark:selection:text-black;
+  /* margin: 0; */
+  height: 100vh;
+  /* Fluid Fonts */
+  font-size: calc(16px + (16 - 16) * ((100vw - 320px) / (1280 - 320)));
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 125%;
+  line-height: 135%;
+}
+
+/* Heading styles */
+h1 {
+  font-size: calc(30px + (36 - 30) * ((100vw - 320px) / (1280 - 320)));
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 125%;
+  line-height: calc(36px + (40 - 36) * ((100vw - 320px) / (1280 - 320)));
+}
+h2 {
+  font-size: calc(20px + (24 - 20) * ((100vw - 320px) / (1280 - 320)));
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 125%;
+  line-height: calc(34px + (38 - 34) * ((100vw - 320px) / (1280 - 320)));
+}
+h3 {
+  font-size: calc(18px + (20 - 18) * ((100vw - 320px) / (1280 - 320)));
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 125%;
+  line-height: calc(28px + (32 - 28) * ((100vw - 320px) / (1280 - 320)));
+}
+
+/* Scrollbar styles */
+/* width */
+body::-webkit-scrollbar {
+  width: 8px;
+  background-color: var(--chakra-colors-transparent);
+}
+
+/* Track */
+body::-webkit-scrollbar-track {
+  @apply bg-transparent dark:bg-[#03040e];
+}
+
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  @apply bg-[#ffffff] dark:bg-[#03040e];
+  border-radius: 35px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* NavigationLink Hover */
+.navLink {
+  @apply px-2 py-1 rounded-md hover:text-[#43b083] dark:hover:text-[#14F195] bg-opacity-20;
+}
+
+/* Glow Buttons */
+.glow-on-hover {
+  @apply bg-transparent text-black dark:text-white hover:text-white;
+  height: 50px;
+  min-width: 150px;
+  border: 1px solid gray;
+  outline: none;
+
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+}
+.glow {
+  @apply text-black dark:text-white;
+  min-width: 150px;
+  height: 50px;
+  border: none;
+  outline: none;
+
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+}
+
+.glow-on-hover:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+.glow:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+.glow-on-hover:active {
+  color: #000;
+}
+.glow:active {
+  color: #000;
+}
+
+.glow-on-hover:active:after {
+  background: transparent;
+}
+.glow:active:after {
+  background: transparent;
+}
+
+.glow-on-hover:hover:before {
+  opacity: 1;
+}
+.glow:before {
+  opacity: 1;
+}
+
+.glow-on-hover:after {
+  @apply bg-transparent text-black dark:text-white;
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+.glow:after {
+  @apply bg-transparent text-black dark:text-white;
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+@keyframes glowing {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+  @apply text-black dark:text-white !important;
+}
+
+.meshBg {
+  background: #0a0924;
+  background-image: radial-gradient(at 47% 96%, #151b40 0px, transparent 50%),
+    radial-gradient(at 61% 15%, #09162b 0px, transparent 50%),
+    radial-gradient(at 8% 16%, #0f1930 0px, transparent 50%),
+    radial-gradient(at 85% 28%, #110c3d 0px, transparent 50%),
+    radial-gradient(at 81% 66%, #060d1f 0px, transparent 50%);
+}
+
+.lightMeshBg {
+  background: #e6e6f0;
+  background-image: radial-gradient(at 47% 96%, #a8abbd 0px, transparent 50%),
+    radial-gradient(at 61% 15%, #d5dde8 0px, transparent 50%),
+    radial-gradient(at 8% 16%, #c3ccde 0px, transparent 50%),
+    radial-gradient(at 85% 28%, #b2abeb 0px, transparent 50%),
+    radial-gradient(at 81% 66%, #ccd2e0 0px, transparent 50%);
+}
+
+.highlight-cyan {
+  background-color: #00f9ff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: black;
+}
+
+.highlight-green {
+  background-color: #00ffd5;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: black;
+}
+
+.highlight-blue {
+  background-color: #002bff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  color: black;
+}
