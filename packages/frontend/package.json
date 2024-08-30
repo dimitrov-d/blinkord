@@ -25,6 +25,7 @@
     "@radix-ui/react-toast": "^1.2.1",
     "@react-three/drei": "^9.111.4",
     "@react-three/fiber": "^8.17.6",
+    "@solana/actions": "^1.6.4",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.35",

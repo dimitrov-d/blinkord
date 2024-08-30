@@ -12,14 +12,17 @@ export const apiRouter = express.Router();
 const BASE_URL = env.APP_BASE_URL;
 // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
-apiRouter.get('/', async (req: Request, res: Response) => res.json({
-  type: 'completed',
-  title: 'Use Blinkord',
-  disabled: true,
-  label: 'Go to https://blinkord.com',
-  icon: `https://blinkord.vercel.app/banner.png`,
-  description: 'Create shareable links for premium channels on your Discord server!',
-}));
+apiRouter.get('/', async (req: Request, res: Response) =>
+  res.json({
+    type: 'action',
+    title: 'Use Blinkord',
+    disabled: true,
+    label: 'Go to https://blinkord.com',
+    icon: `https://blinkord.vercel.app/banner.png`,
+    description: 'Create shareable links for premium roles on your Discord server!',
+    error: { message: 'Go to https://blinkord.com to get started' },
+  } as Action<'action'>),
+);
 /**
  * Returns an action based on data for a given guild
  * @param {string} guildId - Path parameter representing ID of the guild

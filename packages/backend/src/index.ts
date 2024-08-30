@@ -17,7 +17,7 @@ app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
     rules: [
       { pathPattern: '/', apiPath: '/api/' },
-      { pathPattern: '/api/*', apiPath: 'https://blinkord.onrender.com/api/*' },
+      { pathPattern: '/api/**', apiPath: 'https://blinkord.onrender.com/api/**' },
     ],
   }),
 );

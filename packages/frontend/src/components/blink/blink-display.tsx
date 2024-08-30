@@ -20,7 +20,7 @@ export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ serverId, code }) =>
   return (
     <div className="p-4 rounded-lg ">
       <div className="w-full h-full overflow-hidden rounded-lg">
-        <Blink action={action} websiteText={new URL(actionApiUrl).hostname} />
+        <Blink action={action} websiteText='blinkord.com' />
       </div>
     </div>
   )
