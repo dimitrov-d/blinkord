@@ -130,7 +130,9 @@ export default function SuccessPage() {
             <h2 className="text-2xl font-semibold mb-4 text-navy-900">
               Your custom Blink URL
             </h2>
+
             <Separator className="my-4" />
+
             <div className="flex items-center justify-between">
               <MotionInput
                 type="text"
@@ -184,8 +186,50 @@ export default function SuccessPage() {
                 Share on Discord
               </Button>
             </div>
-          </motion.div>
 
+            <Separator className="my-4" />
+
+            <div className="mt-8" style={{ 'textAlign': 'center' }}>
+              <motion.h1
+                className="text-3xl font-normal tracking-tight md:text-6xl"
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.span
+                  className="relative inline-block group"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <Image
+                    src="/jumping.png"
+                    alt="Illustration"
+                    width={400}
+                    height={400}
+                    style={{ margin: 'auto' }}
+                    className="rounded-lg full"
+                  />
+                  <motion.div
+                    className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-neon-blue z-10"
+                    animate={{ rotate: 0 }}
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 2, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-neon-pink z-10"
+                    animate={{ rotate: 0 }}
+                    whileHover={{ rotate: -360 }}
+                    transition={{ duration: 2, ease: "linear" }}
+                  />
+
+                  <motion.div
+                    className="absolute -inset-4 bg-neon-purple opacity-20 z-0"
+                    animate={{ rotate: [0, 360] }}
+                  />
+
+                </motion.span>{" "}
+              </motion.h1>{" "}
+            </div>
+          </motion.div>
         </div>
       </motion.div>
     </div>
