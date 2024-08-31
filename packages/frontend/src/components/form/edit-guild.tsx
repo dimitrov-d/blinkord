@@ -222,7 +222,9 @@ function ServerFormEdit({
           </ScrollArea>
         </MotionCardContent>
       </MotionCard>
-
+      <p className="text-sm text-muted-foreground text-center mt-4">
+        The wallet you connect will be used to receive payments
+      </p>
       {wallet.connected ? (
         <div className="flex justify-center p-4">
           <MotionButton

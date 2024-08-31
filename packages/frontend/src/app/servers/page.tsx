@@ -42,7 +42,7 @@ export default function Servers() {
     const userData = useUserStore.getState().userData;
 
     if (userData?.guilds) {
-      setGuilds(userData.guilds);
+      setGuilds(userData.guilds.sort((a: any, b: any) => a.name.localeCompare(b.name)));
     }
     setIsFetchingGuilds(false);
   };
@@ -213,18 +213,17 @@ export default function Servers() {
                     <div className="absolute bottom-4 right-4 z-20">
                       <Button
                         variant="secondary"
-                        className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
-                          guild.hasBot
+                        className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
                             ? "bg-cyan-400 hover:bg-cyan-600 text-white"
                             : "bg-purple-500 hover:bg-purple-600 text-white"
-                        }`}
+                          }`}
                         onClick={() =>
                           guild.hasBot
                             ? handleServerSelect(
-                                guild.id,
-                                guild.name,
-                                guild.image
-                              )
+                              guild.id,
+                              guild.name,
+                              guild.image
+                            )
                             : handleInstallBot(guild.id)
                         }
                       >
@@ -302,18 +301,17 @@ export default function Servers() {
                     <div className="absolute bottom-4 right-4 z-20">
                       <Button
                         variant="secondary"
-                        className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${
-                          guild.hasBot
+                        className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
                             ? "bg-cyan-400 hover:bg-cyan-600 text-white"
                             : "bg-purple-500 hover:bg-purple-600 text-white"
-                        }`}
+                          }`}
                         onClick={() =>
                           guild.hasBot
                             ? handleServerSelect(
-                                guild.id,
-                                guild.name,
-                                guild.image
-                              )
+                              guild.id,
+                              guild.name,
+                              guild.image
+                            )
                             : handleInstallBot(guild.id)
                         }
                       >

@@ -103,8 +103,6 @@ export default function Panel() {
           address: wallet.publicKey,
           message,
           signature,
-          // no need for base64 here?
-          // signature: Buffer.from(signature, "base64").toString(),
         };
 
         const response = await fetch(
@@ -122,7 +120,6 @@ export default function Panel() {
         if (response.ok) {
           toast.success("Server created successfully");
           router.push(`/servers/${serverId}/success`);
-          // I need to create this view for success
         } else {
           toast.error("Error creating server");
           setErrorOccurred(true);

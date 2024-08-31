@@ -255,7 +255,7 @@ export default function ManageServerPage() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-bold"
       >
-        Manage Server: {selectedGuildName}
+        Manage Blink for {selectedGuildName}
       </motion.h1>
       {overlayVisible && (
         <OverlaySpinner

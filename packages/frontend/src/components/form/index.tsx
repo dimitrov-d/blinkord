@@ -229,8 +229,12 @@ function ServerForm({
           </MotionCard>
         </div>
       </div>
+      <p className="text-sm text-muted-foreground text-center mt-4">
+        The wallet you connect will be used to receive payments
+      </p>
       {wallet.connected ? (
         <div className="flex justify-center">
+
           <MotionButton
             type="submit"
             className="w-[40%]"
