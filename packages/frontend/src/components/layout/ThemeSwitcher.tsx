@@ -77,8 +77,11 @@ export default function ThemeSwitcherComponent({ isDark, setIsDark }: any) {
           <MaterialUISwitch
             checked={isDark === true}
             onChange={() => {
-              setIsDark(!isDark);
-              document.documentElement.classList.toggle("dark");
+              const newTheme = !isDark;
+              setIsDark(newTheme);
+              localStorage.setItem("isDark", JSON.stringify(newTheme));
+              document.documentElement.classList.toggle("dark", newTheme);
+
             }}
           />
         }
