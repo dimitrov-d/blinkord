@@ -10,12 +10,15 @@ import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
 import { MotionInput, MotionButton } from "@/components/motion";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 export default function SuccessPage() {
   const [blinkUrl, setBlinkUrl] = useState("");
   const [serverId, setServerId] = useState("");
   const [customUrl, setCustomUrl] = useState("");
   const { toast } = useToast();
+  const [imageSrc, setImageSrc] = useState("/images/og-image.png");
+  const router = useRouter();
 
   useEffect(() => {
     const id = window.location.pathname.split("/")?.at(-2);
@@ -80,6 +83,18 @@ export default function SuccessPage() {
       description: "The custom URL has been copied to your clipboard.",
     });
   };
+
+  // Validate and set image source
+  useEffect(() => {
+    const imageUrl = "/images/x.webp"; // Example URL
+    try {
+      new URL(imageUrl); // Check if valid URL
+      setImageSrc(imageUrl); // If valid, use the provided URL
+    } catch (error) {
+      console.error("Invalid URL, using placeholder image instead.");
+      setImageSrc("/images/placeholder.png"); // Fallback to placeholder
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white flex flex-col items-center justify-center px-4 py-12">
@@ -181,6 +196,16 @@ export default function SuccessPage() {
             </div>
 
             <Separator className="my-4" />
+
+            <div className="flex justify-center w-full">
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => router.push(`/servers/${serverId}/manage`)}
+              >
+                Manage your Blink 👀
+              </Button>
+            </div>
 
             <div className="mt-8" style={{ textAlign: "center" }}>
               <motion.h1

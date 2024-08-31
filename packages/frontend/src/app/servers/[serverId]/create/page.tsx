@@ -5,10 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { BlinkDisplay } from "@/components/blink/blink-display";
-import { BlinkCardSkeleton } from "@/components/skeletons/blink-skeleton";
-import { ServerFormSkeleton } from "@/components/skeletons/server-form";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
 import { SaveIcon, ServerIcon } from "lucide-react";
 import { z } from "zod";
@@ -63,7 +59,12 @@ export default function Panel() {
     const fetchData = async () => {
       if (serverId) {
         try {
-          await fetchRoles(serverId, setDiscordRoles);
+          const rolesData = await fetchRoles(serverId);
+          setDiscordRoles(rolesData.roles.map((role: DiscordRole) => ({
+            ...role,
+            price: '0',
+            enabled: false,
+          })));
         } catch (error) {
           console.error("Error fetching roles:", error);
           toast.error("Failed to fetch server roles");
@@ -83,11 +84,7 @@ export default function Panel() {
     setIsLoading(true);
 
     try {
-      promptConnectWallet();
-      // if (!formData.address) {
-      //   toast.error("Please connect your wallet to proceed.");
-      //   return;
-      // }
+      await promptConnectWallet();
 
       const validatedFormData = serverFormSchema.parse(formData);
       const message = JSON.stringify(formData);
@@ -143,8 +140,7 @@ export default function Panel() {
           }
         });
         setFormErrors(errors);
-        console.log(errors);
-        toast.error("Please fix the form errors");
+        toast.error(`Please fix the form errors: ${Object.values(errors).join('\n')}`);
       } else {
         console.error("Unexpected error:", error);
         toast.error("An unexpected error occurred");

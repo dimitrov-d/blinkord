@@ -6,9 +6,16 @@ export function useWalletActions() {
   const wallet = useWallet();
 
   // Prompt the user to connect if not already connected
-  const promptConnectWallet = () => {
+  const promptConnectWallet = async () => {
     if (!wallet.connected) {
-      toast.error("Please connect your wallet to proceed");
+      toast.info("Connecting your wallet...");
+      try {
+        await wallet.connect();
+        toast.success("Wallet connected successfully");
+      } catch (error) {
+        console.error("Failed to connect wallet:", error);
+        toast.error("Failed to connect wallet");
+      }
     }
   };
 
