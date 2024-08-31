@@ -1,13 +1,79 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useUserStore } from "@/lib/contexts/zustand/userStore";
+import { useSearchParams } from "next/navigation";
 
-export default function Component() {
+export default function Redirect() {
   const router = useRouter();
   const controls = useAnimation();
+  const [callbackHandled, setCallbackHandled] = useState(false);
+
+  const setToken = useUserStore((state) => state.setToken);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const setDiscordConnected = useUserStore(
+    (state) => state.setDiscordConnected
+  );
+  const setDiscordDisconnected = useUserStore(
+    (state) => state.setDiscordDisconnected
+  );
+
+  const searchParams = useSearchParams();
+
+  const handleCodeCallback = async (
+    code: string,
+    searchParams: URLSearchParams
+  ) => {
+    if (callbackHandled) return;
+
+    const serverId = searchParams.get("state");
+    if (serverId) {
+      // Redirect to the Blink page
+      return router.push(`${serverId}?code=${code}`);
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Discord API error:", errorData);
+        throw new Error(
+          `Discord API error: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      if (data.token) {
+        setToken(data.token);
+        localStorage.setItem("discordToken", data.token);
+        setUserData(data);
+        setDiscordConnected(true);
+
+        // Default redirection for owners or other flows
+        router.push("/servers");
+      } else {
+        console.warn("No token received in the response.");
+      }
+    } catch (error) {
+      console.error("Error in handleCodeCallback:", error);
+      setDiscordDisconnected(true);
+    } finally {
+      setCallbackHandled(true);
+    }
+  };
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code && !callbackHandled) {
+      handleCodeCallback(code, searchParams);
+    }
+  }, [searchParams, callbackHandled]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -143,12 +209,20 @@ export default function Component() {
           </div>
 
           <motion.h1
-            className="mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl"
+            className="mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl space-y-4"
             variants={itemVariants}
           >
-            We are <span className="highlight-cyan">redirecting</span> you,
+            We are{" "}
+            <span className="highlight-cyan">
+              <span className="text-white">redirecting</span>
+            </span>{" "}
+            you,
             <br className="my-4" /> don't forget to{" "}
-            <span className="highlight-blue"> blink</span>...{" "}
+            <span className="highlight-blue">
+              {" "}
+              <span className="text-white">blink</span>
+            </span>
+            ...{" "}
             <motion.span
               className="pr-2 inline-block"
               animate={{

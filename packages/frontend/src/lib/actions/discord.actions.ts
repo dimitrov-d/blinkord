@@ -216,7 +216,7 @@ export const handleSaveConfiguration = async (
 ) => {
   try {
     const DiscordRolesToSave = DiscordRoles.filter(
-      (DiscordRole) => DiscordRole.price > 0
+      (DiscordRole) => Number(DiscordRole.price) > 0
     );
 
     const response = await fetch(`/api/discord/guilds/${serverId}/configure`, {
