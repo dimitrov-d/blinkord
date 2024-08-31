@@ -167,9 +167,8 @@ export async function editGuild(
 
 // Fetch roles for a given guild
 export const fetchRoles = async (
-  guildId: string,
-  setRoles: (roles: DiscordRole[]) => void
-) => {
+  guildId: string
+): Promise<{ roles: DiscordRole[]; blinkRolePosition?: number }> => {
   const token =
     useUserStore.getState().token || localStorage.getItem("discordToken");
 
@@ -183,19 +182,13 @@ export const fetchRoles = async (
       console.error(
         `Failed to fetch roles for guild ${guildId}: ${response.statusText}`
       );
-      return;
+      return { roles: [] };
     }
 
-    const rolesData = await response.json();
-    setRoles(
-      rolesData.roles.map((role: Omit<DiscordRole, "price" | "enabled">) => ({
-        ...role,
-        price: 0,
-        enabled: false,
-      }))
-    );
+    return await response.json();
   } catch (error) {
     console.error(`Error fetching roles for guild ${guildId}`, error);
+    return { roles: [] };
   }
 };
 
