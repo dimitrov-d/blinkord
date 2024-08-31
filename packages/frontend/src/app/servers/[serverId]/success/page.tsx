@@ -18,13 +18,11 @@ export default function SuccessPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set the serverId based on the URL path
-    const id = window.location.pathname.split('/')?.at(-2);
+    const id = window.location.pathname.split("/")?.at(-2);
     if (id) setServerId(id);
   }, []);
 
   useEffect(() => {
-    // Only proceed if serverId is set
     if (!serverId) {
       return;
     }
@@ -66,10 +64,7 @@ export default function SuccessPage() {
 
   const handleShare = (platform: string) => {
     if (platform === "discord") {
-      window.open(
-        `https://discord.com/channels/${serverId}`,
-        "_blank"
-      );
+      window.open(`https://discord.com/channels/${serverId}`, "_blank");
     } else if (platform === "x") {
       window.open(
         `https://twitter.com/intent/tweet?text=Check%20out%20my%20Blink!%20${encodeURIComponent(blinkUrl)}`,
@@ -113,11 +108,8 @@ export default function SuccessPage() {
             <h2 className="text-2xl font-semibold mb-4 text-navy-900">
               Your Blink
             </h2>
-            <div className="mb-6 bg-gray-100 p-4 rounded-lg">
-              <BlinkPreview
-                serverId={serverId}
-                code={''}
-              />
+            <div className=" bg-gray-100 rounded-lg">
+              <BlinkPreview serverId={serverId} code={""} />
             </div>
           </motion.div>
 
@@ -125,7 +117,7 @@ export default function SuccessPage() {
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="bg-white rounded-lg shadow-lg p-4 md:p-6"
+            className="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col justify-between"
           >
             <h2 className="text-2xl font-semibold mb-4 text-navy-900">
               Your custom Blink URL
@@ -156,7 +148,8 @@ export default function SuccessPage() {
               Share Your Blink
             </h2>
             <p className="mb-6 text-gray-600">
-              Share the URL with other people so they can gain access to your Discord's premium roles
+              Share the URL with other people so they can gain access to your
+              Discord's premium roles
             </p>
             <div className="flex flex-col space-y-4">
               <Button
@@ -189,7 +182,7 @@ export default function SuccessPage() {
 
             <Separator className="my-4" />
 
-            <div className="mt-8" style={{ 'textAlign': 'center' }}>
+            <div className="mt-8" style={{ textAlign: "center" }}>
               <motion.h1
                 className="text-3xl font-normal tracking-tight md:text-6xl"
                 initial={{ opacity: 0, y: -50 }}
@@ -203,10 +196,10 @@ export default function SuccessPage() {
                   <Image
                     src="/jumping.png"
                     alt="Illustration"
-                    width={400}
-                    height={400}
-                    style={{ margin: 'auto' }}
-                    className="rounded-lg full"
+                    width={150}
+                    height={150}
+                    className="rounded-lg"
+                    style={{ maxWidth: "100%", height: "auto" }}
                   />
                   <motion.div
                     className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-neon-blue z-10"
@@ -222,10 +215,9 @@ export default function SuccessPage() {
                   />
 
                   <motion.div
-                    className="absolute -inset-4 bg-neon-purple opacity-20 z-0"
+                    className="absolute -inset-4 bg-neon-purple/30 opacity-20 z-0"
                     animate={{ rotate: [0, 360] }}
                   />
-
                 </motion.span>{" "}
               </motion.h1>{" "}
             </div>

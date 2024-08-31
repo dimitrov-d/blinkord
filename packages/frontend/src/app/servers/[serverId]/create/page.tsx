@@ -20,12 +20,15 @@ import { fetchRoles } from "@/lib/actions/discord.actions";
 import { ServerFormData, serverFormSchema } from "@/lib/zod-validation";
 import { MotionCard, MotionCardContent } from "@/components/motion";
 import ServerForm from "@/components/form";
+import OverlaySpinner from "@/components/overlay-spinner";
 
 export default function Panel() {
   const { serverId } = useParams<{ serverId: string }>();
   const { signMessage, promptConnectWallet } = useWalletActions();
   const selectedGuildName = useUserStore((state) => state.selectedGuildName);
   const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const [errorOccurred, setErrorOccurred] = useState(false);
 
   const [formData, setFormData] = useState<ServerFormData>({
     id: serverId || "",
@@ -75,7 +78,9 @@ export default function Panel() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // setIsLoading(true);
+    setOverlayVisible(true);
+    setErrorOccurred(false);
+    setIsLoading(true);
 
     try {
       promptConnectWallet();
@@ -105,14 +110,17 @@ export default function Panel() {
           // signature: Buffer.from(signature, "base64").toString(),
         };
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${useUserStore.getState().token || localStorage.getItem("discordToken")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${useUserStore.getState().token || localStorage.getItem("discordToken")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
 
         if (response.ok) {
           toast.success("Server created successfully");
@@ -120,6 +128,7 @@ export default function Panel() {
           // I need to create this view for success
         } else {
           toast.error("Error creating server");
+          setErrorOccurred(true);
         }
       }
     } catch (error) {
@@ -142,11 +151,18 @@ export default function Panel() {
       }
     } finally {
       setIsLoading(false);
+      setOverlayVisible(false);
     }
   };
 
   return (
     <div className="space-y-6 p-6 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 min-h-screen">
+      {overlayVisible && (
+        <OverlaySpinner
+          text="Submitting your blink configuration"
+          error={errorOccurred}
+        />
+      )}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
