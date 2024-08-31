@@ -43,14 +43,17 @@ function OwnerFlow() {
 
   const handleConnectDiscord = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login?owner=true`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login?owner=true`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       const data = await response.json();
       if (data.url) {
-        window.location.href = data.url; // Redirects to Discord login
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error("Failed to connect Discord", error);
@@ -71,7 +74,7 @@ function OwnerFlow() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`,
-        { headers: { "Content-Type": "application/json" }, }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       if (!response.ok) {

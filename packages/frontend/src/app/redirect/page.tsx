@@ -55,7 +55,6 @@ export default function Redirect() {
         setUserData(data);
         setDiscordConnected(true);
 
-        // Default redirection for owners or other flows
         router.push("/servers");
       } else {
         console.warn("No token received in the response.");
@@ -125,7 +124,7 @@ export default function Redirect() {
           animate={controls}
         >
           <motion.div
-            className="absolute top-32 -right-0 w-0 h-0 border-l-[50px] border-l-transparent border-r-[50px] border-r-transparent border-b-[100px] border-b-gray-700 z-10"
+            className="absolute top-32 -right-0 w-0 h-0 border-l-[50px] border-l-transparent border-r-[50px] border-r-transparent border-b-[100px] border-b-gray-700 -z-50"
             variants={shapeVariants}
           />
           <motion.div
