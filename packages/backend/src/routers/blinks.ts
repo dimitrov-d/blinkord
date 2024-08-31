@@ -53,7 +53,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     description: guild.description,
     links: {
       actions: guild.roles.map(({ id, name, amount }) => ({
-        label: `${name} (${amount} SOL)`,
+        label: `${name} (${amount} ${guild.useSend ? 'SEND' : 'SOL'})`,
         href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
@@ -97,7 +97,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
       await createPostResponse({
         fields: {
           transaction,
-          message: `Buy role ${role.name} for ${role.amount} SOL`,
+          message: `Buy role ${role.name} for ${role.amount} ${guild.useSend ? 'SEND' : 'SOL'}`,
           links: {
             next: {
               type: 'post',

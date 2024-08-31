@@ -20,7 +20,7 @@
     "@solana/spl-token": "^0.4.8",
     "@solana/web3.js": "^1.95.3",
     "axios": "^1.7.6",
-    "blinksights-sdk": "^1.0.11",
+    "blinksights-sdk": "^1.0.12",
     "console-stamp": "^3.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

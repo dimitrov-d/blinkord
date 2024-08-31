@@ -24,7 +24,7 @@ export async function generateSendTransaction(from: string, amount: number, guil
 
   if (guild.domainsTld) {
     // If user owns any domain from the guild's TLD, give them a 10% discount
-    const walletDomains = await getOwnedDomainsFromTld(from, guild.domainsTld);
+    const walletDomains = await getOwnedDomainsFromTld(from, guild.domainsTld).catch(() => []);
     if (walletDomains?.length > 0) {
       const discount = 0.1;
       // Multiply as integers (avoiding floating-point precision issues)

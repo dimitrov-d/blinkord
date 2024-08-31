@@ -83,7 +83,7 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
 /**
  * Get the roles of a guild through the API with Bot credentials
  * @param {string} guildId - Path parameter representing ID of the guild
- * @returns { blinkRolePosition: number, roles: { id: string, name: string, position: number}[]}
+ * @returns { blinkordRolePosition: number, roles: { id: string, name: string, position: number}[]}
  */
 discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) => {
   try {
