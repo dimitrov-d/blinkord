@@ -4,14 +4,13 @@ import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
-import { SaveIcon, ServerIcon } from "lucide-react";
+import { ServerIcon } from "lucide-react";
 import { z } from "zod";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { toast } from "sonner";
-import { DiscordRole } from "@/lib/types/index";
+import { DiscordRole, RoleData } from "@/lib/types/index";
 import { fetchRoles } from "@/lib/actions/discord.actions";
 import { ServerFormData, serverFormSchema } from "@/lib/zod-validation";
 import { MotionCard, MotionCardContent } from "@/components/motion";
@@ -37,7 +36,7 @@ export default function Panel() {
     // message: "",
     // signature: "",
   });
-  const [DiscordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
+  const [roleData, setRoleData] = useState<RoleData>({ blinkordRolePosition: -1, roles: [] });
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ServerFormData, string>>
   >({});
@@ -60,11 +59,14 @@ export default function Panel() {
       if (serverId) {
         try {
           const rolesData = await fetchRoles(serverId);
-          setDiscordRoles(rolesData.roles.map((role: DiscordRole) => ({
-            ...role,
-            price: '0',
-            enabled: false,
-          })));
+          setRoleData({
+            ...rolesData,
+            roles: rolesData.roles.map((role: DiscordRole) => ({
+              ...role,
+              price: '0',
+              enabled: false,
+            }))
+          });
         } catch (error) {
           console.error("Error fetching roles:", error);
           toast.error("Failed to fetch server roles");
@@ -81,20 +83,21 @@ export default function Panel() {
     e.preventDefault();
     setOverlayVisible(true);
     setErrorOccurred(false);
-    setIsLoading(true);
 
     try {
       await promptConnectWallet();
 
       const validatedFormData = serverFormSchema.parse(formData);
       const message = JSON.stringify(formData);
+      setIsLoading(true);
+
       const signature = await signMessage(message);
 
       if (signature) {
         const payload = {
           data: {
             ...validatedFormData,
-            roles: DiscordRoles.filter((role) => role.enabled).map((role) => ({
+            roles: roleData?.roles.filter((role) => role.enabled).map((role) => ({
               id: role.id,
               name: role.name,
               amount: role.price.toString(),
@@ -175,14 +178,14 @@ export default function Panel() {
           transition={{ duration: 0.5 }}
         >
           <CardHeader>
-            <CardTitle>Blink Details</CardTitle>
+            <CardTitle className="ml-5">Blink Details 👀</CardTitle>
           </CardHeader>
           <MotionCardContent>
             <ServerForm
               formData={formData}
               setFormData={setFormData}
-              DiscordRoles={DiscordRoles}
-              setDiscordRoles={setDiscordRoles}
+              roleData={roleData!}
+              setRoleData={setRoleData!}
               formErrors={formErrors}
               onSubmit={handleSubmit}
               isLoading={isLoading}

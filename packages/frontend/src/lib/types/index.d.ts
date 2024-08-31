@@ -13,6 +13,7 @@ declare interface DiscordRole {
   name: string;
   price: string;
   enabled: boolean;
+  position?: number;
 }
 
 declare type DiscordServer = {
@@ -147,7 +148,7 @@ declare type HandleDiscordCallback = (code: string) => Promise<{
 declare type GetGuildRoles = (
   guildId: string,
   token: string
-) => Promise<{ blinkRolePosition: number; roles: DiscordRole[] }>;
+) => Promise<{ blinkordRolePosition: number; roles: DiscordRole[] }>;
 
 declare type CreateOrEditGuild = (
   guildData: BlinkordServerSettings,
@@ -166,11 +167,14 @@ declare type PatchGuild = (
   token: string
 ) => Promise<DiscordServer>;
 
+type RoleData = { blinkordRolePosition: number; roles: DiscordRole[] };
+
 declare interface ServerFormProps {
   formData: ServerFormData;
   setFormData: React.Dispatch<React.SetStateAction<ServerFormData>>;
-  DiscordRoles: DiscordRole[];
-  setDiscordRoles: React.Dispatch<React.SetStateAction<DiscordRole[]>>;
+  roleData: RoleData;
+  setRoleData: React.Dispatch<React.SetStateAction<RoleData>>;
   formErrors: Partial<Record<keyof ServerFormData, string>>;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  isLoading: boolean;
 }

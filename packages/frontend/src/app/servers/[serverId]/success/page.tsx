@@ -135,7 +135,7 @@ export default function SuccessPage() {
             className="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col justify-between"
           >
             <h2 className="text-2xl font-semibold mb-4 text-navy-900">
-              Your custom Blink URL
+              Your custom Blink URL 🔗
             </h2>
 
             <Separator className="my-4" />

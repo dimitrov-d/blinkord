@@ -214,8 +214,8 @@ export default function Servers() {
                       <Button
                         variant="secondary"
                         className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
-                            ? "bg-cyan-400 hover:bg-cyan-600 text-white"
-                            : "bg-purple-500 hover:bg-purple-600 text-white"
+                          ? "bg-cyan-400 hover:bg-cyan-600 text-white"
+                          : "bg-purple-500 hover:bg-purple-600 text-white"
                           }`}
                         onClick={() =>
                           guild.hasBot
@@ -302,8 +302,8 @@ export default function Servers() {
                       <Button
                         variant="secondary"
                         className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
-                            ? "bg-cyan-400 hover:bg-cyan-600 text-white"
-                            : "bg-purple-500 hover:bg-purple-600 text-white"
+                          ? "bg-cyan-400 hover:bg-cyan-600 text-white"
+                          : "bg-purple-500 hover:bg-purple-600 text-white"
                           }`}
                         onClick={() =>
                           guild.hasBot

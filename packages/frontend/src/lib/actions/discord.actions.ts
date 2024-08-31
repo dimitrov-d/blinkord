@@ -84,7 +84,7 @@ export async function getGuildRoles(guildId: string, token: string) {
       },
     }
   );
-  return await response.json(); // { blinkRolePosition, roles }
+  return await response.json(); // { blinkordRolePosition, roles }
 }
 
 export async function getGuild(guildId: string, token: string) {
@@ -168,7 +168,7 @@ export async function editGuild(
 // Fetch roles for a given guild
 export const fetchRoles = async (
   guildId: string
-): Promise<{ roles: DiscordRole[]; blinkRolePosition?: number }> => {
+): Promise<{ roles: DiscordRole[]; blinkordRolePosition: number }> => {
   const token =
     useUserStore.getState().token || localStorage.getItem("discordToken");
 
@@ -182,13 +182,13 @@ export const fetchRoles = async (
       console.error(
         `Failed to fetch roles for guild ${guildId}: ${response.statusText}`
       );
-      return { roles: [] };
+      return { roles: [], blinkordRolePosition: -1 };
     }
 
     return await response.json();
   } catch (error) {
     console.error(`Error fetching roles for guild ${guildId}`, error);
-    return { roles: [] };
+    return { roles: [], blinkordRolePosition: -1 };
   }
 };
 

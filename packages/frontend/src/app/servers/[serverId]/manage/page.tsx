@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CopyIcon } from "lucide-react";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
-import { DiscordRole } from "@/lib/types";
+import { DiscordRole, RoleData } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import {
   MotionCard,
@@ -41,7 +41,7 @@ export default function ManageServerPage() {
   const selectedGuildName = useUserStore((state) => state.selectedGuildName);
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
-  const [discordRoles, setDiscordRoles] = useState<DiscordRole[]>([]);
+  const [roleData, setRoleData] = useState<RoleData>({ blinkordRolePosition: -1, roles: [] });
   const [customUrl, setCustomUrl] = useState("");
   const wallet = useWallet();
 
@@ -89,7 +89,8 @@ export default function ManageServerPage() {
               const selectedRole = guild.roles.find((r: DiscordRole) => r.id === role.id);
               return selectedRole ? { ...role, price: selectedRole.amount, enabled: true, } : role;
             });
-            setDiscordRoles(mergedRoles);
+
+            setRoleData({ ...allRoles, roles: mergedRoles });
 
             setGuildFound(true); // Guild was found and data populated
             // Generate the custom URL
@@ -134,7 +135,7 @@ export default function ManageServerPage() {
         const payload = {
           data: {
             ...validatedFormData,
-            roles: discordRoles
+            roles: roleData.roles
               .filter((role) => role.enabled)
               .map((role) => ({
                 id: role.id,
@@ -253,7 +254,7 @@ export default function ManageServerPage() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="text-3xl font-bold"
+        className="text-3xl font-bold ml-3"
       >
         Manage Blink for {selectedGuildName}
       </motion.h1>
@@ -276,7 +277,7 @@ export default function ManageServerPage() {
           >
             <MotionCardContent className="p-6">
               <h2 className="text-2xl font-semibold mb-4">
-                Your custom Blink URL
+                Your custom Blink URL 🔗
               </h2>
               <Separator className="my-4" />
               {isLoading ? (
@@ -307,8 +308,8 @@ export default function ManageServerPage() {
             <ServerFormEdit
               formData={formData}
               setFormData={setFormData}
-              DiscordRoles={discordRoles}
-              setDiscordRoles={setDiscordRoles}
+              roleData={roleData}
+              setRoleData={setRoleData}
               formErrors={formErrors}
               onSubmit={handleSubmit}
               isLoading={isLoading}
@@ -321,7 +322,7 @@ export default function ManageServerPage() {
           transition={{ delay: 0.5, duration: 0.5 }}
         >
           <MotionCardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">Blink Preview</h2>
+            <h2 className="text-2xl font-semibold mb-4">Blink Preview 👀</h2>
             <Separator className="my-4" />
             {isLoading ? (
               <div className="flex items-center justify-between">
