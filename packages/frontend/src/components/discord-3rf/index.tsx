@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useDrag } from "@use-gesture/react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
 function DiscordLogo() {
   const mesh = useRef<THREE.Group>(null);
@@ -15,6 +16,8 @@ function DiscordLogo() {
   const { scene } = useGLTF("/models/scene.gltf");
 
   const [position, setPosition] = useState<[number, number, number]>([0, 0, 0]);
+
+  const { isDark } = useContext(ThemeContext);
 
   const bind = useDrag(({ offset: [x, y] }) => {
     const z = position[2];
@@ -30,36 +33,21 @@ function DiscordLogo() {
     }
   });
 
-  const updateLogoColor = () => {
-    if (mesh.current) {
-      // Detect if dark mode is active
-      const isDarkMode = document.documentElement.classList.contains("dark");
-
-      scene.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.material.color.set(isDarkMode ? "magenta" : "white");
-        }
-      });
-    }
-  };
+  const material = useMemo(() => {
+    return new THREE.MeshStandardMaterial({
+      color: isDark ? 0xff00ff : 0xffffff,
+      metalness: 0.5,
+      roughness: 0.5,
+    });
+  }, [isDark]);
 
   useEffect(() => {
-    if (mesh.current) {
-      mesh.current.position.set(...position);
-
-      // Update color initially
-      updateLogoColor();
-
-      // Listen for changes in the theme
-      const observer = new MutationObserver(updateLogoColor);
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["class"],
-      });
-
-      return () => observer.disconnect();
-    }
-  }, [position]);
+    scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material = material;
+      }
+    });
+  }, [scene, material]);
 
   return (
     <group ref={mesh} {...(bind() as any)} position={position}>
@@ -70,7 +58,7 @@ function DiscordLogo() {
 
 export default function DiscordLogo3D() {
   return (
-    <div className="absolute inset-0 z-100 pointer-events-auto">
+    <div className="absolute inset-0 -z-10 pointer-events-auto">
       <Canvas>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />

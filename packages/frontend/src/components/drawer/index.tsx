@@ -105,7 +105,7 @@ export default function SwipeableTemporaryDrawer() {
               >
                 <div className="rounded-lg border border-[#1E2232]  dark:border-[#bcbdc1] mt-auto px-3 py-2 text-black dark:text-gray-400">
                   <a
-                    href="https://github.com/Cynova-Group/builderz-solana-dapp-scaffold"
+                    href="https://github.com/dimitrov-d/blinkord"
                     className="flex justify-center items-center  gap-2 text-xs"
                   >
                     <svg
@@ -123,7 +123,7 @@ export default function SwipeableTemporaryDrawer() {
 
                 <div className="rounded-lg border border-[#1E2232]  dark:border-[#bcbdc1] mt-auto px-3 py-2 text-black dark:text-gray-400">
                   <a
-                    href="https://twitter.com/builderzdotdev"
+                    href="https://x.com/blinkord_sol"
                     className="flex justify-center items-center gap-2 text-xs"
                   >
                     <svg
@@ -140,11 +140,11 @@ export default function SwipeableTemporaryDrawer() {
                 </div>
                 <div className=" rounded-lg border border-[#1E2232]  dark:border-[#bcbdc1] mt-auto px-3 py-2 text-black dark:text-gray-400">
                   <a
-                    href="https://discord.gg/QFZAkbVmjE"
+                    href="https://discord.gg/HugHTEPu4H"
                     className="flex justify-center items-center  gap-2 text-xs"
                   >
                     <svg
-                      xmlns="https://discord.gg/TAhQRHP6dU"
+                      xmlns="https://discord.gg/HugHTEPu4H"
                       width="20"
                       height="20"
                       fill="currentColor"

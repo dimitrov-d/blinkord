@@ -45,7 +45,7 @@ export default function PrimarySearchAppBar() {
             }}
           >
             <Drawer />
-            {showLogo && <Logo isDark={isDark} />}
+        <Logo isDark={isDark} />
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">

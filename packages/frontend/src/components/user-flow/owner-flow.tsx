@@ -107,7 +107,7 @@ function OwnerFlow() {
 
   return (
     <div className="flex flex-col">
-      <main className="flex flex-col md:flex-row container mx-auto px-4 py-8 z-1">
+      <main className="flex flex-row container mx-auto z-1">
         <Suspense
           fallback={
             <>

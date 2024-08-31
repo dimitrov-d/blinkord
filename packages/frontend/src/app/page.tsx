@@ -28,7 +28,7 @@ const Index: React.FC = () => {
             />
           ))}
         </GridPattern>
-        <div className="max-w-7xl bg-transparent">
+        <div className="max-w-7xl bg-transparent h-screen">
           <div className="flex flex-col justify-center p-4 bg-inherit gap-10">
             <OwnerFlow />
           </div>
