@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
 import { MotionInput, MotionButton } from "@/components/motion";
 import { Separator } from "@/components/ui/separator";
+import router from "next/router";
 
 export default function SuccessPage() {
   const [blinkUrl, setBlinkUrl] = useState("");
