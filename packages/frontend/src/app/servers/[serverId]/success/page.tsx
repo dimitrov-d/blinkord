@@ -234,6 +234,14 @@ export default function SuccessPage() {
                 </motion.span>{" "}
               </motion.h1>{" "}
             </div>
+            <div className="mt-8 flex justify-center">
+              <Button
+                variant="default"
+                onClick={() => router.push(`/servers/${serverId}/manage`)}
+              >
+                Manage your Blink
+              </Button>
+            </div>
           </motion.div>
         </div>
       </motion.div>

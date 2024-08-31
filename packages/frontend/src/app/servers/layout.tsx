@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter, useParams, usePathname } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export default function ServersLayout({
   children,
@@ -12,9 +11,6 @@ export default function ServersLayout({
 }) {
   const router = useRouter();
   const { serverId } = useParams();
-  const pathname = usePathname();
-
-  const isSuccessPage = pathname === `/servers/${serverId}/success`;
 
   return (
     <div className="container mx-auto px-4 pt-32 pb-8">
@@ -29,15 +25,6 @@ export default function ServersLayout({
               <ChevronLeftIcon className="mr-2 h-4 w-4" />
               Back to Servers
             </Button>
-            {!isSuccessPage && (
-              <Button
-                variant="default"
-                onClick={() => router.push(`/servers/${serverId}/manage`)}
-                className="flex items-center"
-              >
-                Manage Blink
-              </Button>
-            )}
           </div>
         </div>
       )}
