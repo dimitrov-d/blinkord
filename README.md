@@ -1,12 +1,15 @@
 # Blinkord: Seamless Premium Role Access for Discord Communities
 
-![Blinkord Banner](https://blinkord.com/banner.png)
+<p align="center">
+    <img src="https://blinkord.com/banner.png" alt="Blinkord Banner" width="500">
+</p>
 
 ## Overview
 
 Blinkord is a platform designed for Discord server owners to easily offer access to obtaining exclusive, paid roles to their members through simple, shareable links. With Blinkord, discord members can gain access to exclusive server features with just a few clicks. Payments are made in SOL (Solana), leveraging the power of Solana Actions and Blinks for a secure and streamlined experience.
 
 Blinks 🤝 Discord = Blinkord
+
 Explore the power of Blinkord and make your Discord server's premium experience as smooth as possible!
 
 ## Solana Actions and Blinks
