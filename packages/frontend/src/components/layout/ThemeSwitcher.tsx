@@ -51,6 +51,21 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#8796A5" : "#aab4be",
     borderRadius: 20 / 2,
   },
+  "@media (max-width: 600px)": {
+    width: 40,
+    height: 20,
+    padding: 4,
+    "& .MuiSwitch-thumb": {
+      width: 20,
+      height: 20,
+    },
+    "& .MuiSwitch-switchBase": {
+      transform: "translateX(4px)",
+      "&.Mui-checked": {
+        transform: "translateX(16px)",
+      },
+    },
+  },
 }));
 
 export default function ThemeSwitcherComponent({ isDark, setIsDark }: any) {

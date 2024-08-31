@@ -12,11 +12,27 @@ import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
 export default function PrimarySearchAppBar() {
   const { isDark, setIsDark } = useContext(ThemeContext);
+  const [showLogo, setShowLogo] = useState(true);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setShowLogo(false);
+      } else {
+        setShowLogo(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <Box
       sx={{ flexGrow: 1 }}
-      className="w-full z-40 max-w-7xl mx-auto fixed top-4 left-1/2 -translate-x-1/2 bg-transparent dark:bg-gray-900 rounded-lg shadow-lg border border-0.5 border-gray-100 dark:border-gray-800"
+      className={`w-full z-40 max-w-7xl mx-auto fixed top-4 left-1/2 -translate-x-1/2 rounded-lg transition-all duration-300 ${showLogo ? 'bg-transparent dark:bg-gray-900 shadow-lg border border-0.5 border-gray-100 dark:border-gray-800' : 'bg-transparent dark:bg-transparent shadow-none border-none'}`}
     >
       <div className="w-full ">
         <Toolbar>
@@ -29,7 +45,7 @@ export default function PrimarySearchAppBar() {
             }}
           >
             <Drawer />
-            <Logo isDark={isDark} />
+            {showLogo && <Logo isDark={isDark} />}
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">
@@ -55,5 +71,6 @@ export default function PrimarySearchAppBar() {
         </Toolbar>
       </div>
     </Box>
+    
   );
 }
