@@ -172,7 +172,7 @@ export default function SuccessPage() {
                 className="bg-[#000000] hover:bg-[#231F1F] text-white"
               >
                 <Image
-                  src={imageSrc} // Use the validated or placeholder image
+                  src="/images/x.webp"
                   alt="X"
                   width={24}
                   height={24}
@@ -185,7 +185,7 @@ export default function SuccessPage() {
                 className="bg-[#5865F2] hover:bg-[#4752C4] text-white"
               >
                 <Image
-                  src={imageSrc} // Use the validated or placeholder image
+                  src="/images/discord.svg"
                   alt="Discord"
                   width={24}
                   height={24}
@@ -196,6 +196,16 @@ export default function SuccessPage() {
             </div>
 
             <Separator className="my-4" />
+
+            <div className="flex justify-center w-full">
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => router.push(`/servers/${serverId}/manage`)}
+              >
+                Manage your Blink 👀
+              </Button>
+            </div>
 
             <div className="mt-8" style={{ textAlign: "center" }}>
               <motion.h1
@@ -235,15 +245,6 @@ export default function SuccessPage() {
                   />
                 </motion.span>{" "}
               </motion.h1>{" "}
-            </div>
-            <div className="mt-8 flex justify-center w-full">
-              <Button
-                variant="default"
-                className="w-full"
-                onClick={() => router.push(`/servers/${serverId}/manage`)}
-              >
-                Manage your Blink 👀
-              </Button>
             </div>
           </motion.div>
         </div>

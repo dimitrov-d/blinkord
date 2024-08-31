@@ -209,7 +209,7 @@ function ServerForm({
                               e.target.value
                             )
                           }
-                          className="w-32 mr-2"
+                          className="w-32 mr-2 rounded-md"
                           disabled={!DiscordRole.enabled}
                           whileFocus={{ scale: 1.02 }}
                           step="0.00000001"
@@ -230,15 +230,17 @@ function ServerForm({
         </div>
       </div>
       {wallet.connected ? (
-        <MotionButton
-          type="submit"
-          className="w-full"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <SaveIcon className="mr-2 h-4 w-4" />
-          Save
-        </MotionButton>
+        <div className="flex justify-center">
+          <MotionButton
+            type="submit"
+            className="w-[40%]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <SaveIcon className="mr-2 h-4 w-4" />
+            Save
+          </MotionButton>
+        </div>
       ) : (
         <div className="flex justify-center items-center w-full h-full">
           <WalletMultiButtonDynamic className="mymultibutton text-sm break-keep flex items-center justify-center text-white py-[18px] px-[36px] rounded-[120px]" />

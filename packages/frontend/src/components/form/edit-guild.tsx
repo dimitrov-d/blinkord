@@ -89,6 +89,8 @@ function ServerFormEdit({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        <h2 className="text-2xl font-semibold mb-4">Edit Blink Data</h2>
+        <Separator className="my-4" />
         <Label htmlFor="name">Blink Title</Label>
         <MotionInput
           id="name"
@@ -202,7 +204,7 @@ function ServerFormEdit({
                           e.target.value
                         )
                       }
-                      className="w-32 mr-2"
+                      className="w-32 mr-2 rounded-md"
                       disabled={!DiscordRole.enabled}
                       whileFocus={{ scale: 1.02 }}
                       step="0.00000001"
@@ -222,17 +224,19 @@ function ServerFormEdit({
       </MotionCard>
 
       {wallet.connected ? (
-        <MotionButton
-          type="submit"
-          className="w-full"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <SaveIcon className="mr-2 h-4 w-4" />
-          Save
-        </MotionButton>
+        <div className="flex justify-center p-4">
+          <MotionButton
+            type="submit"
+            className="w-[40%]"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <SaveIcon className="mr-2 h-4 w-4" />
+            Save
+          </MotionButton>
+        </div>
       ) : (
-        <div className="flex justify-center items-center w-full h-full">
+        <div className="flex justify-center items-center w-full h-full p-4">
           <WalletMultiButtonDynamic className="mymultibutton text-sm break-keep flex items-center justify-center text-white py-[18px] px-[36px] rounded-[120px]" />
         </div>
       )}

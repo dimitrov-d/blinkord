@@ -88,7 +88,7 @@ export default function ManageServerPage() {
             setGuildFound(true); // Guild was found and data populated
 
             // Generate the custom URL
-            const generatedUrl = `${window.location.origin}/${guild.guild.id}?code=${serverIdStr}`;
+            const generatedUrl = `${window.location.origin}/${guild.guild.id}`;
             setCustomUrl(generatedUrl);
           } else {
             setGuildFound(false); // Guild data was not found
@@ -273,7 +273,7 @@ export default function ManageServerPage() {
             transition={{ delay: 0.5, duration: 0.5 }}
           >
             <MotionCardContent className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">Your custom URL</h2>
+              <h2 className="text-2xl font-semibold mb-4">Your custom Blink URL</h2>
               <Separator className="my-4" />
               {isLoading ? (
                 <div className="flex items-center justify-between">
@@ -311,11 +311,24 @@ export default function ManageServerPage() {
             />
           </MotionCard>
         </MotionCard>
-
-        <BlinkPreview
-          serverId={Array.isArray(serverId) ? serverId[0] : serverId}
-          code="123"
-        />
+        <MotionCard
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+        >
+          <MotionCardContent className="p-6">
+            <h2 className="text-2xl font-semibold mb-4">Blink Preview</h2>
+            <Separator className="my-4" />
+            {isLoading ? (
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-10 w-3/4 mr-4" />
+                <Skeleton className="h-10 w-24" />
+              </div>
+            ) : (
+              <BlinkPreview serverId={Array.isArray(serverId) ? serverId[0] : serverId} />
+            )}
+          </MotionCardContent>
+        </MotionCard>
       </div>
     </motion.div>
   );
