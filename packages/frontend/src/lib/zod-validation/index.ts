@@ -34,6 +34,8 @@ export const serverFormSchema = z.object({
       })
     )
     .min(1, "At least one role is required"),
+  useSend: z.boolean().default(false),
+  domainsTld: z.string(),
 });
 
 // Type inference based on the schema

@@ -32,6 +32,8 @@ export default function Panel() {
     description: "",
     // details: "",
     roles: [],
+    useSend: false,
+    domainsTld: "",
     // address: "",
     // message: "",
     // signature: "",
@@ -88,7 +90,7 @@ export default function Panel() {
       await promptConnectWallet();
 
       const validatedFormData = serverFormSchema.parse(formData);
-      const message = JSON.stringify(formData);
+      const message = `Please confirm the following data is correct: ${JSON.stringify(formData)}`;
       setIsLoading(true);
 
       const signature = await signMessage(message);

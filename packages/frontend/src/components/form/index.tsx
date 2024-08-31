@@ -107,7 +107,6 @@ function ServerForm({
             )}
           </MotionCardContent>
 
-          {/* Blink Description Field */}
           <MotionCardContent
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -134,9 +133,60 @@ function ServerForm({
               </motion.p>
             )}
           </MotionCardContent>
+
+          <MotionCardContent
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex items-center"
+          >
+            <Label htmlFor="useSend" className="mr-2">
+              Pay with $SEND
+            </Label>
+            <Switch
+              id="useSend"
+              checked={formData.useSend}
+              onCheckedChange={(value) =>
+                handleInputChange("useSend", value, setFormData)
+              }
+              className="mr-2"
+            />
+            <motion.span
+              className="text-gray-500 cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              title="Use $SEND token for payments instead of SOL"
+            >
+              ?
+            </motion.span>
+          </MotionCardContent>
+
+          <MotionCardContent
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Label htmlFor="tld">AllDomains TLD</Label>
+            <MotionInput
+              id="tld"
+              placeholder="bonk"
+              value={formData.domainsTld}
+              onChange={(e) =>
+                handleInputChange("domainsTld", e.target.value, setFormData)
+              }
+              whileFocus={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              title="The TLD of your project on alldomains.id"
+            />
+            <motion.span
+              className="text-gray-500 cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              title="The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles."
+            >
+              ?
+            </motion.span>
+          </MotionCardContent>
         </div>
         <div className="flex-1">
-          {/* Roles Section */}
           <MotionCard
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -206,7 +256,8 @@ function ServerForm({
                           animate={{ opacity: 1 }}
                           className="text-destructive text-sm mt-1"
                         >
-                          The bot is unable to assign this role due to having a lower position on the role list. Drag the Blinkord role above the roles which you want to enable. For a tutorial  <a
+                          The bot is unable to assign this role due to having a lower position on the role list. Drag the Blinkord role above the roles which you want to enable. For a tutorial{" "}
+                          <a
                             className="underline"
                             href="https://youtu.be/HBqebvEi8Vk?si=X72ZRggcp4ieq04G&t=10"
                             target="_blank"

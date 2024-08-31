@@ -200,7 +200,7 @@ export default function SuccessPage() {
             <div className="flex justify-center w-full">
               <Button
                 variant="default"
-                className="w-full"
+                className="w-full bg-[#008FE7]"
                 onClick={() => router.push(`/servers/${serverId}/manage`)}
               >
                 Manage your Blink 👀

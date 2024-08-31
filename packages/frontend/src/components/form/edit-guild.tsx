@@ -135,7 +135,58 @@ function ServerFormEdit({
         )}
       </MotionCardContent>
 
-      {/* Roles Section */}
+      <MotionCardContent
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex items-center"
+      >
+        <Label htmlFor="useSend" className="mr-2">
+          Pay with $SEND
+        </Label>
+        <Switch
+          id="useSend"
+          checked={formData.useSend}
+          onCheckedChange={(value) =>
+            handleInputChange("useSend", value, setFormData)
+          }
+          className="mr-2"
+        />
+        <motion.span
+          className="text-gray-500 cursor-pointer"
+          whileHover={{ scale: 1.05 }}
+          title="Use $SEND token for payments instead of SOL"
+        >
+          ?
+        </motion.span>
+      </MotionCardContent>
+
+      <MotionCardContent
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <Label htmlFor="tld">AllDomains TLD</Label>
+        <MotionInput
+          id="tld"
+          placeholder="bonk"
+          value={formData.domainsTld}
+          onChange={(e) =>
+            handleInputChange("domainsTld", e.target.value, setFormData)
+          }
+          whileFocus={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          title="The TLD of your project on alldomains.id"
+        />
+        <motion.span
+          className="text-gray-500 cursor-pointer"
+          whileHover={{ scale: 1.05 }}
+          title="The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles."
+        >
+          ?
+        </motion.span>
+      </MotionCardContent>
+
       <MotionCard
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -194,7 +245,7 @@ function ServerFormEdit({
                         step="0.00000001"
                         transition={{ type: "spring", stiffness: 300 }}
                       />
-                      <span className="text-gray-600">SOL</span>
+                      <span className="text-gray-600">{formData.useSend ? 'SEND' : 'SOL'}</span>
                     </div>
                   </div>
                   {roleErrors[role.id] && (

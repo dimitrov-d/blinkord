@@ -38,7 +38,7 @@ export default function ManageServerPage() {
   const { serverId } = useParams<{ serverId: string | string[] }>();
   const serverIdStr = Array.isArray(serverId) ? serverId[0] : serverId;
   const { signMessage, promptConnectWallet } = useWalletActions();
-  const selectedGuildName = useUserStore((state) => state.selectedGuildName);
+  const [guildName, setGuildName] = useState("");
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
   const [roleData, setRoleData] = useState<RoleData>({ blinkordRolePosition: -1, roles: [] });
@@ -51,6 +51,8 @@ export default function ManageServerPage() {
     iconUrl: "",
     description: "",
     roles: [],
+    useSend: false,
+    domainsTld: "",
   });
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ServerFormData, string>>
@@ -80,7 +82,11 @@ export default function ManageServerPage() {
               iconUrl: guild.iconUrl,
               description: guild.description,
               roles: guild.roles || [],
+              useSend: guild.useSend,
+              domainsTld: guild.domainsTld
             });
+
+            setGuildName(guild.name);
 
             // Map out the pre-selected roles to enable toggles
             const allRoles = await fetchRoles(serverIdStr)
@@ -227,7 +233,7 @@ export default function ManageServerPage() {
             </div>
             <p className="text-gray-600 text-center max-w-md">
               You haven't created Discord paid roles for your server{" "}
-              <span className="font-semibold">{selectedGuildName}</span>. Please
+              <span className="font-semibold">{guildName}</span>. Please
               go back and create a paid role in{" "}
               <span className="highlight-cyan">Create Paid Roles</span> or go
               back to the Servers page to select a guild to manage.
@@ -256,7 +262,7 @@ export default function ManageServerPage() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-bold ml-3"
       >
-        Manage Blink for {selectedGuildName}
+        Manage Blink for {guildName}
       </motion.h1>
       {overlayVisible && (
         <OverlaySpinner

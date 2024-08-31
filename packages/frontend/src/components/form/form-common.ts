@@ -2,7 +2,7 @@ import { RoleData, ServerFormProps } from "@/lib/types";
 
 export const handleInputChange = (
   field: keyof ServerFormProps["formData"],
-  value: string,
+  value: any,
   setFormData: React.Dispatch<React.SetStateAction<any>>
 ) => {
   setFormData((prev: any) => ({ ...prev, [field]: value }));
