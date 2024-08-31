@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { CopyIcon } from "lucide-react";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
 import { DiscordRole } from "@/lib/types";
-import { fetchRoles, generateCustomUrl } from "@/lib/actions/discord.actions";
 import { useToast } from "@/components/ui/use-toast";
 import {
   MotionCard,
@@ -57,12 +56,85 @@ export default function ManageServerPage() {
   >({});
   const [showBlinkPreview, setShowBlinkPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [guildFound, setGuildFound] = useState(false); // Track if guild was found
+  const [guildFound, setGuildFound] = useState(false);
   const router = useRouter();
   const token =
     useUserStore((state) => state.token) ||
     localStorage.getItem("discordToken");
 
+  // Fetch all roles for the guild
+  const fetchAllRoles = async (guildId: string) => {
+    try {
+      const response = await fetch(`/api/discord/guilds/${guildId}/roles`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const rolesData = await response.json();
+        return rolesData.roles.map(
+          (role: Omit<DiscordRole, "price" | "enabled">) => ({
+            ...role,
+            price: 0,
+            enabled: false,
+          })
+        );
+      } else {
+        console.error("Failed to fetch all roles");
+      }
+    } catch (error) {
+      console.error("Error fetching all roles:", error);
+    }
+    return [];
+  };
+
+  // Fetch selected roles for the guild
+  const fetchSelectedRoles = async (guildId: string) => {
+    try {
+      const response = await fetch(`/api/discord/guilds/${guildId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const guildData = await response.json();
+        return guildData.guild.roles || [];
+      } else {
+        console.error("Failed to fetch selected roles");
+      }
+    } catch (error) {
+      console.error("Error fetching selected roles:", error);
+    }
+    return [];
+  };
+
+  // Fetch and set roles (merge all roles with selected roles)
+  useEffect(() => {
+    const fetchAndSetRoles = async () => {
+      const allRoles = await fetchAllRoles(serverIdStr);
+      const selectedRoles = await fetchSelectedRoles(serverIdStr);
+
+      const mergedRoles = allRoles.map((role) => {
+        const selectedRole = selectedRoles.find((r) => r.id === role.id);
+        if (selectedRole) {
+          return {
+            ...role,
+            price: selectedRole.amount,
+            enabled: true,
+          };
+        }
+        return role;
+      });
+
+      setDiscordRoles(mergedRoles);
+    };
+
+    if (serverIdStr) {
+      fetchAndSetRoles();
+    }
+  }, [serverIdStr]);
+
+  // Fetch guild data and set form data
   useEffect(() => {
     const fetchGuildData = async () => {
       try {
@@ -86,7 +158,7 @@ export default function ManageServerPage() {
             });
             setDiscordRoles(guild.guild.roles || []);
             setGuildFound(true); // Guild was found and data populated
-
+            console.log("These are the guild roles", guild.guild.roles);
             // Generate the custom URL
             const generatedUrl = `${window.location.origin}/${guild.guild.id}`;
             setCustomUrl(generatedUrl);
@@ -197,7 +269,6 @@ export default function ManageServerPage() {
   if (isLoading) {
     return (
       <div>
-        {" "}
         <OverlaySpinner />
       </div>
     );
@@ -273,7 +344,9 @@ export default function ManageServerPage() {
             transition={{ delay: 0.5, duration: 0.5 }}
           >
             <MotionCardContent className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">Your custom Blink URL</h2>
+              <h2 className="text-2xl font-semibold mb-4">
+                Your custom Blink URL
+              </h2>
               <Separator className="my-4" />
               {isLoading ? (
                 <div className="flex items-center justify-between">
@@ -325,7 +398,9 @@ export default function ManageServerPage() {
                 <Skeleton className="h-10 w-24" />
               </div>
             ) : (
-              <BlinkPreview serverId={Array.isArray(serverId) ? serverId[0] : serverId} />
+              <BlinkPreview
+                serverId={Array.isArray(serverId) ? serverId[0] : serverId}
+              />
             )}
           </MotionCardContent>
         </MotionCard>
