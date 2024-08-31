@@ -156,9 +156,7 @@ export async function editGuild(
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
-    console.log("Guild edited:", data);
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Failed to edit guild:", error);
     throw error;

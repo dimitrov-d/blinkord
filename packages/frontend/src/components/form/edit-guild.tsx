@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { ServerFormSkeleton } from "@/components/skeletons/server-form";
-import { SaveIcon } from "lucide-react";
+import { HelpCircle, SaveIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ServerFormProps } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -24,6 +24,8 @@ import {
   handleDiscordRoleToggle,
   handleDiscordRolePriceChange,
 } from "./form-common";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -139,34 +141,64 @@ function ServerFormEdit({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex items-center"
+        className="flex flex-col w-full"
       >
-        <Label htmlFor="useSend" className="mr-2">
-          Pay with $SEND
-        </Label>
+        <div className="flex items-center">
+          <Label htmlFor="useSend" className="mr-2">
+            Pay with $SEND
+          </Label>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <motion.span
+                  className="text-gray-500 cursor-pointer"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <HelpCircle />
+                </motion.span>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
+                Use $SEND token for payments instead of SOL
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <Switch
           id="useSend"
           checked={formData.useSend}
           onCheckedChange={(value) =>
             handleInputChange("useSend", value, setFormData)
           }
-          className="mr-2"
+          className="mt-2"
         />
-        <motion.span
-          className="text-gray-500 cursor-pointer"
-          whileHover={{ scale: 1.05 }}
-          title="Use $SEND token for payments instead of SOL"
-        >
-          ?
-        </motion.span>
       </MotionCardContent>
 
       <MotionCardContent
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
+        className="flex flex-col w-[50%]"
       >
-        <Label htmlFor="tld">AllDomains TLD</Label>
+        <div className="flex items-center">
+          <Label htmlFor="tld" className="mr-2">
+            AllDomains TLD
+          </Label>
+          <TooltipProvider>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <motion.span
+                  className="text-gray-500 cursor-pointer ml-2"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <HelpCircle />
+                </motion.span>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
+                The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <MotionInput
           id="tld"
           placeholder="bonk"
@@ -177,14 +209,8 @@ function ServerFormEdit({
           whileFocus={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 300 }}
           title="The TLD of your project on alldomains.id"
+          className="mt-2 w-full"
         />
-        <motion.span
-          className="text-gray-500 cursor-pointer"
-          whileHover={{ scale: 1.05 }}
-          title="The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles."
-        >
-          ?
-        </motion.span>
       </MotionCardContent>
 
       <MotionCard

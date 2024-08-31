@@ -34,10 +34,18 @@ export default function PrimarySearchAppBar() {
           <Box sx={{ flexGrow: 1 }}>
             <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">
               <Link
-                href="/"
+                href="https://discord.gg/bfTCF3tk"
                 className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
+                target="_blank"
               >
-                Home
+                Discord
+              </Link>
+              <Link
+                href="https://docs.blinkord.com"
+                className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
+                target="_blank"
+              >
+                Docs
               </Link>
             </div>
           </Box>
