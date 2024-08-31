@@ -67,14 +67,15 @@ export default function BlinkPage() {
             <Card className="w-full">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-center">
-                  Welcome to Blinkord
+                  Welcome to <span className="highlight-cyan">Blinkord</span>
                 </CardTitle>
                 <CardDescription className="text-center">
                   You're one step away from unlocking exclusive content and
-                  features on your favorite Discord servers!
+                  features on your favorite{" "}
+                  <span className="highlight-blue">Discord</span> servers!
                 </CardDescription>
               </CardHeader>
-              <div className="mt-8" style={{ 'textAlign': 'center' }}>
+              <div className="mt-8" style={{ textAlign: "center" }}>
                 <motion.h1
                   className="text-3xl font-normal tracking-tight md:text-6xl"
                   initial={{ opacity: 0, y: -50 }}
@@ -90,7 +91,7 @@ export default function BlinkPage() {
                       alt="Illustration"
                       width={400}
                       height={400}
-                      style={{ margin: 'auto' }}
+                      style={{ margin: "auto" }}
                       className="rounded-lg full"
                     />
                     <motion.div
@@ -110,7 +111,6 @@ export default function BlinkPage() {
                       className="absolute -inset-4 bg-neon-purple opacity-20 z-0"
                       animate={{ rotate: [0, 360] }}
                     />
-
                   </motion.span>{" "}
                 </motion.h1>{" "}
               </div>
@@ -134,8 +134,9 @@ export default function BlinkPage() {
                     <InfoIcon className="h-4 w-4" />
                     <AlertTitle>Authentication Required</AlertTitle>
                     <AlertDescription>
-                      Please authenticate with Discord to proceed with
-                      purchasing premium access.
+                      Please authenticate with{" "}
+                      <span className="highlight-cyan">Discord</span> to proceed
+                      with purchasing premium access.
                     </AlertDescription>
                   </Alert>
                 )}
