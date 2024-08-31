@@ -59,7 +59,12 @@ export default function Panel() {
     const fetchData = async () => {
       if (serverId) {
         try {
-          await fetchRoles(serverId, setDiscordRoles);
+          const rolesData = await fetchRoles(serverId);
+          setDiscordRoles(rolesData.roles.map((role: DiscordRole) => ({
+            ...role,
+            price: '0',
+            enabled: false,
+          })));
         } catch (error) {
           console.error("Error fetching roles:", error);
           toast.error("Failed to fetch server roles");
@@ -135,8 +140,7 @@ export default function Panel() {
           }
         });
         setFormErrors(errors);
-        console.log(errors);
-        toast.error("Please fix the form errors");
+        toast.error(`Please fix the form errors: ${Object.values(errors).join('\n')}`);
       } else {
         console.error("Unexpected error:", error);
         toast.error("An unexpected error occurred");

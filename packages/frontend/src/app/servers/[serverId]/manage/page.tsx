@@ -32,6 +32,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { fetchRoles } from "@/lib/actions/discord.actions";
 
 export default function ManageServerPage() {
   const { serverId } = useParams<{ serverId: string | string[] }>();
@@ -62,105 +63,37 @@ export default function ManageServerPage() {
     useUserStore((state) => state.token) ||
     localStorage.getItem("discordToken");
 
-  // Fetch all roles for the guild
-  const fetchAllRoles = async (guildId: string) => {
-    try {
-      const response = await fetch(`/api/discord/guilds/${guildId}/roles`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        const rolesData = await response.json();
-        return rolesData.roles.map(
-          (role: Omit<DiscordRole, "price" | "enabled">) => ({
-            ...role,
-            price: 0,
-            enabled: false,
-          })
-        );
-      } else {
-        console.error("Failed to fetch all roles");
-      }
-    } catch (error) {
-      console.error("Error fetching all roles:", error);
-    }
-    return [];
-  };
-
-  // Fetch selected roles for the guild
-  const fetchSelectedRoles = async (guildId: string) => {
-    try {
-      const response = await fetch(`/api/discord/guilds/${guildId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        const guildData = await response.json();
-        return guildData.guild.roles || [];
-      } else {
-        console.error("Failed to fetch selected roles");
-      }
-    } catch (error) {
-      console.error("Error fetching selected roles:", error);
-    }
-    return [];
-  };
-
-  // Fetch and set roles (merge all roles with selected roles)
-  useEffect(() => {
-    const fetchAndSetRoles = async () => {
-      const allRoles = await fetchAllRoles(serverIdStr);
-      const selectedRoles = await fetchSelectedRoles(serverIdStr);
-
-      const mergedRoles = allRoles.map((role) => {
-        const selectedRole = selectedRoles.find((r) => r.id === role.id);
-        if (selectedRole) {
-          return {
-            ...role,
-            price: selectedRole.amount,
-            enabled: true,
-          };
-        }
-        return role;
-      });
-
-      setDiscordRoles(mergedRoles);
-    };
-
-    if (serverIdStr) {
-      fetchAndSetRoles();
-    }
-  }, [serverIdStr]);
-
-  // Fetch guild data and set form data
   useEffect(() => {
     const fetchGuildData = async () => {
       try {
         const response = await fetch(`/api/discord/guilds/${serverIdStr}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}`, },
         });
 
         if (response.ok) {
-          const guild = await response.json();
-          console.log(guild);
+          const { guild } = await response.json();
 
-          if (guild && guild.guild) {
+          if (guild) {
             setFormData({
-              id: guild.guild.id,
-              name: guild.guild.name,
-              iconUrl: guild.guild.iconUrl,
-              description: guild.guild.description,
-              roles: guild.guild.roles || [],
+              id: guild.id,
+              name: guild.name,
+              iconUrl: guild.iconUrl,
+              description: guild.description,
+              roles: guild.roles || [],
             });
-            setDiscordRoles(guild.guild.roles || []);
+
+            // Map out the pre-selected roles to enable toggles
+            const allRoles = await fetchRoles(serverIdStr)
+
+            const mergedRoles = allRoles.roles.map((role: DiscordRole) => {
+              const selectedRole = guild.roles.find((r: DiscordRole) => r.id === role.id);
+              return selectedRole ? { ...role, price: selectedRole.amount, enabled: true, } : role;
+            });
+            setDiscordRoles(mergedRoles);
+
             setGuildFound(true); // Guild was found and data populated
-            console.log("These are the guild roles", guild.guild.roles);
             // Generate the custom URL
-            const generatedUrl = `${window.location.origin}/${guild.guild.id}`;
+            const generatedUrl = `${window.location.origin}/${guild.id}`;
             setCustomUrl(generatedUrl);
           } else {
             setGuildFound(false); // Guild data was not found
@@ -246,13 +179,11 @@ export default function ManageServerPage() {
           }
         );
         setFormErrors(errors);
-        toast.error("Please fix the form errors");
+        toast.error(`Please fix the form errors: ${Object.values(errors).join('\n')}`);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
       } else {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        } else {
-          toast.error("An unexpected error occurred");
-        }
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setIsLoading(false);

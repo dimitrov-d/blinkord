@@ -27,9 +27,8 @@ export const serverFormSchema = z.object({
         name: z.string().min(1, "Role name is required"),
         amount: z
           .string()
-          .refine((val) => /^\d*\.?\d+$/.test(val) && parseFloat(val) >= 0, {
-            message:
-              "Amount must be a valid number or decimal greater than or equal to 0",
+          .refine((val) => /^\d*\.?\d+$/.test(val) && parseFloat(val) > 0, {
+            message: "Amount must be a valid number or decimal greater than 0",
           })
           .transform((val) => parseFloat(val).toString()),
       })
