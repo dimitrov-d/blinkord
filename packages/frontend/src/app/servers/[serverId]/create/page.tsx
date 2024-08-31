@@ -124,7 +124,7 @@ export default function Panel() {
 
         if (response.ok) {
           toast.success("Server created successfully");
-          router.push(`/servers/${serverId}/success`);
+          router.push(`/servers/${serverId}`);
           // I need to create this view for success
         } else {
           toast.error("Error creating server");

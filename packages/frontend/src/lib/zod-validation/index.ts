@@ -12,7 +12,12 @@ export const serverFormSchema = z.object({
       z.object({
         id: z.string().min(1, "Role ID is required"),
         name: z.string().min(1, "Role name is required"),
-        amount: z.string().min(1, "Amount is required"),
+        amount: z
+          .number()
+          .min(0, "Amount must be 0 or more")
+          .refine((value) => value.toFixed(8).length <= 10, {
+            message: "Amount must have up to 7 decimal places",
+          }),
       })
     )
     .min(1, "At least one role is required"),
