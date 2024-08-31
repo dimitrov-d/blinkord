@@ -46,6 +46,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
+    "sharp": "^0.33.5",
     "sonner": "^1.5.0",
     "styled-components": "^6.1.12",
     "tailwind-merge": "^2.5.2",

@@ -75,7 +75,7 @@ export default function Servers() {
 
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
     const appUrl = process.env.NEXT_PUBLIC_APP_BASE_URL!
-    const redirectUri = encodeURIComponent(appUrl);
+    const redirectUri = encodeURIComponent(`${appUrl}/redirect`);
 
     const popup = window.open(
       `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=268435457&integration_type=0&scope=bot+applications.commands&redirect_uri=${redirectUri}&response_type=code&guild_id=${serverId}`,
@@ -116,6 +116,8 @@ export default function Servers() {
         transition={{ duration: 0.5 }}
       >
         Select a server
+        <p className="text-sm text-muted-foreground text-center mt-4">Please choose a server you want to create a blink for. </p>
+        <p className="text-sm text-muted-foreground text-center mt-4">The Blinkord Bot will be added to your server in order to assign roles to your members.</p>
       </motion.h1>
       {isFetchingGuilds ? (
         <LoadingSpinner />

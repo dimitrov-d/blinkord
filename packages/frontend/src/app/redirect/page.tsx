@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useSearchParams } from "next/navigation";
 
-export default function Redirect() {
+function RedirectComponent() {
   const router = useRouter();
   const controls = useAnimation();
   const [callbackHandled, setCallbackHandled] = useState(false);
@@ -240,5 +240,13 @@ export default function Redirect() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function Redirect() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RedirectComponent />
+    </Suspense>
   );
 }
