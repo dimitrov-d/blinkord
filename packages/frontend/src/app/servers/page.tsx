@@ -116,6 +116,8 @@ export default function Servers() {
         transition={{ duration: 0.5 }}
       >
         Select a server
+        <p className="text-sm text-muted-foreground text-center mt-4">Please choose a server you want to create a blink for. </p>
+        <p className="text-sm text-muted-foreground text-center mt-4">The Blinkord Bot will be added to your server in order to assign roles to your members.</p>
       </motion.h1>
       {isFetchingGuilds ? (
         <LoadingSpinner />
