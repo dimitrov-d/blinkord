@@ -130,7 +130,7 @@ export default function ManageServerPage() {
 
   const handleDiscordRolePriceChange = (
     discordRoleId: string,
-    price: number
+    price: string
   ) => {
     setDiscordRoles((prevDiscordRoles) =>
       prevDiscordRoles.map((discordRole) =>
@@ -215,7 +215,6 @@ export default function ManageServerPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
-
           <MotionCard
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

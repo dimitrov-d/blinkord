@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { ServerFormData } from "@/lib/zod-validation";
 
-
 declare type SearchParamProps = {
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
@@ -12,10 +11,9 @@ declare type SearchParamProps = {
 declare interface DiscordRole {
   id: string;
   name: string;
-  price: number;
+  price: string;
   enabled: boolean;
 }
-
 
 declare type DiscordServer = {
   id: string;
@@ -169,10 +167,10 @@ declare type PatchGuild = (
 ) => Promise<DiscordServer>;
 
 declare interface ServerFormProps {
-  formData: ServerFormData
-  setFormData: React.Dispatch<React.SetStateAction<ServerFormData>>
-  DiscordRoles: DiscordRole[]
-  setDiscordRoles: React.Dispatch<React.SetStateAction<DiscordRole[]>>
-  formErrors: Partial<Record<keyof ServerFormData, string>>
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+  formData: ServerFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ServerFormData>>;
+  DiscordRoles: DiscordRole[];
+  setDiscordRoles: React.Dispatch<React.SetStateAction<DiscordRole[]>>;
+  formErrors: Partial<Record<keyof ServerFormData, string>>;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }

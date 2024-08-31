@@ -5,10 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { BlinkDisplay } from "@/components/blink/blink-display";
-import { BlinkCardSkeleton } from "@/components/skeletons/blink-skeleton";
-import { ServerFormSkeleton } from "@/components/skeletons/server-form";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
 import { SaveIcon, ServerIcon } from "lucide-react";
 import { z } from "zod";
@@ -83,11 +79,7 @@ export default function Panel() {
     setIsLoading(true);
 
     try {
-      promptConnectWallet();
-      // if (!formData.address) {
-      //   toast.error("Please connect your wallet to proceed.");
-      //   return;
-      // }
+      await promptConnectWallet();
 
       const validatedFormData = serverFormSchema.parse(formData);
       const message = JSON.stringify(formData);
@@ -124,7 +116,7 @@ export default function Panel() {
 
         if (response.ok) {
           toast.success("Server created successfully");
-          router.push(`/servers/${serverId}`);
+          router.push(`/servers/${serverId}/success`);
           // I need to create this view for success
         } else {
           toast.error("Error creating server");

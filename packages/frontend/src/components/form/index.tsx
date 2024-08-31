@@ -13,8 +13,16 @@ import {
   MotionCardContent,
   MotionInput,
   MotionTextarea,
+  MotionNumberInput,
   MotionButton,
 } from "@/components/motion";
+import { useWallet } from "@solana/wallet-adapter-react";
+import dynamic from "next/dynamic";
+const WalletMultiButtonDynamic = dynamic(
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+);
 
 function ServerForm({
   formData,
@@ -28,16 +36,7 @@ function ServerForm({
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
-  // const handleDiscordRoleToggle = (DiscordRoleId: string) => {
-  //   setDiscordRoles((prevDiscordRoles) =>
-  //     prevDiscordRoles.map((DiscordRole) =>
-  //       DiscordRole.id === DiscordRoleId
-  //         ? { ...DiscordRole, enabled: !DiscordRole.enabled }
-  //         : DiscordRole
-  //     )
-  //   );
-  // };
+  const wallet = useWallet();
 
   const handleDiscordRoleToggle = (DiscordRoleId: string) => {
     const updatedRoles = DiscordRoles.map((DiscordRole) =>
@@ -52,53 +51,30 @@ function ServerForm({
       .map((role) => ({
         id: role.id,
         name: role.name,
-        amount: role.price.toString(),
+        amount: role.price, // Changed to keep the type as string
       }));
     setFormData((prev) => ({ ...prev, roles: enabledRoles }));
   };
-
-  // const handleDiscordRolePriceChange = (
-  //   DiscordRoleId: string,
-  //   price: string
-  // ) => {
-  //   const numericPrice = parseFloat(price);
-  //   if (!isNaN(numericPrice)) {
-  //     setDiscordRoles((prevDiscordRoles) =>
-  //       prevDiscordRoles.map((DiscordRole) =>
-  //         DiscordRole.id === DiscordRoleId
-  //           ? { ...DiscordRole, price: numericPrice }
-  //           : DiscordRole
-  //       )
-  //     );
-  //   }
-  // };
-
-  // if (isLoading) {
-  //   return <ServerFormSkeleton />;
-  // }
 
   const handleDiscordRolePriceChange = (
     DiscordRoleId: string,
     price: string
   ) => {
-    const numericPrice = parseFloat(price);
-    if (!isNaN(numericPrice)) {
-      const updatedRoles = DiscordRoles.map((DiscordRole) =>
-        DiscordRole.id === DiscordRoleId
-          ? { ...DiscordRole, price: numericPrice }
-          : DiscordRole
-      );
-      setDiscordRoles(updatedRoles);
+    const updatedRoles = DiscordRoles.map((DiscordRole) =>
+      DiscordRole.id === DiscordRoleId ? { ...DiscordRole, price } : DiscordRole
+    );
 
-      const enabledRoles = updatedRoles
-        .filter((role) => role.enabled)
-        .map((role) => ({
-          id: role.id,
-          name: role.name,
-          amount: role.price.toString(),
-        }));
-      setFormData((prev) => ({ ...prev, roles: enabledRoles }));
-    }
+    setDiscordRoles(updatedRoles);
+
+    const enabledRoles = updatedRoles
+      .filter((role) => role.enabled)
+      .map((role) => ({
+        id: role.id,
+        name: role.name,
+        amount: price || "0",
+      }));
+
+    setFormData((prev) => ({ ...prev, roles: enabledRoles }));
   };
 
   if (isLoading) {
@@ -223,9 +199,9 @@ function ServerForm({
                         </h3>
                       </div>
                       <div className="flex items-center">
-                        <MotionInput
-                          type="number"
-                          placeholder="Price in SOL"
+                        <MotionNumberInput
+                          type="text"
+                          placeholder="0"
                           value={DiscordRole.price || ""}
                           onChange={(e) =>
                             handleDiscordRolePriceChange(
@@ -236,6 +212,7 @@ function ServerForm({
                           className="w-32 mr-2"
                           disabled={!DiscordRole.enabled}
                           whileFocus={{ scale: 1.02 }}
+                          step="0.00000001"
                           transition={{ type: "spring", stiffness: 300 }}
                         />
                         <span className="text-gray-600">SOL</span>
@@ -252,16 +229,21 @@ function ServerForm({
           </MotionCard>
         </div>
       </div>
-
-      <MotionButton
-        type="submit"
-        className="w-full"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <SaveIcon className="mr-2 h-4 w-4" />
-        Save
-      </MotionButton>
+      {wallet.connected ? (
+        <MotionButton
+          type="submit"
+          className="w-full"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <SaveIcon className="mr-2 h-4 w-4" />
+          Save
+        </MotionButton>
+      ) : (
+        <div className="flex justify-center items-center w-full h-full">
+          <WalletMultiButtonDynamic className="mymultibutton text-sm break-keep flex items-center justify-center text-white py-[18px] px-[36px] rounded-[120px]" />
+        </div>
+      )}
     </form>
   );
 }
