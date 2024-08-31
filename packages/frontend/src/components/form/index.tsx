@@ -222,7 +222,7 @@ function ServerForm({
                 👤 Configure Paid Roles
               </h2>
               <Separator className="my-4" />
-              <ScrollArea className="max-h-200">
+              <ScrollArea className="max-h-[300px] overflow-y-scroll">
                 {roleData.roles.length > 0 ? (
                   roleData.roles.map((role) => (
                     <motion.div

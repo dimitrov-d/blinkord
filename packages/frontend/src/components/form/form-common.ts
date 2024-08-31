@@ -64,7 +64,7 @@ export const handleDiscordRolePriceChange = (
     .map((role: any) => ({
       id: role.id,
       name: role.name,
-      amount: price || "0",
+      amount: price,
     }));
 
   setFormData((prev: any) => ({ ...prev, roles: enabledRoles }));

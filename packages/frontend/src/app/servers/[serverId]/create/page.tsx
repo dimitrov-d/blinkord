@@ -65,7 +65,7 @@ export default function Panel() {
             ...rolesData,
             roles: rolesData.roles.map((role: DiscordRole) => ({
               ...role,
-              price: '0',
+              price: '',
               enabled: false,
             }))
           });
