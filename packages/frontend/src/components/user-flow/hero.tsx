@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { LogIn } from "lucide-react";
 import Image from "next/image";
-import DiscordLogo3D from "../discord-3rf";
 
 export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
   const fadeInUp = {
@@ -11,7 +10,7 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
   };
 
   return (
-    <div className="relative h-screen flex items-center justify-center overflow-hidden font-excon px-4 py-8 md:px-6 md:mt-40">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden font-excon px-4 py-8 md:px-6 md:my-10">
       {/* Gradient bubbles */}
       <motion.div
         className="absolute top-10 left-10 w-24 h-24 md:w-40 md:h-40 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20"
@@ -39,9 +38,9 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl h-full flex flex-col items-center justify-center">
+      <div className="relative z-10 w-full max-w-7xl flex flex-col items-center justify-center space-y-4 md:space-y-6">
         <motion.h1
-          className="text-2xl sm:text-base lg:text-6xl font-normal tracking-tight text-center mb-6"
+          className="text-2xl sm:text-3xl lg:text-5xl font-normal tracking-tight text-center leading-tight"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -52,26 +51,26 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
             whileHover={{ scale: 1.05 }}
           >
             <Image
-              className="my-auto -mt-1 md:-mt-2 inline w-16 sm:w-20 md:w-24 lg:w-32 xl:w-48 z-20 relative"
+              className="my-auto -mt-1 md:-mt-2 inline w-16 sm:w-20 md:w-24 lg:w-32 z-20 relative"
               width={192}
               height={108}
               src="/evolve.svg"
               alt=""
             />
             <motion.div
-              className="absolute -top-1 -left-1 md:-top-2 md:-left-2 w-4 h-4 md:w-6 md:h-6 lg:w-8 lg:h-8 border-t-2 border-l-2 border-neon-blue z-10"
+              className="absolute -top-1 -left-1 md:-top-2 md:-left-2 w-4 h-4 md:w-6 md:h-6 border-t-2 border-l-2 border-neon-blue z-10"
               animate={{ rotate: 0 }}
               whileHover={{ rotate: 360 }}
               transition={{ duration: 2, ease: "linear" }}
             />
             <motion.div
-              className="absolute -bottom-1 -right-1 md:-bottom-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 lg:w-8 lg:h-8 border-b-2 border-r-2 border-neon-pink z-10"
+              className="absolute -bottom-1 -right-1 md:-bottom-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 border-b-2 border-r-2 border-neon-pink z-10"
               animate={{ rotate: 0 }}
               whileHover={{ rotate: -360 }}
               transition={{ duration: 2, ease: "linear" }}
             />
             <motion.div
-              className="absolute -inset-2 md:-inset-3 lg:-inset-4 bg-neon-purple opacity-20 z-0"
+              className="absolute -inset-2 md:-inset-3 bg-neon-purple opacity-20 z-0"
               animate={{ rotate: [0, 360] }}
             />
           </motion.span>{" "}
@@ -81,28 +80,32 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
             whileHover={{ scale: 1.05 }}
           >
             <Image
-              className="inline w-12 sm:w-20 md:w-28 lg:w-36 z-20 relative mr-2"
+              className="inline w-12 sm:w-16 md:w-20 z-20 relative mr-6 lg:mr-10"
               width={192}
               height={108}
               src="/transhumans-roboto.webp"
               alt=""
             />
-            <div>experiences with Blinkord.</div>
+   <div>experiences with Blinkord.</div>
+            <motion.div
+              className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 border-t-2 border-r-2 border-neon-blue z-10"
+              animate={{ rotate: 0 }}
+              whileHover={{ rotate: -360 }}
+              transition={{ duration: 2, ease: "linear" }}
+            />
+
             <div className="absolute inset-0 -z-10 flex justify-center items-center">
-              <motion.div
-                className="absolute top-1/4 -right-1/4 w-0 h-0 border-l-[15px] sm:border-l-[20px] md:border-l-[25px] lg:border-l-[35px] xl:border-l-[45px] border-l-transparent border-r-[15px] sm:border-r-[20px] md:border-r-[25px] lg:border-r-[35px] xl:border-r-[45px] border-r-transparent border-b-[30px] sm:border-b-[40px] md:border-b-[50px] lg:border-b-[70px] xl:border-b-[90px] border-b-gray-700 z-10"
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              />
-              <motion.div
-                className="absolute top-0 left-1/4 w-0 h-0 border-l-[15px] sm:border-l-[20px] md:border-l-[25px] lg:border-l-[35px] xl:border-l-[45px] border-l-transparent border-r-[15px] sm:border-r-[20px] md:border-r-[25px] lg:border-r-[35px] xl:border-r-[45px] border-r-transparent border-b-[30px] sm:border-b-[40px] md:border-b-[50px] lg:border-b-[70px] xl:border-b-[90px] border-b-yellow-400 z-1"
+                 {/* //yellow */}
+                 <motion.div
+                className="absolute top-0 sm:-top-4  -left-4 w-0 h-0 border-l-[15px] sm:border-l-[20px] md:border-l-[25px] lg:border-l-[35px] xl:border-l-[45px] border-l-transparent border-r-[15px] sm:border-r-[20px] md:border-r-[25px] lg:border-r-[35px] xl:border-r-[45px] border-r-transparent border-b-[30px] sm:border-b-[40px] md:border-b-[50px] lg:border-b-[70px] xl:border-b-[90px] border-b-yellow-400 z-1"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
               />
+
+              {/* //purple */}
               <motion.div
-                className="absolute top-1/4 left-0 w-20 sm:w-24 md:w-32 lg:w-40 xl:w-48 h-16 sm:h-20 md:h-24 lg:h-28 xl:h-32 bg-indigo-600 z-1"
+                className="absolute top-1/4 xl:top-10 left-0 w-14 sm:w-12 md:w-16 lg:w-20 xl:w-24 h-10  lg:h-20 bg-indigo-600 z-1"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
@@ -118,30 +121,24 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
         </motion.h1>
         
         <motion.div
-          className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-center mb-4 md:mb-6"
+          className="text-sm sm:text-base md:text-lg lg:text-xl text-center"
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <p className="mb-2 ">
+          <p className="mb-1 md:mb-2">
             Monetize your <span className="highlight-green">Discord</span>{" "}
             server <span className="highlight-cyan">effortlessly</span>.
           </p>
+          <p className="opacity-50 dark:text-white text-black text-xs sm:text-sm md:text-base">
+            Create shareable links that grant access to exclusive discord roles
+            with just a few clicks.
+          </p>
         </motion.div>
         
-        <motion.p
-          className="opacity-50 dark:text-white text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-center mb-4 "
-          variants={fadeInUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          Create shareable links that grant access to exclusive discord roles
-          with just a few clicks.
-        </motion.p>
         <motion.div
-          className="flex flex-col sm:flex-row items-center justify-center w-full mb-6 md:mb-8 space-y-4 sm:space-y-0 sm:space-x-4"
+          className="flex flex-col sm:flex-row items-center justify-center w-full mb-4 md:mb-6 space-y-4 sm:space-y-0 sm:space-x-4"
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
@@ -157,46 +154,46 @@ export function ConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
           </div>
         </motion.div>
         <motion.div
-          className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 rounded-lg border border-gray-700 p-3 md:p-4"
+          className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 rounded-lg border border-gray-700 p-3 md:p-4"
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
           transition={{ duration: 0.5, delay: 1 }}
         >
-          <p className="dark:text-white text-black text-xs sm:text-sm md:text-base w-full text-center mb-2">
+          <p className="dark:text-white text-black text-xs sm:text-sm w-full text-center mb-2">
             Hackathon Sponsors:
           </p>
           <div className="flex flex-wrap justify-center items-center gap-2">
             <Image
-              className="h-4 md:h-5 lg:h-6 w-auto"
+              className="h-4 md:h-5 w-auto"
               src="/solana.svg"
               alt="Solana"
               width={100}
               height={24}
             />
             <Image
-              className="h-4 md:h-5 lg:h-6 w-auto"
+              className="h-4 md:h-5 w-auto"
               src="/alldomains.svg"
               alt="AllDomains"
               width={100}
               height={24}
             />
             <Image
-              className="h-4 md:h-5 lg:h-6 w-auto"
+              className="h-4 md:h-5 w-auto"
               src="/helius.svg"
               alt="Helius"
               width={100}
               height={24}
             />
             <Image
-              className="h-4 md:h-5 lg:h-6 w-auto"
+              className="h-4 md:h-5 w-auto"
               src="/dialect.svg"
               alt="Dialect"
               width={100}
               height={24}
             />
             <Image
-              className="h-4 md:h-5 lg:h-6 w-auto"
+              className="h-4 md:h-5 w-auto"
               src="/bags.svg"
               alt="Bags"
               width={100}

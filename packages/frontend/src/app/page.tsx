@@ -17,7 +17,7 @@ const Index: React.FC = () => {
           size={75}
           offsetX={0}
           offsetY={0}
-          className="absolute top-0 left-0 h-full w-full dark:stroke-builderz-blue/10 stroke-indigo-600/20 stroke-[2] [mask-image:linear-gradient(-85deg,black,transparent)]"
+          className="opacity-10 sm:opacity-100 absolute top-0 left-0 h-full w-full dark:stroke-builderz-blue/10 stroke-indigo-600/20 stroke-[2] [mask-image:linear-gradient(-85deg,black,transparent)]"
         >
           {gridBlocks.map(([row, column], index) => (
             <GridPattern.Block
