@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
 import { MotionInput, MotionButton } from "@/components/motion";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 export default function SuccessPage() {
   const [blinkUrl, setBlinkUrl] = useState("");
@@ -17,6 +18,7 @@ export default function SuccessPage() {
   const [customUrl, setCustomUrl] = useState("");
   const { toast } = useToast();
   const [imageSrc, setImageSrc] = useState("/images/og-image.png");
+  const router = useRouter();
 
   useEffect(() => {
     const id = window.location.pathname.split("/")?.at(-2);
@@ -234,12 +236,13 @@ export default function SuccessPage() {
                 </motion.span>{" "}
               </motion.h1>{" "}
             </div>
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex justify-center w-full">
               <Button
                 variant="default"
+                className="w-full"
                 onClick={() => router.push(`/servers/${serverId}/manage`)}
               >
-                Manage your Blink
+                Manage your Blink 👀
               </Button>
             </div>
           </motion.div>

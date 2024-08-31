@@ -72,7 +72,7 @@ export default function BlinkPage() {
                 <CardDescription className="text-center">
                   You're one step away from unlocking exclusive content and
                   features on your favorite{" "}
-                  <span className="highlight-blue">Discord</span> servers!
+                  <span className="highlight-cyan">Discord</span> servers!
                 </CardDescription>
               </CardHeader>
               <div className="mt-8" style={{ textAlign: "center" }}>
@@ -107,9 +107,18 @@ export default function BlinkPage() {
                       transition={{ duration: 2, ease: "linear" }}
                     />
 
+                    {/* Moved the first element to the top */}
                     <motion.div
-                      className="absolute -inset-4 bg-neon-purple opacity-20 z-0"
+                      className="absolute top-0 left-0 right-0 w-full h-32 bg-neon-purple opacity-20 z-0"
                       animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 2, ease: "linear" }}
+                    />
+
+                    {/* Moved the second element to the bottom */}
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 w-full h-32 bg-cyan-400 opacity-20 z-0"
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 2, ease: "linear" }}
                     />
                   </motion.span>{" "}
                 </motion.h1>{" "}
