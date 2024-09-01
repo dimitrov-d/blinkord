@@ -158,7 +158,7 @@ export function HeroLarge({ onConnect }: { onConnect: () => void }) {
         transition={{ duration: 0.5, delay: 1 }}
       >
         <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 rounded-lg border border-gray-700 p-3 md:p-4">
-          <p className="dark:text-white text-black text-xs sm:text-sm md:text-base w-full text-center mb-2">
+          <p className="dark:text-white uppercase font-excon font-bold text-black text-xs sm:text-sm md:text-base w-full text-center mb-2">
             Hackathon Sponsors:
           </p>
           <Image

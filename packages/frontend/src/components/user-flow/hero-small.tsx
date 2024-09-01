@@ -162,7 +162,7 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
           animate="visible"
           transition={{ duration: 0.5, delay: 1 }}
         >
-          <p className="dark:text-white text-black text-xs sm:text-sm w-full text-center mb-2">
+          <p className="dark:text-white  font-excon font-bold  uppercase text-black text-xs sm:text-sm w-full text-center mb-2">
             Hackathon Sponsors:
           </p>
           <div className="flex flex-wrap justify-center items-center gap-2">
