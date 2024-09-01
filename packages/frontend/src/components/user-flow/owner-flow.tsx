@@ -6,7 +6,7 @@ import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useSearchParams } from "next/navigation";
 import LoadingSpinner from "../loading";
 import DiscordLogo3D from "../discord-3rf";
-import { ConnectDiscordScreen } from "./hero";
+import { ResponsiveConnectDiscordScreen } from "./hero";
 
 function SearchParamsHandler({
   handleCodeCallback,
@@ -120,7 +120,7 @@ function OwnerFlow() {
             callbackHandled={callbackHandled}
           />
         </Suspense>
-        <ConnectDiscordScreen onConnect={handleConnectDiscord} />
+        <ResponsiveConnectDiscordScreen onConnect={handleConnectDiscord} />
         <DiscordLogo3D />
       </main>
     </div>
