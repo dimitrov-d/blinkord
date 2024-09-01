@@ -50,7 +50,7 @@ Learn more about Solana actions and Blinks by [using this link](https://solana.c
 
 
 ## Additional Resources
-
-- [Actions and Blinks Dashboard](https://dashboard.dialect.to/actions)
-- [Blinks Marketplace](https://dial.to)
-- [Full Documentation](https://docs.dialect.to/documentation)
+- [Official webpage](https://blinkord.com)
+- [Full documentation](https://docs.blinkord.com)
+- [Discord Community](https://discord.com/invite/HugHTEPu4H)
+- [X Profile](https://x.com/blinkord_sol)
