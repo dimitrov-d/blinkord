@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: "Blinkord - Seamless Premium Access for Discord Servers",
     description:
       "Monetize your Discord server effortlessly with Blinkord. Secure payments in SOL and instant premium access with custom links.",
-    images: ["https://blinkord.com/images/twitter-image.png"],
+    images: ["https://blinkord.com/images/og-image.png"],
   },
 };
 
@@ -96,8 +96,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
           <meta
             name="twitter:image"
-            content="https://blinkord.com/images/twitter-image.png"
+            content="https://blinkord.com/images/og-image.png"
           />
+
+          <script src="/scripts/mailgo.min.js" />
         </head>
         <body
           className={cn(
