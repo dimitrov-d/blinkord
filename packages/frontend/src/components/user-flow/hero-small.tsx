@@ -78,7 +78,7 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
           </motion.span>{" "}
           Discord
           <motion.span
-            className="relative inline-block group mx-1 md:mx-2 flex items-center justify-center"
+            className="relative inline-block group md:mx-2 flex items-center justify-center"
             whileHover={{ scale: 1.05 }}
           >
             <Image
@@ -88,7 +88,7 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
               src="/transhumans-roboto.webp"
               alt=""
             />
-          <span className="z-100 ml-4 md:ml-6 xl:ml-10">experiences</span> with <span className="highlight-blue">Blinkord</span>.
+          <div className="inline-block flex-1 relative whitespace-nowrap">experiences with <span className="highlight-blue">Blinkord</span>.</div>
           <motion.div
               className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 border-t-2 border-r-2 border-neon-blue z-10"
               animate={{ rotate: 0 }}
