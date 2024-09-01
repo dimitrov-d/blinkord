@@ -12,7 +12,7 @@ const LoadingSpinner = () => {
       transition={{ duration: 0.5 }}
     >
       <div role="status">
-        <motion.p 
+        <motion.p
           className="text-center text-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -5,12 +5,12 @@ import env from '../services/env';
 import { findGuildById } from '../database/database';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { createPostResponse } from '@solana/actions';
-// import { BlinksightsClient } from 'blinksights-sdk';
+import { BlinksightsClient } from 'blinksights-sdk';
 
 export const blinksRouter = express.Router();
 
 const BASE_URL = env.APP_BASE_URL;
-// const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
+const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
 blinksRouter.get('/', async (req: Request, res: Response) =>
   res.json({
@@ -50,10 +50,10 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     label: null,
     title: guild.name,
     icon: guild.iconUrl,
-    description: guild.description,
+    description: `${guild.description}${guild.domainsTld ? `\n\n 10% discount for .${guild.domainsTld} domains` : ''}`,
     links: {
       actions: guild.roles.map(({ id, name, amount }) => ({
-        label: `${name} (${amount} ${guild.useSend ? 'SEND' : 'SOL'})`,
+        label: `${name} (${amount.toString().replace('.00', '')}) ${guild.useSend ? 'SEND' : 'SOL'})`,
         href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
@@ -62,9 +62,9 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
   };
 
   // Blinksights tracking API call fails
-  // const response = blinkSights.createActionGetResponseV1(req.url, payload);
-  // return res.json(response);
-  return res.json(payload);
+  const response = await blinkSights.createActionGetResponseV1(req.url, payload);
+  return res.json(response);
+  // return res.json(payload);
 });
 
 /**
@@ -90,9 +90,13 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   if (!role) return res.status(404).json({ error: 'Role not found' });
 
   try {
-    const transaction = await generateSendTransaction(req.body.account, role.amount, guild);
+    // Instruction to add blinksights memo to transaction
+    const trackingInstruction = await blinkSights.getActionIdentityInstructionV2(req.body.account, req.url);
+    const transaction = await generateSendTransaction(req.body.account, role.amount, guild, trackingInstruction);
 
-    // blinkSights.trackActionV2(req.body.account, req.url);
+    // Run in async, no need to await
+    blinkSights.trackActionV2(req.body.account, req.url);
+
     return res.json(
       await createPostResponse({
         fields: {

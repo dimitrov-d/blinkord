@@ -5,6 +5,7 @@ import {
   Connection,
   TransactionMessage,
   VersionedTransaction,
+  TransactionInstruction,
 } from '@solana/web3.js';
 import { Guild } from '../database/entities/guild';
 import nacl from 'tweetnacl';
@@ -13,10 +14,12 @@ import env from './env';
 import { getOwnedDomainsFromTld } from './alldomains';
 import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 
-// import { BlinksightsClient } from 'blinksights-sdk';
-// import env from './env';
-
-export async function generateSendTransaction(from: string, amount: number, guild: Guild) {
+export async function generateSendTransaction(
+  from: string,
+  amount: number,
+  guild: Guild,
+  trackingInstruction: TransactionInstruction,
+) {
   const fromPubkey = new PublicKey(from);
   const toPubKey = new PublicKey(guild.address);
 
@@ -39,12 +42,12 @@ export async function generateSendTransaction(from: string, amount: number, guil
 
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
-  // const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
-  // const trackingInstruction = blinkSights.getActionIdentityInstructionV2(fromPubkey.toString(), 'abc');
-
   const transferInstruction = guild.useSend
     ? await getTransferSendInstruction(fromPubkey, toPubKey, lamports)
     : getTransferSolInstruction(fromPubkey, toPubKey, lamports);
+
+  const instructions = [transferInstruction];
+  if (trackingInstruction) instructions.push(trackingInstruction);
 
   return new VersionedTransaction(
     new TransactionMessage({
@@ -52,7 +55,7 @@ export async function generateSendTransaction(from: string, amount: number, guil
       recentBlockhash: blockhash,
       instructions: [
         transferInstruction,
-        //  trackingInstruction
+        //trackingInstruction
       ],
     }).compileToV0Message(),
   );

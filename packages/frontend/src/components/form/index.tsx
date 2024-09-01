@@ -272,7 +272,7 @@ function ServerForm({
                             step="0.00000001"
                             transition={{ type: "spring", stiffness: 300 }}
                           />
-                          <span className="text-gray-600">SOL</span>
+                          <span className="text-gray-600">{formData.useSend ? 'SEND' : 'SOL'}</span>
                         </div>
                       </div>
                       {roleErrors[role.id] && (

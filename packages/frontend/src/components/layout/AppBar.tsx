@@ -55,10 +55,18 @@ export default function PrimarySearchAppBar() {
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">
+              <a
+                href="mailto:hi@blinkord.com?subject=Blinkord Feedback"
+                className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
+                rel="noopener noreferrer"
+              >
+                Feedback
+              </a>
               <Link
                 href="https://discord.gg/HugHTEPu4H"
                 className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 Discord
               </Link>
@@ -66,6 +74,7 @@ export default function PrimarySearchAppBar() {
                 href="https://docs.blinkord.com"
                 className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 Docs
               </Link>
