@@ -88,8 +88,8 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
               src="/transhumans-roboto.webp"
               alt=""
             />
-   <div>experiences with Blinkord.</div>
-            <motion.div
+          <span className="z-100 ml-4 md:ml-6 xl:ml-10">experiences</span> with <span className="highlight-blue">Blinkord</span>.
+          <motion.div
               className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 border-t-2 border-r-2 border-neon-blue z-10"
               animate={{ rotate: 0 }}
               whileHover={{ rotate: -360 }}
@@ -130,8 +130,8 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <p className="mb-1 md:mb-2">
-            Monetize your <span className="highlight-green">Discord</span>{" "}
-            server <span className="highlight-cyan">effortlessly</span>.
+          Monetize your <span className="highlight-green">Discord</span>{" "}
+          server <span className="highlight-cyan">effortlessly</span>.
           </p>
           <p className="opacity-50 dark:text-white text-black text-xs sm:text-sm md:text-base">
             Create shareable links that grant access to exclusive discord roles
