@@ -9,11 +9,11 @@ export function ResponsiveConnectDiscordScreen({ onConnect }: { onConnect: () =>
   const { width } = useWindowSize();
 
   if (width === undefined) {
-    return null; // Return null if the width is not defined yet
+    return null;
   }
 
   if (width <= 1200) {
-    return <HeroLarge onConnect={onConnect} />;
+    return <HeroSmall onConnect={onConnect} />;
   } else if (width <= 1800) {
     return <HeroSmall onConnect={onConnect} />;
   } else {
