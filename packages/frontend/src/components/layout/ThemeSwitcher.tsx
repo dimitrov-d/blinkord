@@ -81,7 +81,6 @@ export default function ThemeSwitcherComponent({ isDark, setIsDark }: any) {
               setIsDark(newTheme);
               localStorage.setItem("isDark", JSON.stringify(newTheme));
               document.documentElement.classList.toggle("dark", newTheme);
-
             }}
           />
         }
