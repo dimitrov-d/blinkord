@@ -52,6 +52,7 @@ function RedirectComponent() {
       if (data.token) {
         setToken(data.token);
         localStorage.setItem("discordToken", data.token);
+        localStorage.setItem("guilds", JSON.stringify(data.guilds));
         setUserData(data);
         setDiscordConnected(true);
 

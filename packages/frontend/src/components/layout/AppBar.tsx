@@ -15,6 +15,12 @@ export default function PrimarySearchAppBar() {
   const [showLogo, setShowLogo] = useState(true);
 
   React.useEffect(() => {
+    const savedTheme = localStorage.getItem("isDark");
+    if (savedTheme) {
+      setIsDark(JSON.parse(savedTheme));
+      document.documentElement.classList.toggle("dark", JSON.parse(savedTheme));
+    }
+
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setShowLogo(false);
@@ -45,7 +51,7 @@ export default function PrimarySearchAppBar() {
             }}
           >
             <Drawer />
-        <Logo isDark={isDark} />
+            <Logo isDark={isDark} />
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">

@@ -24,17 +24,22 @@ export default function Servers() {
   const [guilds, setGuilds] = useState<Guild[]>([]);
   const [isFetchingGuilds, setIsFetchingGuilds] = useState(false);
   const router = useRouter();
-  const setIsLoggedIn = useUserStore((state) => state.setDiscordConnected);
   const discordConnected = useUserStore((state) => state.discordConnected);
-  const discordClientId = useUserStore((state) => state.discordClientId);
   const { isDark } = useContext(ThemeContext);
 
   useEffect(() => {
     if (discordConnected) {
       fetchGuilds();
-    } else {
-      router.push("/");
+      return;
     }
+    const guilds = localStorage.getItem("guilds");
+    if (guilds?.length) {
+      setGuilds(JSON.parse(guilds).sort((a: any, b: any) => a.name.localeCompare(b.name)));
+      setIsFetchingGuilds(false);
+      return;
+    }
+
+    router.push("/");
   }, [discordConnected, router]);
 
   const fetchGuilds = async () => {
@@ -173,7 +178,7 @@ export default function Servers() {
                     )}
                     <div className="absolute inset-0 bg-black bg-opacity-40 rounded" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="absolute inset-x-0 z-1 bottom-0 h-2  bg-gradient-to-r from-green-400 via-blue-600 to-purple-700"></span>
+                      <span className="absolute inset-x-0 z-1 bottom-0 h-2  bg-gradient-to-r from-green-400 via-blue-600 to-purple-700"></span>
                       {guild.image ? (
                         <Image
                           src={guild.image}
@@ -271,7 +276,7 @@ export default function Servers() {
                     )}
                     <div className="absolute inset-0 bg-black bg-opacity-40 rounded" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="absolute inset-x-0 z-1 bottom-0 h-2  bg-gradient-to-r from-green-400 via-blue-600 to-purple-700"></span>
+                      <span className="absolute inset-x-0 z-1 bottom-0 h-2  bg-gradient-to-r from-green-400 via-blue-600 to-purple-700"></span>
                       {guild.image ? (
                         <Image
                           src={guild.image}
