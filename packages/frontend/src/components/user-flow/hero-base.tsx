@@ -5,14 +5,14 @@ import { motion } from "framer-motion";
 import { LogIn } from "lucide-react";
 import Image from "next/image";
 
-export function HeroSmall({ onConnect }: { onConnect: () => void }) {
+export function HeroBase({ onConnect }: { onConnect: () => void }) {
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-8 md:px-6 md:my-10">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden font-excon px-4 py-8 md:px-6 md:my-10">
       {/* Gradient bubbles */}
       <motion.div
         className="absolute top-10 left-10 w-24 h-24 md:w-40 md:h-40 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20"
@@ -162,7 +162,7 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
           animate="visible"
           transition={{ duration: 0.5, delay: 1 }}
         >
-          <p className="dark:text-white font-bold  uppercase text-black text-xs sm:text-sm w-full text-center mb-2">
+          <p className="dark:text-white  font-excon font-bold  uppercase text-black text-xs sm:text-sm w-full text-center mb-2">
             Hackathon Sponsors:
           </p>
           <div className="flex flex-wrap justify-center items-center gap-2">

@@ -2,7 +2,7 @@ import React from 'react';
 import { useWindowSize } from '@/lib/hooks/use-window-size';
 import { HeroSmall } from './hero-small';
 import { HeroLarge } from './hero-large';
-
+import { HeroBase } from './hero-base'
 
 export function ResponsiveConnectDiscordScreen({ onConnect }: { onConnect: () => void }) {
 
@@ -15,7 +15,7 @@ export function ResponsiveConnectDiscordScreen({ onConnect }: { onConnect: () =>
   if (width <= 1200) {
     return <HeroSmall onConnect={onConnect} />;
   } else if (width <= 1800) {
-    return <HeroSmall onConnect={onConnect} />;
+    return <HeroBase onConnect={onConnect} />;
   } else {
     return <HeroLarge onConnect={onConnect} />;
   }
