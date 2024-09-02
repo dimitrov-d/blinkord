@@ -18,7 +18,7 @@ blinksRouter.get('/', async (req: Request, res: Response) =>
     title: 'Use Blinkord',
     disabled: true,
     label: 'Go to blinkord.com',
-    icon: `https://blinkord.com/banner_sm.png`,
+    icon: `https://blinkord.com/images/banner_square.png`,
     description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
     error: { message: 'Go to blinkord.com to get started' },
   } as Action<'action'>),
