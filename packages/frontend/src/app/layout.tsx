@@ -100,7 +100,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
 
           <script src="/scripts/mailgo.min.js" />
-        </head>
+          <meta name="dscvr:canvas:version" content="vNext" /></head>
         <body
           className={cn(
             "min-h-screen font-sans antialiased",
