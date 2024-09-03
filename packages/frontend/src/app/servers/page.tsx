@@ -75,7 +75,7 @@ export default function Servers() {
     const data = await response.json();
 
     if (data?.guild?.id) {
-      router.push(`/servers/${guildId}/manage`);
+      router.push(`/servers/${guildId}/configure`);
     } else {
       router.push(`/servers/${guildId}/create`);
     }

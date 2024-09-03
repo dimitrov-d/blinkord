@@ -209,9 +209,9 @@ export default function SuccessPage() {
               <Button
                 variant="default"
                 className="w-full bg-[#008FE7]"
-                onClick={() => router.push(`/servers/${serverId}/manage`)}
+                onClick={() => router.push(`/servers/${serverId}/configure`)}
               >
-                Manage your Blink 👀
+                Configure your Blink 👀
               </Button>
             </div>
 

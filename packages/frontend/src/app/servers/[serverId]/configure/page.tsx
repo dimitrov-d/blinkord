@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/card";
 import { fetchRoles } from "@/lib/actions/discord.actions";
 
-export default function ManageServerPage() {
+export default function ConfigureServerPage() {
   const { serverId } = useParams<{ serverId: string | string[] }>();
   const serverIdStr = Array.isArray(serverId) ? serverId[0] : serverId;
   const { signMessage, promptConnectWallet } = useWalletActions();
@@ -236,7 +236,7 @@ export default function ManageServerPage() {
               <span className="font-semibold">{guildName}</span>. Please
               go back and create a paid role in{" "}
               <span className="highlight-cyan">Create Paid Roles</span> or go
-              back to the Servers page to select a guild to manage.
+              back to the Servers page to select a server to configure.
             </p>
           </CardContent>
           <CardFooter className="flex justify-center">
@@ -262,7 +262,7 @@ export default function ManageServerPage() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-bold ml-3"
       >
-        Manage Blink for {guildName}
+        Configure Blink for {guildName}
       </motion.h1>
       {overlayVisible && (
         <OverlaySpinner
