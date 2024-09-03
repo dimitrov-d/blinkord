@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { BlinkPreview } from "@/components/blink/blink-display";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { MotionInput, MotionButton } from "@/components/motion";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
+import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
 export default function SuccessPage() {
   const [blinkUrl, setBlinkUrl] = useState("");
@@ -19,6 +20,7 @@ export default function SuccessPage() {
   const { toast } = useToast();
   const [imageSrc, setImageSrc] = useState("/images/og-image.png");
   const router = useRouter();
+  const { isDark } = useContext(ThemeContext);
 
   useEffect(() => {
     const id = window.location.pathname.split("/")?.at(-2);
@@ -84,7 +86,6 @@ export default function SuccessPage() {
     });
   };
 
-  // Validate and set image source
   useEffect(() => {
     const imageUrl = "/images/x.webp"; // Example URL
     try {
@@ -97,7 +98,12 @@ export default function SuccessPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-white flex flex-col items-center justify-center px-4 py-12">
+    <div
+      className={`min-h-screen flex flex-col items-center justify-center px-4 py-12 ${isDark
+        ? "bg-gradient-to-b from-purple-900 to-gray-900"
+        : "bg-gradient-to-b from-purple-100 to-white"
+        }`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -108,7 +114,8 @@ export default function SuccessPage() {
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-4xl md:text-5xl font-bold text-center mb-8 text-navy-900"
+          className={`text-4xl md:text-5xl font-bold text-center mb-8 ${isDark ? "text-white" : "text-navy-900"
+            }`}
         >
           Blink Created Successfully! 🎉
         </motion.h1>
@@ -118,23 +125,23 @@ export default function SuccessPage() {
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-white rounded-lg shadow-lg p-4 md:p-6"
+            className={`rounded-lg shadow-lg p-4 md:p-6 ${isDark ? "bg-gray-800" : "bg-white"
+              }`}
           >
-            <h2 className="text-2xl font-semibold mb-4 text-navy-900">
+            <h2 className={`text-2xl font-semibold mb-4 ${isDark ? "text-white" : "text-navy-900"}`}>
               Your Blink
             </h2>
-            <div className=" bg-gray-100 rounded-lg">
-              <BlinkPreview serverId={serverId} code={""} />
-            </div>
+            <BlinkPreview serverId={serverId} code={""} />
           </motion.div>
 
           <motion.div
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="bg-white rounded-lg shadow-lg p-4 md:p-6 flex flex-col justify-between"
+            className={`rounded-lg shadow-lg p-4 md:p-6 flex flex-col justify-between ${isDark ? "bg-gray-800" : "bg-white"
+              }`}
           >
-            <h2 className="text-2xl font-semibold mb-4 text-navy-900">
+            <h2 className={`text-2xl font-semibold mb-4 ${isDark ? "text-white" : "text-navy-900"}`}>
               Your custom Blink URL 🔗
             </h2>
 
@@ -145,7 +152,7 @@ export default function SuccessPage() {
                 type="text"
                 value={customUrl}
                 readOnly
-                className="flex-grow mr-4"
+                className={`flex-grow mr-4 ${isDark ? "text-white bg-gray-700" : ""}`}
                 whileFocus={{ scale: 1.05 }}
               />
               <MotionButton
@@ -157,12 +164,13 @@ export default function SuccessPage() {
                 Copy URL
               </MotionButton>
             </div>
+
             <Separator className="my-4" />
 
-            <h2 className="text-2xl font-semibold mb-4 text-navy-900">
+            <h2 className={`text-2xl font-semibold mb-4 ${isDark ? "text-white" : "text-navy-900"}`}>
               Share Your Blink
             </h2>
-            <p className="mb-6 text-gray-600">
+            <p className={`mb-6 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
               Share the URL with other people so they can gain access to your
               Discord's premium roles
             </p>
@@ -227,20 +235,22 @@ export default function SuccessPage() {
                     style={{ maxWidth: "100%", height: "auto" }}
                   />
                   <motion.div
-                    className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-neon-blue z-10"
+                    className={`absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 ${isDark ? "border-neon-blue" : "border-navy-900"
+                      } z-10`}
                     animate={{ rotate: 0 }}
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 2, ease: "linear" }}
                   />
                   <motion.div
-                    className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-neon-pink z-10"
+                    className={`absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 ${isDark ? "border-neon-pink" : "border-navy-900"
+                      } z-10`}
                     animate={{ rotate: 0 }}
                     whileHover={{ rotate: -360 }}
                     transition={{ duration: 2, ease: "linear" }}
                   />
-
                   <motion.div
-                    className="absolute -inset-4 bg-neon-purple/30 opacity-20 z-0"
+                    className={`absolute -inset-4 ${isDark ? "bg-neon-purple/30" : "bg-purple-200/30"
+                      } opacity-20 z-0`}
                     animate={{ rotate: [0, 360] }}
                   />
                 </motion.span>{" "}

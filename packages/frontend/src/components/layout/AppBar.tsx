@@ -50,7 +50,7 @@ export default function PrimarySearchAppBar() {
               justifyContent: "center",
             }}
           >
-            <Drawer />
+            {/* <Drawer /> */}
             <Logo isDark={isDark} />
           </Box>
           <Box sx={{ flexGrow: 1 }}>

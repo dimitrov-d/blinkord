@@ -11,13 +11,12 @@ const OverlaySpinner: React.FC<OverlaySpinnerProps> = ({
   error = false,
 }) => {
   return (
-    <div className="animate-in fade-in-0 fixed inset-0 z-50 bg-white/90 flex items-center justify-center">
+    <div className="animate-in fade-in-0 fixed inset-0 z-50 bg-white/90 dark:bg-black/80 flex items-center justify-center">
       <div className="flex flex-col items-center">
         <svg
           aria-hidden="true"
-          className={`animate-spin h-20 w-20 fill-neutral-600 text-neutral-200 dark:text-neutral-600 ${
-            error ? "text-red-500" : ""
-          }`}
+          className={`animate-spin h-20 w-20 fill-neutral-600 text-neutral-200 dark:fill-neutral-400 dark:text-neutral-800 ${error ? "text-red-500 dark:text-red-400" : ""
+            }`}
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -31,10 +30,10 @@ const OverlaySpinner: React.FC<OverlaySpinnerProps> = ({
             fill="currentFill"
           />
         </svg>
-        <p className="mt-4 text-black font-excon">{text}...👀</p>
+        <p className="mt-4 text-black dark:text-white font-excon">{text}...👀</p>
         {error && (
           <Link href="/servers">
-            <a className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
+            <a className="mt-4 px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded">
               Back to Servers
             </a>
           </Link>
