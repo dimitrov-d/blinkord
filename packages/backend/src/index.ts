@@ -4,6 +4,7 @@ import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
 import helmet from 'helmet';
 import { actionCorsMiddleware } from '@solana/actions';
+import env from './services/env';
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
 
 initializeDatabase();
@@ -30,7 +31,7 @@ app.get('/actions.json', (req: Request, res: Response) =>
   res.json({
     rules: [
       { pathPattern: '/', apiPath: '/blinks/' },
-      { pathPattern: '/blinks/**', apiPath: 'https://api.blinkord.com/blinks/**' },
+      { pathPattern: '/blinks/**', apiPath: `${env.APP_BASE_URL}/blinks/**` },
     ],
   }),
 );

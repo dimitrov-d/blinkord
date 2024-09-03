@@ -5,7 +5,7 @@ export const GET = async () => {
     rules: [
       {
         pathPattern: "/**",
-        apiPath: "https://api.blinkord.com/blinks/**",
+        apiPath: `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/**`,
       },
     ],
   };
