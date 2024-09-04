@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { findGuildById, insertGuild, saveNewAccessToken as saveAuthToken, updateGuild } from '../database/database';
+import { findGuildById, insertGuild, saveNewAccessToken as saveAccessToken, updateGuild } from '../database/database';
 import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
@@ -36,17 +36,24 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
     const { access_token, expires_in } = await getDiscordAccessToken(code);
     console.info(`Login access token obtained, fetching user profile and guild data...`);
 
-    if (!req.query.owner) {
-      // Save auth token for user flow, to avoid expiration of the grant code
-      const expiresAt = new Date(Date.now() + expires_in * 1000);
-      await saveAuthToken(new AccessToken({ code, token: encryptText(access_token), expiresAt }));
-      // No response sent, just 200 json response
-      return res.json({ success: true });
-    }
-
     const { data: user } = await discordApi.get('/users/@me', {
       headers: { Authorization: `Bearer ${access_token}` },
     });
+
+    if (!req.query.owner) {
+      // Save auth token for user flow, to avoid expiration of the grant code
+      const expiresAt = new Date(Date.now() + expires_in * 1000);
+      await saveAccessToken(
+        new AccessToken({
+          discordUserId: user.id,
+          code,
+          token: encryptText(access_token),
+          expiresAt,
+        }),
+      );
+      // No need to return response, redirect user to blink page
+      return res.json({ success: true });
+    }
 
     // Fetch the user's guilds
     const getGuilds = async (Authorization: string) => {

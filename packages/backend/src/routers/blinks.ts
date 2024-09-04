@@ -2,11 +2,12 @@ import express, { Request, Response } from 'express';
 import { Action } from '@solana/actions-spec';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
-import { findAccessTokenByCode, findGuildById } from '../database/database';
+import { findAccessTokenByCode, findGuildById, saveRolePurchase } from '../database/database';
 import { discordApi } from '../services/oauth';
 import { createPostResponse } from '@solana/actions';
 import { BlinksightsClient } from 'blinksights-sdk';
 import { decryptText } from '../services/encrypt';
+import { RolePurchase } from '../database/entities/role-purchase';
 
 export const blinksRouter = express.Router();
 
@@ -168,6 +169,7 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
     );
 
     console.info(`Successfully added user ${user.username} to guild ${guild.name} with role ${role.name}`);
+    saveRolePurchase(new RolePurchase({ discordUserId: user.id, guild, role }));
 
     return res.json({
       title: guild.name,
