@@ -1,11 +1,14 @@
 import 'reflect-metadata';
-import { Repository, DataSource, InsertResult, UpdateResult } from 'typeorm';
+import { Repository, DataSource, InsertResult, UpdateResult, MoreThan } from 'typeorm';
 import { Guild } from './entities/guild';
 import { Role } from './entities/role';
 import env from '../services/env';
+import { AccessToken } from './entities/access-token';
+
+let dataSource: DataSource;
 
 let guildRepository: Repository<Guild>;
-let dataSource: DataSource;
+let accessTokenRepository: Repository<AccessToken>;
 
 export async function initializeDatabase() {
   dataSource = new DataSource({
@@ -17,7 +20,7 @@ export async function initializeDatabase() {
     database: 'postgres',
     port: 5432,
     driver: require('pg'),
-    entities: [Guild, Role],
+    entities: [Guild, Role, AccessToken],
     synchronize: false, // Set to true when you want to sync DB fields and tables with codebase
   });
   await dataSource
@@ -26,6 +29,7 @@ export async function initializeDatabase() {
     .catch((err) => console.error('Error during database initialization', err));
 
   guildRepository = dataSource.getRepository(Guild);
+  accessTokenRepository = dataSource.getRepository(AccessToken);
 }
 
 export async function insertGuild(guild: Guild): Promise<InsertResult> {
@@ -71,6 +75,19 @@ export async function findGuildById(id: string) {
     where: { id },
     relations: ['roles'],
   });
-  guild?.roles.sort((a, b) => a.amount - b.amount);
+  guild?.roles
+    .sort((a, b) => a.amount - b.amount)
+    // Trim trailing zeroes based on precision
+    .forEach((role) => (role.amount = +parseFloat(`${role.amount}`).toFixed(5).replace(/0+$/, '')));
   return guild;
+}
+
+export async function findAccessTokenByCode(code: string): Promise<AccessToken | undefined> {
+  return await accessTokenRepository.findOne({
+    where: { code, expiresAt: MoreThan(new Date()) },
+  });
+}
+
+export async function saveNewAccessToken(authToken: AccessToken): Promise<AccessToken> {
+  return await accessTokenRepository.save(authToken);
 }

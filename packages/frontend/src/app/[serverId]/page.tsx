@@ -25,28 +25,24 @@ export default function BlinkPage() {
 
   const { width } = useWindowSize();
 
+  const authenticateUser = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`,
+        { method: "GET", headers: { "Content-Type": "application/json" }, }
+      );
+
+      const data = await response.json();
+      if (data.url) window.location.href = `${data.url}&state=${serverId}`;
+    } catch (error) {
+      console.error("Failed to connect to Discord", error);
+    }
+  };
+
   useEffect(() => {
     if (code) {
       return setIsAuthenticated(true);
     }
-    const authenticateUser = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-
-        const data = await response.json();
-        if (data.url) {
-          window.location.href = `${data.url}&state=${serverId}`;
-        }
-      } catch (error) {
-        console.error("Failed to connect to Discord", error);
-      }
-    };
 
     authenticateUser();
   }, [code]);

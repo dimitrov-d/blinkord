@@ -2,10 +2,11 @@ import express, { Request, Response } from 'express';
 import { Action } from '@solana/actions-spec';
 import { generateSendTransaction } from '../services/transaction';
 import env from '../services/env';
-import { findGuildById } from '../database/database';
-import { discordApi, getDiscordAccessToken } from '../services/oauth';
+import { findAccessTokenByCode, findGuildById } from '../database/database';
+import { discordApi } from '../services/oauth';
 import { createPostResponse } from '@solana/actions';
 import { BlinksightsClient } from 'blinksights-sdk';
+import { decryptText } from '../services/encrypt';
 
 export const blinksRouter = express.Router();
 
@@ -75,7 +76,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
  * @returns {[Action POST response](https://docs.dialect.to/documentation/actions/actions/building-actions-with-nextjs#structuring-the-get-and-options-request)}
  */
 blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
-  const { code, roleId } = req.query;
+  const { code, roleId } = req.query as { code: string; roleId: string };
   const { guildId } = req.params;
 
   if (!guildId || !roleId || !code)
@@ -88,6 +89,9 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
 
   const role = guild.roles.find((r) => r.id === roleId);
   if (!role) return res.status(404).json({ error: 'Role not found' });
+
+  const accessToken = await findAccessTokenByCode(code);
+  if (!accessToken) return res.status(403).json({ error: 'Unauthorized: access_token not found.' });
 
   try {
     // Instruction to add blinksights memo to transaction
@@ -126,7 +130,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
  * @returns {[Completed action](https://docs.dialect.to/documentation/actions/specification/action-chaining)}
  */
 blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
-  const { code, roleId } = req.query;
+  const { code, roleId } = req.query as { code: string; roleId: string };
   const { guildId } = req.params;
 
   if (!guildId || !roleId || !code)
@@ -140,9 +144,11 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
   const role = guild.roles.find((r) => r.id === roleId);
   if (!role) return res.status(404).json({ error: 'Role not found' });
 
-  // Exchange the authorization code for an access token
   try {
-    const access_token = await getDiscordAccessToken(code as string);
+    // Exchange the authorization code for an access token
+    // By default check in DB, if not found then use code
+    const { token } = await findAccessTokenByCode(code);
+    const access_token = decryptText(token);
     console.info(`Guild join access token obtained, adding member to the server with roles...`);
 
     const { data: user } = await discordApi.get('/users/@me', {

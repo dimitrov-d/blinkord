@@ -32,14 +32,11 @@ function RedirectComponent() {
   ) => {
     if (callbackHandled) return;
 
+    // serverId in state indicates that it's a user login
     const serverId = searchParams.get("state");
-    if (serverId) {
-      // Redirect to the Blink page
-      return router.push(`${serverId}?code=${code}`);
-    }
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}${serverId ? '' : '&owner=true'}`,
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -52,17 +49,16 @@ function RedirectComponent() {
       }
 
       const data = await response.json();
+      setDiscordConnected(true);
+
       if (data.token) {
+        // Login data was received
         setToken(data.token);
         localStorage.setItem("discordToken", data.token);
         localStorage.setItem("guilds", JSON.stringify(data.guilds));
         setUserData(data);
-        setDiscordConnected(true);
-
-        router.push("/servers");
-      } else {
-        console.warn("No token received in the response.");
       }
+      router.push(serverId ? `${serverId}?code=${code}` : '/servers');
     } catch (error) {
       console.error("Error in handleCodeCallback:", error);
       setDiscordDisconnected(true);
