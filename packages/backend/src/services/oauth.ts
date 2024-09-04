@@ -16,5 +16,6 @@ export async function getDiscordAccessToken(code: string) {
     }),
     { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
   );
+  console.log({ data });
   return data.access_token;
 }
