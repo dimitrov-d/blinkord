@@ -53,7 +53,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     description: `${guild.description}${guild.domainsTld ? `\n\n 10% discount for .${guild.domainsTld} domains` : ''}`,
     links: {
       actions: guild.roles.map(({ id, name, amount }) => ({
-        label: `${name} (${amount.toString().replace('.00', '')}) ${guild.useSend ? 'SEND' : 'SOL'})`,
+        label: `${name} (${amount} ${guild.useSend ? 'SEND' : 'SOL'})`,
         href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },

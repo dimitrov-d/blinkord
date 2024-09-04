@@ -67,9 +67,7 @@ export default function Servers() {
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${guildId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
+      { headers: { Authorization: `Bearer ${token}` }, }
     );
 
     const data = await response.json();

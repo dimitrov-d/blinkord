@@ -19,7 +19,7 @@ export class Role {
   /**
    * Amount of Solana this role costs
    */
-  @Column('decimal', { precision: 9, scale: 2 })
+  @Column('decimal', { precision: 9, scale: 5 })
   amount: number;
 
   @ManyToOne(() => Guild, (guild) => guild.roles, { nullable: false, onDelete: 'CASCADE' })

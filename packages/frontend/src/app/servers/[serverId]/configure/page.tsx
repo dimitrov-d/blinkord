@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { CopyIcon } from "lucide-react";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
 import { DiscordRole, RoleData } from "@/lib/types";
-import { useToast } from "@/components/ui/use-toast";
 import {
   MotionCard,
   MotionCardContent,
@@ -26,7 +25,6 @@ import ServerFormEdit from "@/components/form/edit-guild";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { z } from "zod";
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
@@ -68,7 +66,7 @@ export default function ConfigureServerPage() {
   useEffect(() => {
     const fetchGuildData = async () => {
       try {
-        const response = await fetch(`/api/discord/guilds/${serverIdStr}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${serverIdStr}`, {
           headers: { Authorization: `Bearer ${token}`, },
         });
 
@@ -154,12 +152,9 @@ export default function ConfigureServerPage() {
           signature,
         };
 
-        const response = await fetch(`/api/discord/guilds/${serverIdStr}`, {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${serverIdStr}`, {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", },
           body: JSON.stringify(payload),
         });
 
