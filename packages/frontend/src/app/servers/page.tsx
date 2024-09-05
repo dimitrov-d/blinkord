@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import LoadingSpinner from "@/components/loading";
+import LoadingSpinner, { SpinnerSvg } from "@/components/loading";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { ThemeContext } from "@/lib/contexts/ThemeProvider";
@@ -26,6 +26,12 @@ export default function Servers() {
   const router = useRouter();
   const discordConnected = useUserStore((state) => state.discordConnected);
   const { isDark } = useContext(ThemeContext);
+  const [loading, setLoading] = useState<{ [guildId: string]: boolean }>({});
+
+  const handleConfigureClick = (guildId: string, guildName: string, guildImage: string | null) => {
+    setLoading((prev) => ({ ...prev, [guildId]: true }));
+    handleServerSelect(guildId, guildName, guildImage);
+  };
 
   useEffect(() => {
     if (discordConnected) {
@@ -200,11 +206,12 @@ export default function Servers() {
                 }`}
               onClick={() =>
                 guild.hasBot
-                  ? handleServerSelect(guild.id, guild.name, guild.image)
+                  ? handleConfigureClick(guild.id, guild.name, guild.image)
                   : handleInstallBot(guild.id)
               }
+              disabled={loading[guild.id]}
             >
-              {guild.hasBot ? "Configure" : "Add Bot"}
+              {loading[guild.id] ? (<SpinnerSvg />) : guild.hasBot ? "Configure" : "Add Bot"}
             </Button>
           </div>
         </CardContent>
