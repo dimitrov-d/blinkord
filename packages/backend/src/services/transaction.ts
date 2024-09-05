@@ -53,10 +53,7 @@ export async function generateSendTransaction(
     new TransactionMessage({
       payerKey: fromPubkey,
       recentBlockhash: blockhash,
-      instructions: [
-        transferInstruction,
-        //trackingInstruction
-      ],
+      instructions,
     }).compileToV0Message(),
   );
 }
@@ -67,7 +64,6 @@ export function isCorrectSignature(address: string, message: string, signature: 
   try {
     return nacl.sign.detached.verify(
       decodeUTF8(message),
-      // Buffer.from(signature).toString('base64')
       Buffer.from(signature, 'base64'),
       new PublicKey(address).toBytes(),
     );
