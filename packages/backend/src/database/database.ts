@@ -81,7 +81,7 @@ export async function findGuildById(id: string) {
   guild?.roles
     .sort((a, b) => a.amount - b.amount)
     // Trim trailing zeroes based on precision
-    .forEach((role) => (role.amount = +parseFloat(`${role.amount}`).toFixed(5).replace(/0+$/, '')));
+    .forEach((role) => (role.amount = (+role.amount).toFixed(5).replace(/0+$/, '') as any));
   return guild;
 }
 

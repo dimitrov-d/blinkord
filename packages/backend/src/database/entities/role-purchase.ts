@@ -14,11 +14,11 @@ export class RolePurchase extends BaseEntity<RolePurchase> {
   @Column({ type: 'varchar' })
   discordUserId: string;
 
-  @ManyToOne(() => Guild)
+  @ManyToOne(() => Guild, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'guildId' })
   guild: Guild;
 
-  @ManyToOne(() => Role)
+  @ManyToOne(() => Role, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'roleId' })
   role: Role;
 }
