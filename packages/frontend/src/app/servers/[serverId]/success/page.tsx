@@ -5,7 +5,7 @@ import { BlinkPreview } from "@/components/blink/blink-display";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
-import { CopyIcon } from "lucide-react";
+import { CopyIcon, SquareArrowOutUpRight } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
 import { MotionInput, MotionButton } from "@/components/motion";
@@ -86,6 +86,10 @@ export default function SuccessPage() {
     });
   };
 
+  const openCustomUrl = () => {
+    window.open(customUrl, '_blank');
+  }
+
   useEffect(() => {
     const imageUrl = "/images/x.webp"; // Example URL
     try {
@@ -152,16 +156,27 @@ export default function SuccessPage() {
                 type="text"
                 value={customUrl}
                 readOnly
-                className={`flex-grow mr-4 ${isDark ? "text-white bg-gray-700" : ""}`}
+                className="flex-grow mr-4"
                 whileFocus={{ scale: 1.05 }}
               />
+            </div>
+            <div className="flex items-center mt-4">
               <MotionButton
+                className="mr-2"
                 onClick={copyCustomUrl}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <CopyIcon className="mr-2 h-4 w-4" />
                 Copy URL
+              </MotionButton>
+              <MotionButton
+                onClick={openCustomUrl}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <SquareArrowOutUpRight className="mr-2 h-4 w-4" />
+                Open URL
               </MotionButton>
             </div>
 
@@ -208,7 +223,7 @@ export default function SuccessPage() {
             <div className="flex justify-center w-full">
               <Button
                 variant="default"
-                className="w-full bg-[#008FE7]"
+                className="w-full bg-[#008FE7] hover:bg-[#015EA0] text-white"
                 onClick={() => router.push(`/servers/${serverId}/configure`)}
               >
                 Configure your Blink 👀

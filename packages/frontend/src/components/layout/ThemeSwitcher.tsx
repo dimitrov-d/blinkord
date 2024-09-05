@@ -70,21 +70,19 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 export default function ThemeSwitcherComponent({ isDark, setIsDark }: any) {
   return (
-    <>
-      <FormControlLabel
-        label={""}
-        control={
-          <MaterialUISwitch
-            checked={isDark === true}
-            onChange={() => {
-              const newTheme = !isDark;
-              setIsDark(newTheme);
-              localStorage.setItem("isDark", JSON.stringify(newTheme));
-              document.documentElement.classList.toggle("dark", newTheme);
-            }}
-          />
-        }
-      />
-    </>
+    <FormControlLabel
+      label={""}
+      control={
+        <MaterialUISwitch
+          checked={isDark === true}
+          onChange={() => {
+            const newTheme = !isDark;
+            setIsDark(newTheme);
+            localStorage.setItem("isDark", JSON.stringify(newTheme));
+            document.documentElement.classList.toggle("dark", newTheme);
+          }}
+        />
+      }
+    />
   );
 }

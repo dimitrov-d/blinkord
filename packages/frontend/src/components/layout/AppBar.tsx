@@ -1,7 +1,6 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Drawer from "@/components/drawer";
 import { Logo } from "@/components/logo";
 import React, { useContext, useState } from "react";
 import ThemeSwitcherComponent from "./ThemeSwitcher";

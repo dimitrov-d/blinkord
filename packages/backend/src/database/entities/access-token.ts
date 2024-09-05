@@ -9,19 +9,19 @@ import { BaseEntity } from './base-entity';
 @Entity()
 export class AccessToken extends BaseEntity<AccessToken> {
   /**
-   * Discord role ID
+   * Discord OAuth grand code
    */
   @PrimaryColumn({ type: 'varchar', unique: true })
   code: string;
 
   /**
-   * Discord role ID
+   * Discord user ID
    */
   @Column({ type: 'varchar' })
   discordUserId: string;
 
   /**
-   * Encrypted access token stored in DB
+   * Encrypted access token
    */
   @Column({ type: 'varchar' })
   token: string;

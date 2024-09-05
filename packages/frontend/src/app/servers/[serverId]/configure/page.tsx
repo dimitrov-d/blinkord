@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { CopyIcon } from "lucide-react";
+import { CopyIcon, SquareArrowOutUpRight } from "lucide-react";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
 import { DiscordRole, RoleData } from "@/lib/types";
 import {
@@ -198,6 +198,10 @@ export default function ConfigureServerPage() {
     toast("URL Copied!");
   };
 
+  const openCustomUrl = () => {
+    window.open(customUrl, '_blank');
+  }
+
   // Delay rendering until loading is complete and guildFound is determined
   if (isLoading) {
     return (
@@ -296,12 +300,21 @@ export default function ConfigureServerPage() {
                     whileFocus={{ scale: 1.05 }}
                   />
                   <MotionButton
+                    className="mr-2"
                     onClick={copyCustomUrl}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <CopyIcon className="mr-2 h-4 w-4" />
                     Copy URL
+                  </MotionButton>
+                  <MotionButton
+                    onClick={openCustomUrl}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <SquareArrowOutUpRight className="mr-2 h-4 w-4" />
+                    Open URL
                   </MotionButton>
                 </div>
               )}
