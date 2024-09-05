@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { Action } from '@solana/actions-spec';
-import { generateSendTransaction } from '../services/transaction';
+import { generateSendTransaction, isTxConfirmed } from '../services/transaction';
 import env from '../services/env';
 import { findAccessTokenByCode, findGuildById, saveRolePurchase } from '../database/database';
 import { discordApi } from '../services/oauth';
@@ -94,6 +94,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const accessToken = await findAccessTokenByCode(code);
   if (!accessToken) return res.status(403).json({ error: 'Unauthorized: access_token not found.' });
 
+  console.info(`Generating transaction for guild ${guildId} and role ${roleId}`);
   try {
     // Instruction to add blinksights memo to transaction
     const trackingInstruction = await blinkSights.getActionIdentityInstructionV2(req.body.account, req.url);
@@ -118,7 +119,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
     );
   } catch (error) {
     console.error('Error during generating transaction', error);
-    res.status(500).json({ error: `Error during generating transaction: ${error}` });
+    res.status(400).send({ message: `${error}` });
   }
 });
 
@@ -144,6 +145,11 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
 
   const role = guild.roles.find((r) => r.id === roleId);
   if (!role) return res.status(404).json({ error: 'Role not found' });
+
+  if (!(await isTxConfirmed(req.body.signature)))
+    return res.status(403).json({
+      error: `Transaction ${req.body.signature} was not confirmed`,
+    });
 
   try {
     // Exchange the authorization code for an access token
