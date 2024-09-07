@@ -55,6 +55,26 @@ export class Guild extends BaseEntity<Guild> {
   @OneToMany(() => Role, (role) => role.guild, { onDelete: 'CASCADE' })
   roles: Role[];
 
+  /**
+   * If true, limited time roles will be enabled
+   */
+  @Column({ type: 'boolean', default: false })
+  limitedTimeRoles: boolean;
+
+  /**
+   * Quantity of unit until role purchases expire
+   * @example 2
+   */
+  @Column({ type: 'int', nullable: true })
+  limitedTimeQuantity: number;
+
+  /**
+   * Type of time unit matched with quantity to get expiration time
+   * @example 'Days'
+   */
+  @Column({ type: 'varchar', nullable: true })
+  limitedTimeUnit: 'hour' | 'day' | 'week' | 'month';
+
   @UpdateDateColumn()
   updateTime: Date;
 }

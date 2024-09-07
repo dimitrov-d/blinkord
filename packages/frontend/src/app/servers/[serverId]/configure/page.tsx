@@ -19,7 +19,7 @@ import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BlinkPreview } from "@/components/blink/blink-display";
 import { toast } from "sonner";
-import { ServerFormData, serverFormSchema } from "@/lib/zod-validation";
+import { defaultSchema, ServerFormData, serverFormSchema } from "@/lib/zod-validation";
 import OverlaySpinner from "@/components/overlay-spinner";
 import ServerFormEdit from "@/components/form/edit-guild";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -33,7 +33,7 @@ import {
 import { fetchRoles } from "@/lib/actions/discord.actions";
 
 export default function ConfigureServerPage() {
-  const { serverId } = useParams<{ serverId: string | string[] }>();
+  const { serverId } = useParams<{ serverId: string }>();
   const serverIdStr = Array.isArray(serverId) ? serverId[0] : serverId;
   const { signMessage, promptConnectWallet } = useWalletActions();
   const [guildName, setGuildName] = useState("");
@@ -43,15 +43,9 @@ export default function ConfigureServerPage() {
   const [customUrl, setCustomUrl] = useState("");
   const wallet = useWallet();
 
-  const [formData, setFormData] = useState<ServerFormData>({
-    id: serverIdStr || "",
-    name: "",
-    iconUrl: "",
-    description: "",
-    roles: [],
-    useSend: false,
-    domainsTld: "",
-  });
+  // Form data is set later when guild is fetched
+  const [formData, setFormData] = useState<ServerFormData>({ ...defaultSchema, id: serverId });
+
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ServerFormData, string>>
   >({});
@@ -74,15 +68,7 @@ export default function ConfigureServerPage() {
           const { guild } = await response.json();
 
           if (guild) {
-            setFormData({
-              id: guild.id,
-              name: guild.name,
-              iconUrl: guild.iconUrl,
-              description: guild.description,
-              roles: guild.roles || [],
-              useSend: guild.useSend,
-              domainsTld: guild.domainsTld
-            });
+            setFormData({ ...guild });
 
             setGuildName(guild.name);
 
@@ -181,6 +167,7 @@ export default function ConfigureServerPage() {
           }
         );
         setFormErrors(errors);
+        console.log(errors);
         toast.error(`Please fix the form errors: ${Object.values(errors).join('\n')}`);
       } else if (error instanceof Error) {
         toast.error(error.message);

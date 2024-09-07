@@ -22,6 +22,12 @@ export class Role extends BaseEntity<Role> {
   @ManyToOne(() => Guild, (guild) => guild.roles, { nullable: false, onDelete: 'CASCADE' })
   guild: Guild;
 
+  /**
+   * If role is limited time only, this is when it expires
+   */
+  @Column({ type: 'timestamp', nullable: true })
+  expiresAt: Date;
+
   @UpdateDateColumn()
   updateTime: Date;
 }

@@ -148,8 +148,8 @@ function ServerFormEdit({
           <Switch
             id="useSend"
             checked={formData.useSend}
-          onCheckedChange={(value) =>
-            handleInputChange("useSend", value, setFormData)
+            onCheckedChange={(value) =>
+              handleInputChange("useSend", value, setFormData)
             }
             className="mt-2"
           />
@@ -162,16 +162,75 @@ function ServerFormEdit({
           </div>
           <MotionInput
             id="tld"
-          placeholder="bonk"
-          value={formData.domainsTld}
-          onChange={(e) =>
-            handleInputChange("domainsTld", e.target.value, setFormData)
-          }
-          whileFocus={{ scale: 1.02 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          title="The TLD of your project on alldomains.id"
-          className="mt-2 w-full"
-        />
+            placeholder="bonk"
+            value={formData.domainsTld}
+            onChange={(e) =>
+              handleInputChange("domainsTld", e.target.value, setFormData)
+            }
+            whileFocus={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="mt-2 w-full"
+          />
+        </div>
+      </MotionCardContent>
+
+      <MotionCardContent
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="flex flex-row w-full space-x-4"
+      >
+        <div className="flex flex-col w-1/2">
+          <div className="flex items-center">
+            <Label htmlFor="limitedTimeRoles" className="mr-2">Limited Time Roles</Label>
+            {HelpTooltip("If toggled on, roles will be available to users for a limited time only and will be automatically removed afterwards.")}
+          </div>
+          <Switch
+            id="limitedTimeRoles"
+            checked={formData.limitedTimeRoles}
+            onCheckedChange={(value) =>
+              handleInputChange("limitedTimeRoles", value, setFormData)
+            }
+            className="mt-2"
+          />
+        </div>
+
+        {formData.limitedTimeRoles && (
+          <div className="flex flex-row w-1/2 space-x-4">
+            <div className="flex-1">
+              <Label htmlFor="limitedTimeQuantity" className="mb-2">Amount</Label>
+              <select
+                id="limitedTimeQuantity"
+                value={formData.limitedTimeQuantity}
+                onChange={(e) =>
+                  handleInputChange("limitedTimeQuantity", e.target.value, setFormData)
+                }
+                className="border rounded p-2 w-full"
+              >
+                {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
+                  <option key={num} value={`${num}`}>{num}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1">
+              <Label htmlFor="limitedTimeUnit" className="mb-2">Unit</Label>
+              <select
+                id="limitedTimeUnit"
+                value={formData.limitedTimeUnit as string}
+                onChange={(e) =>
+                  handleInputChange("limitedTimeUnit", e.target.value, setFormData)
+                }
+                className="border rounded p-2 w-full"
+              >
+                <option value="hour">Hours</option>
+                <option value="day">Days</option>
+                <option value="week">Weeks</option>
+                <option value="month">Months</option>
+              </select>
+            </div>
+          </div>
+        )}
       </MotionCardContent>
 
       <MotionCard

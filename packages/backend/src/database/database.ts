@@ -80,8 +80,12 @@ export async function findGuildById(id: string) {
   });
   guild?.roles
     .sort((a, b) => a.amount - b.amount)
-    // Trim trailing zeroes based on precision
-    .forEach((role) => (role.amount = (+role.amount).toFixed(5).replace(/0+$/, '') as any));
+    // Trim trailing zeroes based on precision and remove decimal dot if integer
+    .forEach((role) => {
+      role.amount = (+role.amount).toFixed(5).replace(/(\.0+|(\.\d+?)0+)$/, '$2') as any;
+    });
+  // Convert to string for form parsing
+  guild.limitedTimeQuantity = `${guild.limitedTimeQuantity}` as any;
   return guild;
 }
 
