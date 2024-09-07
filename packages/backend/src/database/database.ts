@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Repository, DataSource, InsertResult, UpdateResult, MoreThan } from 'typeorm';
+import { Repository, DataSource, InsertResult, UpdateResult, MoreThan, Between } from 'typeorm';
 import { Guild } from './entities/guild';
 import { Role } from './entities/role';
 import env from '../services/env';
@@ -103,4 +103,16 @@ export async function saveNewAccessToken(authToken: AccessToken): Promise<Access
 
 export async function saveRolePurchase(rolePurchase: RolePurchase): Promise<RolePurchase> {
   return await rolePurchaseRepository.save(rolePurchase);
+}
+
+export async function getExpiringRoles() {
+  const now = new Date();
+  const startOfCurrentHour = new Date(now.setMinutes(0, 0, 0));
+  const startOfNextHour = new Date(startOfCurrentHour);
+  startOfNextHour.setHours(startOfNextHour.getHours() + 1);
+
+  return await rolePurchaseRepository.find({
+    where: { expiresAt: Between(startOfCurrentHour, startOfNextHour) },
+    relations: ['role', 'guild'],
+  });
 }

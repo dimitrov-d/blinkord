@@ -5,6 +5,8 @@ import { discordRouter } from './routers/discord';
 import helmet from 'helmet';
 import { actionCorsMiddleware } from '@solana/actions';
 import env from './services/env';
+import './cron/remove-expired-roles';
+
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
 
 initializeDatabase();
