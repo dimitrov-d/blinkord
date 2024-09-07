@@ -17,7 +17,7 @@ import { MotionCard, MotionCardContent } from "@/components/motion";
 import ServerForm from "@/components/form";
 import OverlaySpinner from "@/components/overlay-spinner";
 
-export default function Panel() {
+export default function CreateServerPage() {
   const { serverId } = useParams<{ serverId: string }>();
   const { signMessage, promptConnectWallet } = useWalletActions();
   const [overlayVisible, setOverlayVisible] = useState(false);

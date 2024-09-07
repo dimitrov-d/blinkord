@@ -205,7 +205,7 @@ function ServerForm({
                     onChange={(e) =>
                       handleInputChange("limitedTimeQuantity", e.target.value, setFormData)
                     }
-                    className="border rounded p-2 w-full"
+                    className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
                   >
                     {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
                       <option key={num} value={`${num}`}>{num}</option>
@@ -221,7 +221,7 @@ function ServerForm({
                     onChange={(e) =>
                       handleInputChange("limitedTimeUnit", e.target.value, setFormData)
                     }
-                    className="border rounded p-2 w-full"
+                    className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
                   >
                     <option value="hour">Hours</option>
                     <option value="day">Days</option>
