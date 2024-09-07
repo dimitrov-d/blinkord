@@ -14,7 +14,6 @@ schedule(
 
     // Remove roles for each expired role purchase
     for (const rolePurchase of expiringRoles) {
-      if (!rolePurchase.guild || !rolePurchase.role) continue;
       const {
         discordUserId,
         guild: { id: guildId, name: guildName },

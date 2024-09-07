@@ -105,14 +105,27 @@ export async function saveRolePurchase(rolePurchase: RolePurchase): Promise<Role
   return await rolePurchaseRepository.save(rolePurchase);
 }
 
-export async function getExpiringRoles() {
+/**
+ * Get all role purchases where guild and role is not null, guild.limitedTimeRoles is true
+ * And based on expiresAt it expires in this hour
+ * @returns {Promise<RolePurchase[]>}
+ */
+export async function getExpiringRoles(): Promise<RolePurchase[]> {
   const now = new Date();
   const startOfCurrentHour = new Date(now.setMinutes(0, 0, 0));
   const startOfNextHour = new Date(startOfCurrentHour);
   startOfNextHour.setHours(startOfNextHour.getHours() + 1);
 
-  return await rolePurchaseRepository.find({
-    where: { expiresAt: Between(startOfCurrentHour, startOfNextHour) },
-    relations: ['role', 'guild'],
-  });
+  return await rolePurchaseRepository
+    .createQueryBuilder('rolePurchase')
+    .leftJoinAndSelect('rolePurchase.guild', 'guild')
+    .leftJoinAndSelect('rolePurchase.role', 'role')
+    .where('rolePurchase.expiresAt BETWEEN :startOfCurrentHour AND :startOfNextHour', {
+      startOfCurrentHour,
+      startOfNextHour,
+    })
+    .andWhere('guild.id IS NOT NULL')
+    .andWhere('role.id IS NOT NULL')
+    .andWhere('guild.limitedTimeRoles = true')
+    .getMany();
 }
