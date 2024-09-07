@@ -8,9 +8,9 @@ schedule(
   '0 * * * *',
   async () => {
     await initializeDatabase();
-    console.info('Running cron job to check for expired roles');
 
     const expiringRoles = await getExpiringRoles();
+    console.info(`Total expired roles: ${expiringRoles}`);
 
     // Remove roles for each expired role purchase
     for (const rolePurchase of expiringRoles) {

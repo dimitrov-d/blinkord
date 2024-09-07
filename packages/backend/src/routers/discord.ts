@@ -94,7 +94,7 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
     });
   } catch (err) {
     const error = `Error during OAuth callback: ${err}`;
-    console.error(error);
+    console.error(err);
     res.status(500).json({ error });
   }
 });
