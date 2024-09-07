@@ -11,7 +11,7 @@ export const defaultSchema = {
   domainsTld: "",
   limitedTimeRoles: false,
   limitedTimeQuantity: "1",
-  limitedTimeUnit: "month",
+  limitedTimeUnit: "Months",
 };
 
 export const serverFormSchema = z
@@ -59,8 +59,8 @@ export const serverFormSchema = z
       .transform((val) => parseInt(val).toString()),
     limitedTimeUnit: z
       .string()
-      .refine((val) => ["hour", "day", "week", "month"].includes(val))
-      .default("month"),
+      .refine((val) => ["Hours", "Days", "Weeks", "Months"].includes(val))
+      .default("Months"),
   })
   .default(defaultSchema);
 

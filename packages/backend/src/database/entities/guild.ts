@@ -73,7 +73,7 @@ export class Guild extends BaseEntity<Guild> {
    * @example 'Days'
    */
   @Column({ type: 'varchar', nullable: true })
-  limitedTimeUnit: 'hour' | 'day' | 'week' | 'month';
+  limitedTimeUnit: 'Hours' | 'Days' | 'Weeks' | 'Months';
 
   @UpdateDateColumn()
   updateTime: Date;

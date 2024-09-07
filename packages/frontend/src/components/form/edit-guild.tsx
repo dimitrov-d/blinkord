@@ -223,10 +223,10 @@ function ServerFormEdit({
                 }
                 className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
               >
-                <option value="hour">Hours</option>
-                <option value="day">Days</option>
-                <option value="week">Weeks</option>
-                <option value="month">Months</option>
+                <option value="Hours">Hours</option>
+                <option value="Days">Days</option>
+                <option value="Weeks">Weeks</option>
+                <option value="Months">Months</option>
               </select>
             </div>
           </div>

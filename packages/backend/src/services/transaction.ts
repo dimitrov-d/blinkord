@@ -100,6 +100,7 @@ function getTransferSolInstruction(fromPubkey: PublicKey, toPubKey: PublicKey, l
  */
 export async function isTxConfirmed(txId: string): Promise<boolean> {
   if (!txId) return false;
+  console.info(`Confirming transaction ${txId}...`);
 
   const connection = new Connection(env.SOLANA_RPC_URL, 'processed');
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();

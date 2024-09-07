@@ -78,7 +78,9 @@ export async function findGuildById(id: string) {
     where: { id },
     relations: ['roles'],
   });
-  guild?.roles
+  if (!guild) return;
+
+  guild.roles
     .sort((a, b) => a.amount - b.amount)
     // Trim trailing zeroes based on precision and remove decimal dot if integer
     .forEach((role) => {

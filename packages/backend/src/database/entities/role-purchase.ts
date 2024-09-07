@@ -21,4 +21,37 @@ export class RolePurchase extends BaseEntity<RolePurchase> {
   @ManyToOne(() => Role, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'roleId' })
   role: Role;
+
+  /**
+   * If role is limited time only, this is when it expires
+   */
+  @Column({ type: 'timestamp', nullable: true })
+  expiresAt: Date;
+
+  setExpiresAt() {
+    const { limitedTimeUnit, limitedTimeQuantity, limitedTimeRoles } = this.guild;
+    if (!limitedTimeRoles) return;
+
+    const now = new Date();
+
+    switch (limitedTimeUnit) {
+      case 'Hours':
+        now.setHours(now.getHours() + +limitedTimeQuantity);
+        break;
+      case 'Days':
+        now.setDate(now.getDate() + +limitedTimeQuantity);
+        break;
+      case 'Weeks':
+        now.setDate(now.getDate() + +limitedTimeQuantity * 7);
+        break;
+      case 'Months':
+        now.setMonth(now.getMonth() + +limitedTimeQuantity);
+        break;
+      default:
+        throw new Error(`Unsupported time unit: ${limitedTimeUnit}`);
+    }
+
+    this.expiresAt = now;
+    return this;
+  }
 }
