@@ -226,25 +226,35 @@ export default function Servers() {
         transition={{ duration: 0.5 }}
       >
         Select a server
-        <p className="text-sm text-muted-foreground text-center mt-4">
-          Please choose a server you want to create a blink for.
-        </p>
-        <p className="text-sm text-muted-foreground text-center mt-4">
-          The Blinkord Bot will be added to your server in order to assign roles
-          to your members.
-        </p>
+        {guilds?.length ? (
+          <>
+            <p className="text-sm text-muted-foreground text-center mt-4">
+              Please choose a server you want to create a blink for.
+            </p>
+            <p className="text-sm text-muted-foreground text-center mt-4">
+              The Blinkord Bot will be added to your server in order to assign roles to your members.
+            </p>
+          </>
+        ) : (
+          <p className="text-center text-lg text-muted-foreground mt-4">
+            You are not an owner or admin of any guild. Please check your Discord permissions or create a new server.
+          </p>
+        )}
       </motion.h1>
+
       {isFetchingGuilds ? (
         <LoadingSpinner />
       ) : (
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full justify-center text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {guilds.map((guild, index) => renderGuildCard(guild, index))}
-        </motion.div>
+        guilds?.length > 0 && (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full justify-center text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            {guilds.map((guild, index) => renderGuildCard(guild, index))}
+          </motion.div>
+        )
       )}
     </div>
   );
