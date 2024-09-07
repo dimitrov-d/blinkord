@@ -10,7 +10,7 @@ schedule(
     await initializeDatabase();
 
     const expiringRoles = await getExpiringRoles();
-    console.info(`Total expired roles: ${expiringRoles}`);
+    console.info(`Total expired roles: ${expiringRoles.length}`);
 
     // Remove roles for each expired role purchase
     for (const rolePurchase of expiringRoles) {
