@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 import { Role } from './role';
 import { BaseEntity } from './base-entity';
 
@@ -54,4 +54,7 @@ export class Guild extends BaseEntity<Guild> {
 
   @OneToMany(() => Role, (role) => role.guild, { onDelete: 'CASCADE' })
   roles: Role[];
+
+  @UpdateDateColumn()
+  updateTime: Date;
 }

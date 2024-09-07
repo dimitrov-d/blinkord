@@ -1,4 +1,4 @@
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn } from 'typeorm';
 
 export class BaseEntity<T> {
   constructor(data: Partial<T>) {
@@ -7,7 +7,4 @@ export class BaseEntity<T> {
 
   @CreateDateColumn()
   createTime: Date;
-
-  @UpdateDateColumn()
-  updateTime: Date;
 }
