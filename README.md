@@ -24,11 +24,12 @@ These tools enable Blinkord to provide a seamless experience for both server own
 Learn more about Solana actions and Blinks by [using this link](https://solana.com/solutions/actions)
 
 ## Features
-
-- **Easy Role Management**: Server owners can quickly create custom links that grant users access to premium roles in their Discord server, they can select which roles they want to offer and what is the cost of each role
-- **Solana Integration**: All transactions are processed using SOL, ensuring fast and secure payments.
-- **Customizable Blinks**: Server owners can customize the appearance and details of their Blinks, providing a personalized experience for their community.
-- **Seamless Member onboarding**: With only a few clicks, members of any Discord server can obtain the exclusive roles they want to gain access to.
+- **Easy Role Management:** Server owners can quickly create custom links that grant users access to premium roles in their Discord server. They can select which roles to offer and set the cost for each role, including options for discounts and limited-time only roles.
+- **Solana Integration:** All transactions are processed using SOL, ensuring fast and secure payments. The system supports transaction tracking and confirmation to enhance reliability. The transaction are executed through Solana Blinks (blockchain links) and can be triggered from any web app that supports blinks.
+- **Customizable Blinks:** Server owners can customize the appearance and details of their Blinks, including titles, descriptions, icons, and promotional messages, providing a personalized experience for their community.
+- **Seamless Member Onboarding:** Members can obtain exclusive roles with just a few clicks. The process requires no signup, and no personal information is requested, ensuring a smooth onboarding experience.
+- **Role Expiration Management:** Server owners can set limited-time roles with expiration dates, allowing for dynamic role management and encouraging users to renew their roles. The system automatically removes expired roles and notifies users via direct messages on Discord, ensuring that the server remains organized and up-to-date.
+- **Discord OAuth Integration:** The application utilizes Discord OAuth for secure authentication, allowing users to log in seamlessly and manage their roles without exposing sensitive information.
 
 ## User Flows
 
