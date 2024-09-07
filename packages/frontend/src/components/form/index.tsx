@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { ServerFormSkeleton } from "@/components/skeletons/server-form";
-import { HelpCircle, SaveIcon } from "lucide-react";
+import { SaveIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ServerFormProps } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -24,7 +24,7 @@ import {
   handleDiscordRoleToggle,
   handleDiscordRolePriceChange,
 } from "./form-common";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { HelpTooltip } from "../ui/tooltip";
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -50,7 +50,6 @@ function ServerForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-6 flex-col">
-      {/* Blink Title Field */}
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1">
           <MotionCardContent
@@ -80,7 +79,6 @@ function ServerForm({
             )}
           </MotionCardContent>
 
-          {/* Blink Image URL Field */}
           <MotionCardContent
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -139,77 +137,102 @@ function ServerForm({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col w-full"
+            className="flex flex-row w-full space-x-4"
           >
-            <div className="flex items-center">
-              <Label htmlFor="useSend" className="mr-2">
-                Pay with $SEND
-              </Label>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <motion.span
-                      className="text-gray-500 cursor-pointer"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <HelpCircle />
-                    </motion.span>
-                  </TooltipTrigger>
-                  <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
-                    Use $SEND token for payments instead of SOL
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            <div className="flex flex-col w-1/2">
+              <div className="flex items-center">
+                <Label htmlFor="useSend" className="mr-1">Pay with $SEND</Label>
+                {HelpTooltip("Use $SEND token for payments instead of SOL")}
+              </div>
+
+              <Switch
+                id="useSend"
+                checked={formData.useSend}
+                onCheckedChange={(value) =>
+                  handleInputChange("useSend", value, setFormData)
+                }
+                className="mt-2"
+              />
             </div>
-            <Switch
-              id="useSend"
-              checked={formData.useSend}
-              onCheckedChange={(value) =>
-                handleInputChange("useSend", value, setFormData)
-              }
-              className="mt-2"
-            />
+
+            <div className="flex flex-col w-1/2">
+              <div className="flex items-center">
+                <Label htmlFor="tld" className="mr-2">AllDomains TLD</Label>
+                {HelpTooltip("The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles.")}
+              </div>
+              <MotionInput
+                id="tld"
+                placeholder="bonk"
+                value={formData.domainsTld}
+                onChange={(e) =>
+                  handleInputChange("domainsTld", e.target.value, setFormData)
+                }
+                whileFocus={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="mt-2 w-full"
+              />
+            </div>
           </MotionCardContent>
 
           <MotionCardContent
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col w-[50%]"
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-row w-full space-x-4"
           >
-            <div className="flex items-center">
-              <Label htmlFor="tld" className="mr-2">
-                AllDomains TLD
-              </Label>
-              <TooltipProvider>
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <motion.span
-                      className="text-gray-500 cursor-pointer ml-2"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <HelpCircle />
-                    </motion.span>
-                  </TooltipTrigger>
-                  <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
-                    The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            <div className="flex flex-col w-1/2">
+              <div className="flex items-center">
+                <Label htmlFor="limitedTimeRoles" className="mr-2">Limited Time Roles</Label>
+                {HelpTooltip("If toggled on, roles will be available to users for a limited time only and will be automatically removed afterwards.")}
+              </div>
+              <Switch
+                id="limitedTimeRoles"
+                checked={formData.limitedTimeRoles}
+                onCheckedChange={(value) =>
+                  handleInputChange("limitedTimeRoles", value, setFormData)
+                }
+                className="mt-2"
+              />
             </div>
-            <MotionInput
-              id="tld"
-              placeholder="bonk"
-              value={formData.domainsTld}
-              onChange={(e) =>
-                handleInputChange("domainsTld", e.target.value, setFormData)
-              }
-              whileFocus={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              title="The TLD of your project on alldomains.id"
-              className="mt-2 w-full"
-            />
+
+            {formData.limitedTimeRoles && (
+              <div className="flex flex-row w-1/2 space-x-4">
+                <div className="flex-1">
+                  <Label htmlFor="limitedTimeQuantity" className="mb-2">Amount</Label>
+                  <select
+                    id="limitedTimeQuantity"
+                    value={formData.limitedTimeQuantity}
+                    onChange={(e) =>
+                      handleInputChange("limitedTimeQuantity", e.target.value, setFormData)
+                    }
+                    className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                  >
+                    {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={`${num}`}>{num}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex-1">
+                  <Label htmlFor="limitedTimeUnit" className="mb-2">Unit</Label>
+                  <select
+                    id="limitedTimeUnit"
+                    value={formData.limitedTimeUnit as string}
+                    onChange={(e) =>
+                      handleInputChange("limitedTimeUnit", e.target.value, setFormData)
+                    }
+                    className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                  >
+                    <option value="Hours">Hours</option>
+                    <option value="Days">Days</option>
+                    <option value="Weeks">Weeks</option>
+                    <option value="Months">Months</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </MotionCardContent>
+
         </div>
         <div className="flex-1">
           <MotionCard

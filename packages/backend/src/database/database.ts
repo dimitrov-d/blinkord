@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Repository, DataSource, InsertResult, UpdateResult, MoreThan } from 'typeorm';
+import { Repository, DataSource, InsertResult, UpdateResult, MoreThan, Between } from 'typeorm';
 import { Guild } from './entities/guild';
 import { Role } from './entities/role';
 import env from '../services/env';
@@ -78,10 +78,16 @@ export async function findGuildById(id: string) {
     where: { id },
     relations: ['roles'],
   });
-  guild?.roles
+  if (!guild) return;
+
+  guild.roles
     .sort((a, b) => a.amount - b.amount)
-    // Trim trailing zeroes based on precision
-    .forEach((role) => (role.amount = (+role.amount).toFixed(5).replace(/0+$/, '') as any));
+    // Trim trailing zeroes based on precision and remove decimal dot if integer
+    .forEach((role) => {
+      role.amount = (+role.amount).toFixed(5).replace(/(\.0+|(\.\d+?)0+)$/, '$2') as any;
+    });
+  // Convert to string for form parsing
+  guild.limitedTimeQuantity = `${guild.limitedTimeQuantity}` as any;
   return guild;
 }
 
@@ -97,4 +103,16 @@ export async function saveNewAccessToken(authToken: AccessToken): Promise<Access
 
 export async function saveRolePurchase(rolePurchase: RolePurchase): Promise<RolePurchase> {
   return await rolePurchaseRepository.save(rolePurchase);
+}
+
+export async function getExpiringRoles() {
+  const now = new Date();
+  const startOfCurrentHour = new Date(now.setMinutes(0, 0, 0));
+  const startOfNextHour = new Date(startOfCurrentHour);
+  startOfNextHour.setHours(startOfNextHour.getHours() + 1);
+
+  return await rolePurchaseRepository.find({
+    where: { expiresAt: Between(startOfCurrentHour, startOfNextHour) },
+    relations: ['role', 'guild'],
+  });
 }

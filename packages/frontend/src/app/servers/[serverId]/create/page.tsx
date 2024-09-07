@@ -12,33 +12,21 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { toast } from "sonner";
 import { DiscordRole, RoleData } from "@/lib/types/index";
 import { fetchRoles } from "@/lib/actions/discord.actions";
-import { ServerFormData, serverFormSchema } from "@/lib/zod-validation";
+import { defaultSchema, ServerFormData, serverFormSchema } from "@/lib/zod-validation";
 import { MotionCard, MotionCardContent } from "@/components/motion";
 import ServerForm from "@/components/form";
 import OverlaySpinner from "@/components/overlay-spinner";
 
-export default function Panel() {
+export default function CreateServerPage() {
   const { serverId } = useParams<{ serverId: string }>();
   const { signMessage, promptConnectWallet } = useWalletActions();
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
 
-  const { guildId, guildName, guildImage } = JSON.parse(localStorage.getItem('selectedGuild') || '{}');
+  const { guildName, guildImage } = JSON.parse(localStorage.getItem('selectedGuild') || '{}');
 
 
-  const [formData, setFormData] = useState<ServerFormData>({
-    id: serverId || "",
-    name: "",
-    iconUrl: "",
-    description: "",
-    // details: "",
-    roles: [],
-    useSend: false,
-    domainsTld: "",
-    // address: "",
-    // message: "",
-    // signature: "",
-  });
+  const [formData, setFormData] = useState<ServerFormData>({ ...defaultSchema, id: serverId });
   const [roleData, setRoleData] = useState<RoleData>({ blinkordRolePosition: -1, roles: [] });
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ServerFormData, string>>
@@ -89,7 +77,6 @@ export default function Panel() {
 
     try {
       await promptConnectWallet();
-
       const validatedFormData = serverFormSchema.parse(formData);
       const message = `Please confirm the following data is correct: ${JSON.stringify(formData)}`;
       setIsLoading(true);
@@ -143,6 +130,7 @@ export default function Panel() {
           }
         });
         setFormErrors(errors);
+        console.log(errors);
         toast.error(`Please fix the form errors: ${Object.values(errors).join('\n')}`);
       } else {
         console.error("Unexpected error:", error);
