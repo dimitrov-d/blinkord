@@ -1,12 +1,9 @@
 import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 import { Role } from './role';
+import { BaseEntity } from './base-entity';
 
 @Entity()
-export class Guild {
-  constructor(guild: Partial<Guild>) {
-    Object.assign(this, guild);
-  }
-
+export class Guild extends BaseEntity<Guild> {
   /**
    * Discord guild ID
    */

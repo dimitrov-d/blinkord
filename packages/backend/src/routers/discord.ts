@@ -1,10 +1,12 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { findGuildById, insertGuild, updateGuild } from '../database/database';
+import { findGuildById, insertGuild, saveNewAccessToken as saveAccessToken, updateGuild } from '../database/database';
 import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { verifySignature, verifyJwt } from '../middleware/auth';
+import { AccessToken } from '../database/entities/access-token';
+import { encryptText } from '../services/encrypt';
 
 export const discordRouter = express.Router();
 
@@ -30,12 +32,28 @@ discordRouter.get('/login', (req: Request, res: Response) => {
  */
 discordRouter.get('/login/callback', async (req: Request, res: Response) => {
   try {
-    const accessToken = await getDiscordAccessToken(req.query.code as string);
+    const code = req.query.code as string;
+    const { access_token, expires_in } = await getDiscordAccessToken(code);
     console.info(`Login access token obtained, fetching user profile and guild data...`);
 
     const { data: user } = await discordApi.get('/users/@me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${access_token}` },
     });
+
+    if (!req.query.owner) {
+      // Save auth token for user flow, to avoid expiration of the grant code
+      const expiresAt = new Date(Date.now() + expires_in * 1000);
+      await saveAccessToken(
+        new AccessToken({
+          discordUserId: user.id,
+          code,
+          token: encryptText(access_token),
+          expiresAt,
+        }),
+      );
+      // No need to return response, redirect user to blink page
+      return res.json({ success: true });
+    }
 
     // Fetch the user's guilds
     const getGuilds = async (Authorization: string) => {
@@ -46,7 +64,7 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
     };
 
     // Guilds where the user is a member/owner
-    const userGuilds = await getGuilds(`Bearer ${accessToken}`);
+    const userGuilds = await getGuilds(`Bearer ${access_token}`);
     // Guilds the bot was invited into
     const botGuilds = await getGuilds(`Bot ${env.DISCORD_BOT_TOKEN}`);
 
@@ -74,9 +92,10 @@ discordRouter.get('/login/callback', async (req: Request, res: Response) => {
         hasBot: botGuilds.some((g) => g.id === id),
       })),
     });
-  } catch (error) {
-    console.error('Error during OAuth callback', error);
-    res.status(500).json({ error: `Error during OAuth callback: ${error}` });
+  } catch (err) {
+    const error = `Error during OAuth callback: ${err}`;
+    console.error(error);
+    res.status(500).json({ error });
   }
 });
 
@@ -158,7 +177,7 @@ discordRouter.get('/guilds/:guildId', verifyJwt, async (req: Request, res: Respo
  * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.patch('/guilds/:guildId', [verifyJwt, verifySignature], async (req: Request, res: Response) => {
+discordRouter.put('/guilds/:guildId', [verifyJwt, verifySignature], async (req: Request, res: Response) => {
   const { address, data } = req.body;
 
   const guildId = req.params.guildId;

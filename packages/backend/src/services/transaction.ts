@@ -23,8 +23,6 @@ export async function generateSendTransaction(
   const fromPubkey = new PublicKey(from);
   const toPubKey = new PublicKey(guild.address);
 
-  const connection = new Connection(env.SOLANA_RPC_URL);
-
   if (guild.domainsTld) {
     // If user owns any domain from the guild's TLD, give them a 10% discount
     const walletDomains = await getOwnedDomainsFromTld(from, guild.domainsTld).catch(() => []);
@@ -36,10 +34,11 @@ export async function generateSendTransaction(
   }
 
   const lamports = amount * LAMPORTS_PER_SOL;
-  if (lamports < (await connection.getMinimumBalanceForRentExemption(0))) {
-    throw new Error(`Insufficient balance: ${from}`);
+  if (lamports > (await getSolBalance(from))) {
+    throw new Error(`Insufficient balance`);
   }
 
+  const connection = new Connection(env.SOLANA_RPC_URL);
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
   const transferInstruction = guild.useSend
@@ -53,10 +52,7 @@ export async function generateSendTransaction(
     new TransactionMessage({
       payerKey: fromPubkey,
       recentBlockhash: blockhash,
-      instructions: [
-        transferInstruction,
-        //trackingInstruction
-      ],
+      instructions,
     }).compileToV0Message(),
   );
 }
@@ -67,7 +63,6 @@ export function isCorrectSignature(address: string, message: string, signature: 
   try {
     return nacl.sign.detached.verify(
       decodeUTF8(message),
-      // Buffer.from(signature).toString('base64')
       Buffer.from(signature, 'base64'),
       new PublicKey(address).toBytes(),
     );
@@ -95,4 +90,31 @@ function getTransferSolInstruction(fromPubkey: PublicKey, toPubKey: PublicKey, l
     toPubkey: toPubKey,
     lamports,
   });
+}
+
+/**
+ *  Check if a transaction is confirmed on-chain
+ * If confirmation is not provided within 15 seconds or error happens, this will return false
+ * @param {string} txId - The transaction ID
+ * @returns {Promise<boolean>}
+ */
+export async function isTxConfirmed(txId: string): Promise<boolean> {
+  if (!txId) return false;
+
+  const connection = new Connection(env.SOLANA_RPC_URL, 'processed');
+  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+
+  return Promise.race([
+    connection
+      .confirmTransaction({ blockhash, lastValidBlockHeight, signature: txId }, 'confirmed')
+      .then((conf) => !conf.value.err),
+    new Promise((resolve) => setTimeout(resolve, 15_000, false)),
+  ])
+    .then((result) => result !== false)
+    .catch(() => false);
+}
+
+export async function getSolBalance(publicKey: string): Promise<number> {
+  const connection = new Connection(env.SOLANA_RPC_URL, 'confirmed');
+  return await connection.getBalance(new PublicKey(publicKey));
 }

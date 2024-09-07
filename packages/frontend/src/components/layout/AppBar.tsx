@@ -1,7 +1,6 @@
 "use client";
 
 import Box from "@mui/material/Box";
-import Drawer from "@/components/drawer";
 import { Logo } from "@/components/logo";
 import React, { useContext, useState } from "react";
 import ThemeSwitcherComponent from "./ThemeSwitcher";
@@ -50,11 +49,11 @@ export default function PrimarySearchAppBar() {
               justifyContent: "center",
             }}
           >
-            <Drawer />
+            {/* <Drawer /> */}
             <Logo isDark={isDark} />
           </Box>
           <Box sx={{ flexGrow: 1 }}>
-            <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">
+            {showLogo && <div className="hidden lg:flex items-center justify-end px-10 gap-6 ">
               <a
                 href="mailto:hi@blinkord.com?subject=Blinkord Feedback"
                 className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
@@ -78,7 +77,7 @@ export default function PrimarySearchAppBar() {
               >
                 Docs
               </Link>
-            </div>
+            </div>}
           </Box>
           <Box
             sx={{

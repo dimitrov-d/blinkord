@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useContext } from 'react'
 import '@dialectlabs/blinks/index.css'
 import { useAction, Blink } from "@dialectlabs/blinks"
 import { useActionSolanaWalletAdapter } from "@dialectlabs/blinks/hooks/solana"
+import { ThemeContext } from '@/lib/contexts/ThemeProvider'
 
 interface BlinkPreviewProps {
   serverId: string
@@ -11,6 +12,8 @@ interface BlinkPreviewProps {
 }
 
 export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ serverId, code }) => {
+  const { isDark } = useContext(ThemeContext);
+
   const actionApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/${serverId}${code ? `?code=${code}` : ''}`;
 
   const { adapter } = useActionSolanaWalletAdapter(process.env.NEXT_PUBLIC_HELIUS_URL!)
@@ -18,7 +21,7 @@ export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ serverId, code }) =>
 
   if (!action) return null;
 
-  const stylePreset = localStorage.getItem('isDark') === 'true' ? 'x-dark' : 'default';
+  const stylePreset = isDark ? 'x-dark' : 'default';
 
   return (
     <div className="p-4 rounded-lg ">

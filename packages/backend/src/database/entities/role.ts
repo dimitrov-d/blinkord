@@ -1,12 +1,9 @@
 import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Guild } from './guild';
+import { BaseEntity } from './base-entity';
 
 @Entity()
-export class Role {
-  constructor(role: Partial<Role>) {
-    Object.assign(this, role);
-  }
-
+export class Role extends BaseEntity<Role> {
   /**
    * Discord role ID
    */
@@ -19,7 +16,7 @@ export class Role {
   /**
    * Amount of Solana this role costs
    */
-  @Column('decimal', { precision: 9, scale: 2 })
+  @Column('decimal', { precision: 9, scale: 5 })
   amount: number;
 
   @ManyToOne(() => Guild, (guild) => guild.roles, { nullable: false, onDelete: 'CASCADE' })

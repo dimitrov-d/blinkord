@@ -5,10 +5,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { CopyIcon } from "lucide-react";
+import { CopyIcon, SquareArrowOutUpRight } from "lucide-react";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
 import { DiscordRole, RoleData } from "@/lib/types";
-import { useToast } from "@/components/ui/use-toast";
 import {
   MotionCard,
   MotionCardContent,
@@ -26,7 +25,6 @@ import ServerFormEdit from "@/components/form/edit-guild";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { z } from "zod";
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
@@ -34,7 +32,7 @@ import {
 } from "@/components/ui/card";
 import { fetchRoles } from "@/lib/actions/discord.actions";
 
-export default function ManageServerPage() {
+export default function ConfigureServerPage() {
   const { serverId } = useParams<{ serverId: string | string[] }>();
   const serverIdStr = Array.isArray(serverId) ? serverId[0] : serverId;
   const { signMessage, promptConnectWallet } = useWalletActions();
@@ -68,7 +66,7 @@ export default function ManageServerPage() {
   useEffect(() => {
     const fetchGuildData = async () => {
       try {
-        const response = await fetch(`/api/discord/guilds/${serverIdStr}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${serverIdStr}`, {
           headers: { Authorization: `Bearer ${token}`, },
         });
 
@@ -154,12 +152,9 @@ export default function ManageServerPage() {
           signature,
         };
 
-        const response = await fetch(`/api/discord/guilds/${serverIdStr}`, {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${serverIdStr}`, {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", },
           body: JSON.stringify(payload),
         });
 
@@ -203,6 +198,10 @@ export default function ManageServerPage() {
     toast("URL Copied!");
   };
 
+  const openCustomUrl = () => {
+    window.open(customUrl, '_blank');
+  }
+
   // Delay rendering until loading is complete and guildFound is determined
   if (isLoading) {
     return (
@@ -236,7 +235,7 @@ export default function ManageServerPage() {
               <span className="font-semibold">{guildName}</span>. Please
               go back and create a paid role in{" "}
               <span className="highlight-cyan">Create Paid Roles</span> or go
-              back to the Servers page to select a guild to manage.
+              back to the Servers page to select a server to configure.
             </p>
           </CardContent>
           <CardFooter className="flex justify-center">
@@ -262,7 +261,7 @@ export default function ManageServerPage() {
         transition={{ delay: 0.2, duration: 0.5 }}
         className="text-3xl font-bold ml-3"
       >
-        Manage Blink for {guildName}
+        Configure Blink for {guildName}
       </motion.h1>
       {overlayVisible && (
         <OverlaySpinner
@@ -301,12 +300,21 @@ export default function ManageServerPage() {
                     whileFocus={{ scale: 1.05 }}
                   />
                   <MotionButton
+                    className="mr-2"
                     onClick={copyCustomUrl}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <CopyIcon className="mr-2 h-4 w-4" />
                     Copy URL
+                  </MotionButton>
+                  <MotionButton
+                    onClick={openCustomUrl}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <SquareArrowOutUpRight className="mr-2 h-4 w-4" />
+                    Open URL
                   </MotionButton>
                 </div>
               )}

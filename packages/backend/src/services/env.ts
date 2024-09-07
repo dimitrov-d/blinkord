@@ -13,6 +13,7 @@ const envKeys = [
   'DATABASE_USER',
   'DATABASE_PASSWORD',
   'BLINKSIGHTS_API_KEY',
+  'ENCRYPTION_KEY',
 ] as const;
 
 // Initialize the env object using a dynamic mapping based on env keys

@@ -6,11 +6,14 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useSearchParams } from "next/navigation";
+import { useContext } from "react";
+import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
 function RedirectComponent() {
   const router = useRouter();
   const controls = useAnimation();
   const [callbackHandled, setCallbackHandled] = useState(false);
+  const { isDark } = useContext(ThemeContext);
 
   const setToken = useUserStore((state) => state.setToken);
   const setUserData = useUserStore((state) => state.setUserData);
@@ -29,14 +32,11 @@ function RedirectComponent() {
   ) => {
     if (callbackHandled) return;
 
+    // serverId in state indicates that it's a user login
     const serverId = searchParams.get("state");
-    if (serverId) {
-      // Redirect to the Blink page
-      return router.push(`${serverId}?code=${code}`);
-    }
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}${serverId ? '' : '&owner=true'}`,
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -49,17 +49,16 @@ function RedirectComponent() {
       }
 
       const data = await response.json();
+      setDiscordConnected(true);
+
       if (data.token) {
+        // Login data was received
         setToken(data.token);
         localStorage.setItem("discordToken", data.token);
         localStorage.setItem("guilds", JSON.stringify(data.guilds));
         setUserData(data);
-        setDiscordConnected(true);
-
-        router.push("/servers");
-      } else {
-        console.warn("No token received in the response.");
       }
+      router.push(serverId ? `${serverId}?code=${code}` : '/servers');
     } catch (error) {
       console.error("Error in handleCodeCallback:", error);
       setDiscordDisconnected(true);
@@ -116,8 +115,14 @@ function RedirectComponent() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-bg">
-      <div className="grid h-screen place-content-center bg-white px-4">
+    <div
+      className={`relative flex h-screen flex-col ${isDark ? "bg-gray-900" : "bg-bg"
+        }`}
+    >
+      <div
+        className={`grid h-screen place-content-center px-4 ${isDark ? "bg-gray-900" : "bg-white"
+          }`}
+      >
         <motion.div
           className="absolute inset-0 -z-10 flex justify-center items-center"
           variants={containerVariants}
@@ -192,7 +197,7 @@ function RedirectComponent() {
           <div className="absolute inset-0 flex items-center justify-center z-20">
             <svg
               aria-hidden="true"
-              className="animate-spin h-20 w-20 fill-neutral-600 text-neutral-200 dark:text-neutral-600"
+              className="animate-spin h-20 w-20 fill-neutral-600 text-neutral-200 dark:fill-neutral-400 dark:text-neutral-800"
               viewBox="0 0 100 101"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -209,12 +214,13 @@ function RedirectComponent() {
           </div>
 
           <motion.h1
-            className="mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl space-y-4"
+            className={`mt-6 text-2xl font-bold tracking-tight sm:text-4xl space-y-4 ${isDark ? "text-white" : "text-gray-900"
+              }`}
             variants={itemVariants}
           >
             We are{" "}
             <span className="highlight-cyan">
-              <span className="text-white">redirecting</span>
+              <span className={`${isDark} ? 'text-white' : ''`}>redirecting</span>
             </span>{" "}
             you,
             <br className="my-4" /> don't forget to{" "}
@@ -240,7 +246,7 @@ function RedirectComponent() {
           </motion.h1>
         </motion.div>
       </div>
-    </div>
+    </div >
   );
 }
 

@@ -6,43 +6,47 @@
 @font-face {
   font-family: "Excon";
   font-weight: 100;
-  src: url("/fonts/Excon-Thin.otf") format("opentype");
+  src: url("/fonts/Excon-Thin.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Excon";
   font-weight: 300;
-  src: url("/fonts/Excon-Light.otf") format("opentype");
+  src: url("/fonts/Excon-Light.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Excon";
   font-weight: 400;
-  src: url("/fonts/Excon-Regular.otf") format("opentype");
+  src: url("/fonts/Excon-Regular.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Excon";
   font-weight: 500;
-  src: url("/fonts/Excon-Medium.otf") format("opentype");
+  src: url("/fonts/Excon-Medium.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Excon";
   font-weight: 700;
-  src: url("/fonts/Excon-Bold.otf") format("opentype");
+  src: url("/fonts/Excon-Bold.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Excon";
   font-weight: 900;
-  src: url("/fonts/Excon-Black.otf") format("opentype");
+  src: url("/fonts/Excon-Black.woff2") format("woff2");
 }
 
+/* Base Styles */
 @layer base {
   body {
-    font-family: "Excon", sans-serif;
+    font-family: "Excon", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    /* For smoother font rendering on Safari */
   }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -103,6 +107,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -115,77 +120,54 @@
   box-sizing: border-box;
 }
 
-/* Navigation link styles */
-.navLink {
-  list-style-type: none;
-}
-
-/* Active navigation link */
-.active {
-  @apply text-[#43b083] dark:text-[#14F195];
-}
-
-/* Custom Wallet Button */
-.mymultibutton {
-  @apply bg-black text-white hover:text-black hover:bg-builderz-blue !important;
-  border: 1px solid black !important;
-}
-
-/* Body styles */
+/* Fluid Fonts */
 body {
-  @apply text-black dark:text-white selection:bg-builderz-blue selection:text-white selection:px-4 dark:selection:text-black;
-  /* margin: 0; */
-  height: 100vh;
-  /* Fluid Fonts */
-  font-size: calc(16px + (16 - 16) * ((100vw - 320px) / (1280 - 320)));
+  font-size: calc(14px + (18 - 14) * ((100vw - 320px) / (1280 - 320)));
   font-style: normal;
   font-weight: 400;
-  letter-spacing: 125%;
-  line-height: 135%;
+  letter-spacing: 0.005em;
+  line-height: 1.5;
 }
 
-/* Heading styles */
 h1 {
-  font-size: calc(30px + (36 - 30) * ((100vw - 320px) / (1280 - 320)));
+  font-size: calc(28px + (34 - 28) * ((100vw - 320px) / (1280 - 320)));
   font-style: normal;
   font-weight: 900;
-  letter-spacing: 125%;
-  line-height: calc(36px + (40 - 36) * ((100vw - 320px) / (1280 - 320)));
+  letter-spacing: 0.005em;
+  line-height: 1.2;
 }
+
 h2 {
   font-size: calc(20px + (24 - 20) * ((100vw - 320px) / (1280 - 320)));
   font-style: normal;
   font-weight: 800;
-  letter-spacing: 125%;
-  line-height: calc(34px + (38 - 34) * ((100vw - 320px) / (1280 - 320)));
+  letter-spacing: 0.005em;
+  line-height: 1.3;
 }
+
 h3 {
   font-size: calc(18px + (20 - 18) * ((100vw - 320px) / (1280 - 320)));
   font-style: normal;
   font-weight: 700;
-  letter-spacing: 125%;
-  line-height: calc(28px + (32 - 28) * ((100vw - 320px) / (1280 - 320)));
+  letter-spacing: 0.005em;
+  line-height: 1.3;
 }
 
 /* Scrollbar styles */
-/* width */
 body::-webkit-scrollbar {
   width: 8px;
   background-color: var(--chakra-colors-transparent);
 }
 
-/* Track */
 body::-webkit-scrollbar-track {
   @apply bg-transparent dark:bg-[#03040e];
 }
 
-/* Handle */
 body::-webkit-scrollbar-thumb {
   @apply bg-[#ffffff] dark:bg-[#03040e];
   border-radius: 35px;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
@@ -202,66 +184,36 @@ body::-webkit-scrollbar-thumb {
   min-width: 150px;
   border: 1px solid gray;
   outline: none;
-
   cursor: pointer;
   position: relative;
   z-index: 0;
   border-radius: 10px;
 }
+
 .glow {
   @apply text-black dark:text-white;
   min-width: 150px;
   height: 50px;
   border: none;
   outline: none;
-
   cursor: pointer;
   position: relative;
   z-index: 0;
   border-radius: 10px;
 }
 
-.glow-on-hover:before {
+.glow-on-hover:before, .glow:before {
   content: "";
-  background: linear-gradient(
-    45deg,
-    #ff0000,
-    #ff7300,
-    #fffb00,
+  background: linear-gradient(45deg,
+      #ff0000,
+      #ff7300,
+      #fffb00,
       #48ff00,
       #00ffd5,
-    #002bff,
-    #7a00ff,
-    #ff00c8,
-    #ff0000
-  );
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  background-size: 400%;
-  z-index: -1;
-  filter: blur(5px);
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-  animation: glowing 20s linear infinite;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  border-radius: 10px;
-}
-.glow:before {
-  content: "";
-  background: linear-gradient(
-    45deg,
-    #ff0000,
-    #ff7300,
-    #fffb00,
-      #48ff00,
-      #00ffd5,
-    #002bff,
-    #7a00ff,
-    #ff00c8,
-    #ff0000
-  );
+      #002bff,
+      #7a00ff,
+      #ff00c8,
+      #ff0000);
   position: absolute;
   top: -2px;
   left: -2px;
@@ -276,57 +228,19 @@ body::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
 
-.glow-on-hover:active {
-  color: #000;
-}
-.glow:active {
-  color: #000;
-}
-
-.glow-on-hover:active:after {
-  background: transparent;
-}
-.glow:active:after {
-  background: transparent;
-}
-
-.glow-on-hover:hover:before {
+.glow-on-hover:hover:before, .glow:before {
   opacity: 1;
-}
-.glow:before {
-  opacity: 1;
-}
-
-.glow-on-hover:after {
-  @apply bg-transparent text-black dark:text-white;
-  z-index: -1;
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  border-radius: 10px;
-}
-.glow:after {
-  @apply bg-transparent text-black dark:text-white;
-  z-index: -1;
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  border-radius: 10px;
 }
 
 @keyframes glowing {
   0% {
     background-position: 0 0;
   }
+
   50% {
     background-position: 400% 0;
   }
+
   100% {
     background-position: 0 0;
   }
@@ -336,6 +250,7 @@ body::-webkit-scrollbar-thumb {
   @apply text-black dark:text-white !important;
 }
 
+/* Mesh Backgrounds */
 .meshBg {
   background: #0a0924;
   background-image: radial-gradient(at 47% 96%, #151b40 0px, transparent 50%),
@@ -354,6 +269,7 @@ body::-webkit-scrollbar-thumb {
     radial-gradient(at 81% 66%, #ccd2e0 0px, transparent 50%);
 }
 
+/* Highlight Styles */
 .highlight-cyan {
   background-color: #00f9ff;
   padding: 0.2rem 0.4rem;
