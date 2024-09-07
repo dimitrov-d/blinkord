@@ -282,7 +282,7 @@ function ServerFormEdit({
                     >
                       The bot is unable to assign this role due to having a
                       lower position on the role list. Drag the Blinkord role
-                      above the roles which you want to enable. For a tutorial
+                      above the roles you want to enable, then refresh this page. For a tutorial
                       {" "}
                       <a
                         className="underline"

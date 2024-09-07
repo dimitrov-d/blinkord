@@ -20,10 +20,11 @@ import OverlaySpinner from "@/components/overlay-spinner";
 export default function Panel() {
   const { serverId } = useParams<{ serverId: string }>();
   const { signMessage, promptConnectWallet } = useWalletActions();
-  const selectedGuildName = useUserStore((state) => state.selectedGuildName);
-  const selectedGuildImage = useUserStore((state) => state.selectedGuildImage);
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false);
+
+  const { guildId, guildName, guildImage } = JSON.parse(localStorage.getItem('selectedGuild') || '{}');
+
 
   const [formData, setFormData] = useState<ServerFormData>({
     id: serverId || "",
@@ -47,14 +48,14 @@ export default function Panel() {
   const wallet = useWallet();
 
   useEffect(() => {
-    if (selectedGuildName || selectedGuildImage) {
+    if (guildName || guildImage) {
       setFormData((prev) => ({
         ...prev,
-        name: selectedGuildName || prev.name,
-        iconUrl: selectedGuildImage || prev.iconUrl,
+        name: guildName || prev.name,
+        iconUrl: guildImage || prev.iconUrl,
       }));
     }
-  }, [selectedGuildName, selectedGuildImage]);
+  }, [guildName, guildImage]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -169,7 +170,7 @@ export default function Panel() {
       >
         <ServerIcon className="h-8 w-8 text-primary" />
         <h1 className="text-3xl font-bold text-primary">
-          Create a Blink for {selectedGuildName}
+          Create a Blink for {guildName}
         </h1>
       </motion.div>
       <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">

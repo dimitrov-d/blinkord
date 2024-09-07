@@ -6,18 +6,10 @@ interface UserState {
   discordConnected: boolean;
   discordDisconnected: boolean;
   discordClientId: number;
-  selectedGuildName: string | null;
-  selectedGuildImage: string | null;
-  selectedGuildId: string | null;
   setToken: (token: string) => void;
   setUserData: (userData: any) => void;
   setDiscordConnected: (connected: boolean) => void;
   setDiscordDisconnected: (disconnected: boolean) => void;
-  setSelectedGuild: (
-    id: string | null,
-    name: string | null,
-    image: string | null
-  ) => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -34,10 +26,4 @@ export const useUserStore = create<UserState>((set) => ({
   setDiscordConnected: (connected) => set({ discordConnected: connected }),
   setDiscordDisconnected: (disconnected) =>
     set({ discordDisconnected: disconnected }),
-  setSelectedGuild: (id, name, image) =>
-    set({
-      selectedGuildId: id,
-      selectedGuildName: name,
-      selectedGuildImage: image,
-    }),
 }));

@@ -67,9 +67,7 @@ export default function Servers() {
   ) => {
     const token =
       useUserStore.getState().token || localStorage.getItem("discordToken");
-    const setSelectedGuild = useUserStore.getState().setSelectedGuild;
-
-    setSelectedGuild(guildId, guildName, guildImage);
+    localStorage.setItem('selectedGuild', JSON.stringify({ guildId, guildName, guildImage }));
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${guildId}`,
