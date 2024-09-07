@@ -2,8 +2,10 @@
 
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils"
+import { HelpCircle } from "lucide-react";
 
 const TooltipProvider = TooltipPrimitive.Provider
 
@@ -25,6 +27,19 @@ const TooltipContent = React.forwardRef<
     {...props}
   />
 ))
-TooltipContent.displayName = TooltipPrimitive.Content.displayName
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } 
+const HelpTooltip = (message: string) => <TooltipProvider>
+  <Tooltip delayDuration={0}>
+    <TooltipTrigger asChild>
+      <motion.span className="text-gray-500 cursor-pointer ml-2" whileHover={{ scale: 1.05 }}>
+        <HelpCircle />
+      </motion.span>
+    </TooltipTrigger>
+    <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
+      {message}
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, HelpTooltip } 
