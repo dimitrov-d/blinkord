@@ -30,7 +30,7 @@ export class RolePurchase extends BaseEntity<RolePurchase> {
 
   setExpiresAt() {
     const { limitedTimeUnit, limitedTimeQuantity, limitedTimeRoles } = this.guild;
-    if (!limitedTimeRoles) return;
+    if (!limitedTimeRoles) return this;
 
     const now = new Date();
 
