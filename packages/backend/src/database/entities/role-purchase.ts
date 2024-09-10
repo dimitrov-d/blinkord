@@ -28,6 +28,12 @@ export class RolePurchase extends BaseEntity<RolePurchase> {
   @Column({ type: 'timestamp', nullable: true })
   expiresAt: Date;
 
+  /**
+   * Signature of the payment transaction
+   */
+  @Column({ type: 'varchar', nullable: true })
+  signature: string;
+
   setExpiresAt() {
     const { limitedTimeUnit, limitedTimeQuantity, limitedTimeRoles } = this.guild;
     if (!limitedTimeRoles) return this;

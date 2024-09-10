@@ -147,9 +147,10 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
   const role = guild.roles.find((r) => r.id === roleId);
   if (!role) return res.status(404).json({ error: 'Role not found' });
 
-  if (!(await isTxConfirmed(req.body.signature)))
+  const signature = req.body.signature;
+  if (!(await isTxConfirmed(signature)))
     return res.status(403).json({
-      error: `Transaction ${req.body.signature} was not confirmed`,
+      error: `Transaction ${signature} was not confirmed`,
     });
 
   try {
@@ -176,12 +177,14 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
     );
 
     console.info(`Successfully added user ${user.username} to guild ${guild.name} with role ${role.name}`);
-    saveRolePurchase(new RolePurchase({ discordUserId: user.id, guild, role }).setExpiresAt());
+
+    const rolePurchase = new RolePurchase({ discordUserId: user.id, guild, role, signature }).setExpiresAt();
+    saveRolePurchase(rolePurchase).catch((err) => console.error(`Error saving role purchase: ${err}`));
 
     return res.json({
       title: guild.name,
       icon: guild.iconUrl,
-      description: `https://solscan.io/tx/${req.body.signature}`,
+      description: `https://solscan.io/tx/${signature}`,
       label: `Role ${role.name} obtained`,
       type: 'completed',
     });
@@ -190,7 +193,7 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
     res.json({
       title: guild.name,
       icon: guild.iconUrl,
-      description: `https://solscan.io/tx/${req.body.signature}`,
+      description: `https://solscan.io/tx/${signature}`,
       label: null,
       type: 'completed',
       error: {
