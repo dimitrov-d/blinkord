@@ -57,7 +57,7 @@ function RedirectComponent() {
         localStorage.setItem("discordToken", data.token);
         localStorage.setItem("guilds", JSON.stringify(data.guilds));
         setUserData(data);
-      }
+      } else if (serverId) localStorage.setItem('serverId', serverId);
       router.push(serverId ? `${serverId}?code=${code}` : '/servers');
     } catch (error) {
       console.error("Error in handleCodeCallback:", error);

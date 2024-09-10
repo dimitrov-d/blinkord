@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useParams } from "next/navigation";
+import { useSearchParams, useParams, useRouter } from "next/navigation";
 import { BlinkDisplay } from "@/components/blink/blink-display";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, LogIn } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -15,11 +15,14 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { useWindowSize } from "@/lib/hooks/use-window-size";
+import { Button } from "@/components/ui/button";
 
 export default function BlinkPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { serverId } = useParams<{ serverId: string }>();
   const code = searchParams.get("code") || "";
+
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -29,7 +32,7 @@ export default function BlinkPage() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`,
-        { method: "GET", headers: { "Content-Type": "application/json" }, }
+        { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
       const data = await response.json();
@@ -39,12 +42,23 @@ export default function BlinkPage() {
     }
   };
 
+  const onConnect = () => {
+    authenticateUser();
+  };
+
   useEffect(() => {
-    if (code) {
+    if (!code) {
+      return;
+    }
+    const serverId = localStorage.getItem("serverId");
+
+    if (serverId) {
       return setIsAuthenticated(true);
     }
+    const params = new URLSearchParams(window.location.search);
+    params.delete("code");
 
-    authenticateUser();
+    router.push(`${window.location.pathname}?${params.toString()}`);
   }, [code]);
 
   return (
@@ -53,94 +67,53 @@ export default function BlinkPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container max-w-6xl"
+        className="container max-w-6xl mt-6"
       >
-        <div className="flex flex-col md:flex-row items-start space-y-8 md:space-y-0 md:space-x-8 mt-16">
-          {width! >= 800 && ( // Show the image and welcome text on the left card only if the screen width is greater than or equal to 800px
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="flex-1"
-            >
-              <Card className="w-full">
-                <WelcomeText />
-                <div className="mt-8" style={{ textAlign: "center" }}>
-                  <motion.h1
-                    className="text-3xl font-normal tracking-tight md:text-6xl"
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <motion.span
-                      className="relative inline-block group"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <Image
-                        src="/helmet.svg"
-                        alt="Illustration"
-                        width={400}
-                        height={400}
-                        style={{ margin: "auto" }}
-                        className="rounded-lg full"
-                      />
-                      <motion.div
-                        className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-neon-blue z-10"
-                        animate={{ rotate: 0 }}
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 2, ease: "linear" }}
-                      />
-                      <motion.div
-                        className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-neon-pink z-10"
-                        animate={{ rotate: 0 }}
-                        whileHover={{ rotate: -360 }}
-                        transition={{ duration: 2, ease: "linear" }}
-                      />
-
-                      {/* Moved the first element to the top */}
-                      <motion.div
-                        className="absolute top-0 left-0 right-0 w-full h-32 bg-neon-purple opacity-20 z-0"
-                        animate={{ rotate: [0, 360] }}
-                        transition={{ duration: 2, ease: "linear" }}
-                      />
-
-                      {/* Moved the second element to the bottom */}
-                      <motion.div
-                        className="absolute bottom-0 left-0 right-0 w-full h-32 bg-cyan-400 opacity-20 z-0"
-                        animate={{ rotate: [0, 360] }}
-                        transition={{ duration: 2, ease: "linear" }}
-                      />
-                    </motion.span>{" "}
-                  </motion.h1>{" "}
-                </div>
-              </Card>
-            </motion.div>
-          )}
-
+        <div
+          className={`flex flex-col ${width! >= 800 ? "md:flex-row" : ""
+            } items-start space-y-8 md:space-y-0 md:space-x-8 mt-16`}
+        >
           <motion.div
-            initial={{ x: width! < 800 ? 0 : 20, opacity: 0 }} // Adjust initial animation based on screen width
+            initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1"
+            className="flex-1 w-full"
+          >
+            <Card className="w-full">
+              <WelcomeText />
+
+              <div className="mt-8" style={{ textAlign: "center" }}>
+                {isAuthenticated || code ? (width! > 800 ? (<Illustration />) : null) : (
+                  <CardContent className="text-center">
+                    <Alert className="mb-4">
+                      <InfoIcon className="h-5 w-5" />
+                      <AlertTitle>Discord Connection Required</AlertTitle>
+                      <AlertDescription className="mt-2">
+                        Please connect your Discord to proceed. This is required for Blinkord to assign the purchased role to your account.
+                      </AlertDescription>
+                    </Alert>
+                    <Button
+                      onClick={onConnect}
+                      className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                    >
+                      <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Connect
+                      Discord
+                    </Button>
+                  </CardContent>
+                )}
+              </div>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ x: width! < 800 ? 0 : 20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex-1 w-full"
           >
             <Card className="w-full h-auto">
               <CardContent>
-                {width! < 800 && (<WelcomeText />)}
-                {isAuthenticated ? (
-                  <div className="mb-6 mt-8">
-                    <BlinkDisplay serverId={serverId} code={code} />
-                  </div>
-                ) : (
-                  <Alert className="mb-4 mt-8">
-                    <InfoIcon className="h-4 w-4" />
-                    <AlertTitle>Authentication Required</AlertTitle>
-                    <AlertDescription>
-                      Please authenticate with{" "}
-                      <span className="highlight-cyan">Discord</span> to proceed
-                      with purchasing premium access.
-                    </AlertDescription>
-                  </Alert>
-                )}
+                <BlinkDisplay serverId={serverId} code={code} />
               </CardContent>
             </Card>
           </motion.div>
@@ -156,8 +129,50 @@ const WelcomeText = () => (
       Welcome to <span className="highlight-cyan">Blinkord</span>
     </CardTitle>
     <CardDescription className="text-center">
-      You're one step away from unlocking exclusive content and features on
-      your favorite <span className="highlight-cyan">Discord</span> servers!
+      You're one step away from unlocking exclusive content and features on your
+      favorite <span className="highlight-cyan">Discord</span> servers!
     </CardDescription>
   </CardHeader>
+);
+
+const Illustration = () => (
+  <motion.h1
+    className="text-3xl font-normal tracking-tight md:text-6xl"
+    initial={{ opacity: 0, y: -50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    <motion.span className="relative inline-block group" whileHover={{ scale: 1.05 }}>
+      <Image
+        src="/helmet.svg"
+        alt="Illustration"
+        width={400}
+        height={400}
+        style={{ margin: "auto" }}
+        className="rounded-lg full"
+      />
+      <motion.div
+        className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-neon-blue z-10"
+        animate={{ rotate: 0 }}
+        whileHover={{ rotate: 360 }}
+        transition={{ duration: 2, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-neon-pink z-10"
+        animate={{ rotate: 0 }}
+        whileHover={{ rotate: -360 }}
+        transition={{ duration: 2, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute top-0 left-0 right-0 w-full h-32 bg-neon-purple opacity-20 z-0"
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 2, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 w-full h-32 bg-cyan-400 opacity-20 z-0"
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 2, ease: "linear" }}
+      />
+    </motion.span>
+  </motion.h1>
 );

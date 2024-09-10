@@ -1,4 +1,4 @@
-require('dotenv').config();
+import 'dotenv/config';
 
 // Define the keys for the environment variables as a constant array
 const envKeys = [
