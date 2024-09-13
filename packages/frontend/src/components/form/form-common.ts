@@ -21,7 +21,7 @@ export const handleDiscordRoleToggle = (
 
   if (!role) return;
 
-  if (roleData.blinkordRolePosition < (role.position || 0)) {
+  if (roleData.blinkordRolePosition <= (role.position || 0)) {
     console.log(role.position, roleData.blinkordRolePosition);
     setRoleErrors((prev) => ({ ...prev, [roleId]: true }));
     return;
