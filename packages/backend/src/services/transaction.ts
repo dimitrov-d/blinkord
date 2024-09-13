@@ -109,7 +109,7 @@ export async function isTxConfirmed(txId: string): Promise<boolean> {
     connection
       .confirmTransaction({ blockhash, lastValidBlockHeight, signature: txId }, 'confirmed')
       .then((conf) => !conf.value.err),
-    new Promise((resolve) => setTimeout(resolve, 15_000, false)),
+    new Promise((resolve) => setTimeout(resolve, 30_000, false)),
   ])
     .then((result) => result !== false)
     .catch(() => false);
