@@ -9,7 +9,7 @@ import MyMultiButton from "./MyMultiButton";
 import Link from "next/link";
 import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
-export default function PrimarySearchAppBar() {
+export default function Header() {
   const { isDark, setIsDark } = useContext(ThemeContext);
   const [showLogo, setShowLogo] = useState(true);
 

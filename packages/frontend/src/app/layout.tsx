@@ -4,7 +4,7 @@ import { DM_Sans as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/layout/Footer";
 import LayoutWrapper from "@/app/LayoutWrapper";
-import AppBar from "@/components/layout/AppBar";
+import Header from "@/components/layout/Header";
 import { Toaster } from "sonner";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -111,7 +111,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
           {/* Main Content */}
           <div className="relative z-10 flex min-h-screen flex-col">
-            <AppBar />
+            <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
           </div>

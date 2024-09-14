@@ -115,7 +115,7 @@ export function HeroLarge({ onConnect }: { onConnect: () => void }) {
           </motion.span>
           <span className="z-100 ml-4 md:ml-6 xl:ml-10">experiences</span> with <span className="highlight-blue">Blinkord</span>.
         </motion.h1>
-        
+
         <motion.div
           className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-center mb-4 md:mb-6"
           variants={fadeInUp}
@@ -128,7 +128,7 @@ export function HeroLarge({ onConnect }: { onConnect: () => void }) {
             server <span className="highlight-cyan">effortlessly</span>.
           </p>
         </motion.div>
-        
+
         <motion.p
           className="opacity-50 dark:text-white text-black text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-center mb-4 "
           variants={fadeInUp}
@@ -140,16 +140,16 @@ export function HeroLarge({ onConnect }: { onConnect: () => void }) {
           with just a few clicks.
         </motion.p>
         <div className="flex justify-center w-full sm:w-auto mb-4 sm:mb-0 xl:my-2">
-            <Button
-              onClick={onConnect}
-              className="w-full sm:w-auto md:w-64 h-10  sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-            >
-              <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Connect Discord
-            </Button>
-          </div>
+          <Button
+            onClick={onConnect}
+            className="w-full sm:w-auto md:w-64 h-10  sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+          >
+            <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Get Started
+          </Button>
+        </div>
       </div>
-    
-    
+
+
       <motion.div
         className="w-full max-w-7xl h-full sm:my-2"
         variants={fadeInUp}
