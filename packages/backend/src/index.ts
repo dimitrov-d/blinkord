@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { actionCorsMiddleware } from '@solana/actions';
 import env from './services/env';
 import './cron/remove-expired-roles';
+import { loginRouter } from './routers/login';
 
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
 
@@ -38,6 +39,7 @@ app.get('/actions.json', (req: Request, res: Response) =>
   }),
 );
 
+app.use('/login', loginRouter);
 app.use('/blinks', blinksRouter);
 app.use('/discord', discordRouter);
 

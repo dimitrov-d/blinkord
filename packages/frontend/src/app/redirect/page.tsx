@@ -36,7 +36,7 @@ function RedirectComponent() {
     const serverId = searchParams.get("state");
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login/callback?code=${encodeURIComponent(code)}${serverId ? '' : '&owner=true'}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login/callback?code=${encodeURIComponent(code)}${serverId ? '' : '&owner=true'}`,
         { headers: { "Content-Type": "application/json" } }
       );
 

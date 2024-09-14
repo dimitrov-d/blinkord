@@ -9,7 +9,7 @@ function OwnerFlow() {
   const handleConnectDiscord = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login?owner=true`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login?owner=true`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },

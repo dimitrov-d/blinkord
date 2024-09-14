@@ -31,7 +31,7 @@ export default function BlinkPage() {
   const authenticateUser = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
