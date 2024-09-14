@@ -50,11 +50,12 @@ export default function BlinkPage() {
     if (!code) {
       return;
     }
-    const serverId = localStorage.getItem("serverId");
+    const guildId = localStorage.getItem("state");
 
-    if (serverId) {
+    if (guildId === serverId) {
       return setIsAuthenticated(true);
     }
+    // If link was shared with code, use this measure to remove code from URL in case user did not log in yet
     const params = new URLSearchParams(window.location.search);
     params.delete("code");
 

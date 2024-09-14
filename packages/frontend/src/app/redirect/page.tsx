@@ -32,11 +32,11 @@ function RedirectComponent() {
   ) => {
     if (callbackHandled) return;
 
-    // serverId in state indicates that it's a user login
-    const serverId = searchParams.get("state");
+    // state indicates that it's a user login (can be marketplace or serverId)
+    const state = searchParams.get("state") as string;
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login/callback?code=${encodeURIComponent(code)}${serverId ? '' : '&owner=true'}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login/callback?code=${encodeURIComponent(code)}${state ? '' : '&owner=true'}`,
         { headers: { "Content-Type": "application/json" } }
       );
 
@@ -57,8 +57,8 @@ function RedirectComponent() {
         localStorage.setItem("discordToken", data.token);
         localStorage.setItem("guilds", JSON.stringify(data.guilds));
         setUserData(data);
-      } else if (serverId) localStorage.setItem('serverId', serverId);
-      router.push(serverId ? `${serverId}?code=${code}` : '/servers');
+      } else if (state) localStorage.setItem('state', state);
+      router.push(state ? `${state}?code=${code}` : '/servers');
     } catch (error) {
       console.error("Error in handleCodeCallback:", error);
       setDiscordDisconnected(true);
