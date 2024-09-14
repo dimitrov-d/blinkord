@@ -3,7 +3,7 @@ import { blinksRouter } from './routers/blinks';
 import { initializeDatabase } from './database/database';
 import { discordRouter } from './routers/discord';
 import helmet from 'helmet';
-import { actionCorsMiddleware } from '@solana/actions';
+import { actionCorsMiddleware, BLOCKCHAIN_IDS } from '@solana/actions';
 import env from './services/env';
 import './cron/remove-expired-roles';
 import { loginRouter } from './routers/login';
@@ -15,7 +15,7 @@ initializeDatabase();
 const app = express();
 app.use(express.json());
 app.use(helmet());
-app.use(actionCorsMiddleware({}));
+app.use(actionCorsMiddleware({ chainId: BLOCKCHAIN_IDS.mainnet, actionVersion: '1' }));
 app.use((req, res, next) => {
   // Redirect API URL to website
   if (req.hostname === 'api.blinkord.com' && req.path === '/') {
