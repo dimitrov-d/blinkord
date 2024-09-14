@@ -87,18 +87,17 @@ export default function BlinkPage() {
                 {isAuthenticated || code ? (width! > 800 ? (<Illustration />) : null) : (
                   <CardContent className="text-center">
                     <Alert className="mb-4">
-                      <InfoIcon className="h-5 w-5" />
-                      <AlertTitle>Discord Connection Required</AlertTitle>
+                      <AlertTitle> <InfoIcon className="h-7 w-7 mr-2" style={{ display: 'inline' }} />Discord Connection Required</AlertTitle>
                       <AlertDescription className="mt-2">
-                        Please connect your Discord to proceed. This is required for Blinkord to assign the purchased role to your account.
+                        Please connect your Discord to proceed. Blinkord requires you to connect your Discord in order to assign you the purchased role
                       </AlertDescription>
                     </Alert>
                     <Button
                       onClick={onConnect}
                       className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
                     >
-                      <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Connect
-                      Discord
+                      <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" />
+                      Connect Discord
                     </Button>
                   </CardContent>
                 )}

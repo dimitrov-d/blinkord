@@ -62,29 +62,19 @@ const BlinkMarketplace = () => {
   if (isLoading) return (<div> <OverlaySpinner /> </div>);
 
   return (
-    <section className="py-20">
+    <section className="py-20 relative">
       <div className="2xl:container 2xl:mx-auto px-4 sm:px-8">
         <h1 className="text-3xl font-bold text-center mb-6 mt-12">Blinkord Marketplace - {blinks.length} blinks</h1>
-
-        <div className="text-center my-4">
-          <Button
-            onClick={() => onConnect(true)}
-            className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-          >
-            <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Add your own
-          </Button>
-        </div>
 
         {!code && (
           <div className="flex flex-col sm:flex-row justify-center items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
             <Alert className="w-full sm:w-1/2 mx-auto text-center">
               <div className="flex flex-col items-center">
                 <div className="flex items-center mb-4">
-                  <InfoIcon className="h-5 w-5 mr-2" />
                   <div>
-                    <AlertTitle>Discord Connection Required</AlertTitle>
+                    <AlertTitle> <InfoIcon className="h-7 w-7 mr-2" style={{ display: 'inline' }} />Discord Connection Required</AlertTitle>
                     <AlertDescription className="mt-2">
-                      Please connect your Discord to proceed. This is required for Blinkord to assign the purchased role to your account.
+                      Blinkord requires you to connect your Discord in order to assign you the purchased roles
                     </AlertDescription>
                   </div>
                 </div>
@@ -92,11 +82,11 @@ const BlinkMarketplace = () => {
                   onClick={() => onConnect(false)}
                   className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
                 >
-                  <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Get Started
+                  <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" />
+                  Connect Discord
                 </Button>
               </div>
             </Alert>
-
           </div>
         )}
 
@@ -108,7 +98,17 @@ const BlinkMarketplace = () => {
           ))}
         </div>
       </div>
+
+      {/* Floating Button */}
+      <Button
+        onClick={() => onConnect(true)}
+        className="fixed h-[4rem] bottom-16 right-8 sm:bottom-16 sm:right-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold rounded-full flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+      >
+        <Plus className="h-7 w-7 mr-0" />
+        <span className="hidden sm:block text-lg">Add a blink</span>
+      </Button>
     </section>
+
   );
 
 };
