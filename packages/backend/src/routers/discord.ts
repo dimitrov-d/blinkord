@@ -57,6 +57,10 @@ discordRouter.post('/guilds', [verifyJwt, verifySignature], async (req: Request,
 discordRouter.get('/guilds/:guildId', verifyJwt, async (req: Request, res: Response) => {
   const guildId = req.params.guildId;
 
+  if (!req['user']?.guildIds?.includes(guildId)) {
+    return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
+  }
+
   const guild = await findGuildById(guildId);
   return res.json({ guild });
 });
@@ -96,8 +100,12 @@ discordRouter.put('/guilds/:guildId', [verifyJwt, verifySignature], async (req: 
  * @returns { blinkordRolePosition: number, roles: { id: string, name: string, position: number}[]}
  */
 discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) => {
+  const guildId = req.params.guildId;
+  if (!req['user']?.guildIds?.includes(guildId)) {
+    return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
+  }
+
   try {
-    const guildId = req.params.guildId;
     const { data: roles } = await discordApi.get(`/guilds/${guildId}/roles`, {
       headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
     });
