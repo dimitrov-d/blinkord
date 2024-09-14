@@ -35,6 +35,16 @@ export async function initializeDatabase() {
   rolePurchaseRepository = dataSource.getRepository(RolePurchase);
 }
 
+export async function findAllGuildIdsSortedByCreateTime(): Promise<string[]> {
+  const guilds = await guildRepository
+    .createQueryBuilder('guild')
+    .select('guild.id')
+    .orderBy('guild.createTime', 'DESC')
+    .getMany();
+
+  return guilds.map(({ id }) => id);
+}
+
 export async function insertGuild(guild: Guild): Promise<InsertResult> {
   return await dataSource.transaction(async (entityManager) => {
     const newGuild = await entityManager.insert(Guild, guild);
