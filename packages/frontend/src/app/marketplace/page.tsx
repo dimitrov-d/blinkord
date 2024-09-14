@@ -38,6 +38,7 @@ const BlinkMarketplace = () => {
         setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch blinks', error);
+        setBlinks([]);
       }
     };
 

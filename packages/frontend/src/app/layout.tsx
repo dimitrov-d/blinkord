@@ -10,7 +10,7 @@ import { Toaster } from "sonner";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 export const metadata: Metadata = {
-  title: "Blinkord - Seamless Premium Access for Discord Servers",
+  title: "Blinkord - Monetize your Discord Community",
   description:
     "Blinkord simplifies premium access for your Discord server. Create shareable links that unlock exclusive roles. Secure payments in SOL via Solana Actions.",
   keywords: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "Discord OAuth integration",
   ],
   openGraph: {
-    title: "Blinkord - Seamless Premium Access for Discord Servers",
+    title: "Blinkord - Monetize your Discord Community",
     description:
       "Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server roles instantly. Powered by Solana for fast, secure transactions.",
     url: "https://blinkord.com",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blinkord - Seamless Premium Access for Discord Servers",
+    title: "Blinkord - Monetize your Discord Community",
     description:
       "Monetize your Discord server effortlessly with Blinkord. Secure payments in SOL and instant premium access with custom links.",
     images: ["https://blinkord.com/images/og-image.png"],
@@ -69,7 +69,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Open Graph & Twitter Cards */}
           <meta
             property="og:title"
-            content="Blinkord - Seamless Premium Access for Discord Servers"
+            content="Blinkord - Monetize your Discord Community"
           />
           <meta
             property="og:description"
@@ -88,7 +88,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <meta name="twitter:card" content="summary_large_image" />
           <meta
             name="twitter:title"
-            content="Blinkord - Seamless Premium Access for Discord Servers"
+            content="Blinkord - Monetize your Discord Community"
           />
           <meta
             name="twitter:description"
