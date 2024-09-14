@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { BlinkDisplay } from '@/components/blink/blink-display';
 import { Button } from "@/components/ui/button";
-import { InfoIcon, LogIn, Plus } from 'lucide-react';
+import { InfoIcon, Plus } from 'lucide-react';
 import OverlaySpinner from '@/components/overlay-spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -72,7 +72,13 @@ const BlinkMarketplace = () => {
               <div className="flex flex-col items-center">
                 <div className="flex items-center mb-4">
                   <div>
-                    <AlertTitle> <InfoIcon className="h-7 w-7 mr-2" style={{ display: 'inline' }} />Discord Connection Required</AlertTitle>
+                    <AlertTitle>
+                      <InfoIcon
+                        className="h-7 w-7 mr-2"
+                        style={{ display: 'inline' }}
+                      />
+                      Discord Connection Required
+                    </AlertTitle>
                     <AlertDescription className="mt-2">
                       Blinkord requires you to connect your Discord in order to assign you the purchased roles
                     </AlertDescription>
@@ -82,7 +88,7 @@ const BlinkMarketplace = () => {
                   onClick={() => onConnect(false)}
                   className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
                 >
-                  <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" />
+                  <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" alt="Discord Logo" />
                   Connect Discord
                 </Button>
               </div>
@@ -90,9 +96,9 @@ const BlinkMarketplace = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 grid-auto-rows">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-0 space-y-0">
           {blinks.map((blink, index) => (
-            <div key={index} className="blink-item">
+            <div key={index} className="mb-2 break-inside-avoid">
               <BlinkDisplay serverId={blink} code={code} />
             </div>
           ))}
@@ -108,9 +114,7 @@ const BlinkMarketplace = () => {
         <span className="hidden sm:block text-lg">Add a blink</span>
       </Button>
     </section>
-
   );
-
 };
 
 export default BlinkMarketplace;
