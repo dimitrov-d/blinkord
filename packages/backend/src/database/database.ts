@@ -39,6 +39,7 @@ export async function findAllGuildIdsSortedByCreateTime(): Promise<string[]> {
   const guilds = await guildRepository
     .createQueryBuilder('guild')
     .select('guild.id')
+    .where('hidden = FALSE')
     .orderBy('guild.createTime', 'DESC')
     .getMany();
 
