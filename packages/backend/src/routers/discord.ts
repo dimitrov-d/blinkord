@@ -99,8 +99,9 @@ discordRouter.put('/guilds/:guildId', [verifyJwt, verifySignature], async (req: 
  * @param {string} guildId - Path parameter representing ID of the guild
  * @returns { blinkordRolePosition: number, roles: { id: string, name: string, position: number}[]}
  */
-discordRouter.get('/guilds/:guildId/roles', async (req: Request, res: Response) => {
+discordRouter.get('/guilds/:guildId/roles', [verifyJwt], async (req: Request, res: Response) => {
   const guildId = req.params.guildId;
+
   if (!req['user']?.guildIds?.includes(guildId)) {
     return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
   }
