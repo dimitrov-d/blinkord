@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { BlinkDisplay } from '@/components/blink/blink-display';
 import { Button } from "@/components/ui/button";
 import { InfoIcon, Plus } from 'lucide-react';
@@ -22,7 +22,7 @@ const onConnect = async (owner: boolean) => {
   }
 };
 
-const BlinkMarketplace = () => {
+const BlinkMarketplaceComponent = () => {
   const [blinks, setBlinks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -117,4 +117,10 @@ const BlinkMarketplace = () => {
   );
 };
 
-export default BlinkMarketplace;
+export default function BlinkMarketplace() {
+  return (
+    <Suspense fallback={<div> <OverlaySpinner /> </div>}>
+      <BlinkMarketplaceComponent />
+    </Suspense>
+  );
+}

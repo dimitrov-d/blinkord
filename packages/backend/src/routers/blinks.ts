@@ -61,7 +61,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
       })),
     },
     disabled: !code,
-    error: code ? null : { message: `Discord login required, visit blinkord.com/${guildId}` },
+    error: code ? null : { message: `Discord connect required, visit blinkord.com/${guildId}` },
   };
 
   // Blinksights tracking API call fails

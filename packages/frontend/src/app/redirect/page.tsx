@@ -8,6 +8,7 @@ import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useSearchParams } from "next/navigation";
 import { useContext } from "react";
 import { ThemeContext } from "@/lib/contexts/ThemeProvider";
+import OverlaySpinner from "@/components/overlay-spinner";
 
 function RedirectComponent() {
   const router = useRouter();
@@ -252,7 +253,7 @@ function RedirectComponent() {
 
 export default function Redirect() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div> <OverlaySpinner /> </div>}>
       <RedirectComponent />
     </Suspense>
   );

@@ -183,32 +183,6 @@ export default function CreateServerPage() {
             />
           </MotionCardContent>
         </MotionCard>
-        {/* Blink Preview commented out */}
-        {/* <MotionCard
-          className="flex-1"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <CardHeader>
-            <CardTitle>Blink Preview</CardTitle>
-          </CardHeader>
-          <MotionCardContent>
-            <Suspense fallback={<BlinkCardSkeleton />}>
-              {isLoading ? (
-                <BlinkCardSkeleton />
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <BlinkMock />
-                </motion.div>
-              )}
-            </Suspense>
-          </MotionCardContent>
-        </MotionCard> */}
       </div>
     </div>
   );
