@@ -39,13 +39,12 @@ export async function generateSendTransaction(
   }
 
   const connection = new Connection(env.SOLANA_RPC_URL);
-  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+  const { blockhash } = await connection.getLatestBlockhash();
 
-  const transferInstruction = guild.useSend
-    ? await getTransferSendInstruction(fromPubkey, toPubKey, lamports)
-    : getTransferSolInstruction(fromPubkey, toPubKey, lamports);
+  const instructions = guild.useSend
+    ? await getTransferSendInstructions(fromPubkey, toPubKey, lamports)
+    : getTransferSolInstructions(fromPubkey, toPubKey, lamports);
 
-  const instructions = [transferInstruction];
   if (trackingInstruction) instructions.push(trackingInstruction);
 
   return new VersionedTransaction(
@@ -72,7 +71,11 @@ export function isCorrectSignature(address: string, message: string, signature: 
   }
 }
 
-async function getTransferSendInstruction(fromPubkey: PublicKey, toPubKey: PublicKey, lamports: number) {
+async function getTransferSendInstructions(
+  fromPubkey: PublicKey,
+  toPubKey: PublicKey,
+  lamports: number,
+): Promise<TransactionInstruction[]> {
   const mintAddress = new PublicKey('SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa');
   // Fetch or create associated token accounts for sender and recipient
   const fromTokenAccount = await getAssociatedTokenAddress(mintAddress, fromPubkey);
@@ -80,16 +83,33 @@ async function getTransferSendInstruction(fromPubkey: PublicKey, toPubKey: Publi
   // SEND token has 6 decimals, SOL has 9
   lamports /= 10 ** 3;
   // Create an instruction to transfer SEND token from one wallet to another
-  return createTransferInstruction(fromTokenAccount, toTokenAccount, fromPubkey, lamports);
+  return [createTransferInstruction(fromTokenAccount, toTokenAccount, fromPubkey, lamports)];
 }
 
-function getTransferSolInstruction(fromPubkey: PublicKey, toPubKey: PublicKey, lamports: number) {
-  // Create an instruction to transfer native SOL from one wallet to another
-  return SystemProgram.transfer({
+function getTransferSolInstructions(
+  fromPubkey: PublicKey,
+  toPubkey: PublicKey,
+  lamports: number,
+): TransactionInstruction[] {
+  const treasuryLamports = Math.floor(lamports * 0.02);
+  const recipientLamports = lamports - treasuryLamports;
+
+  // Instruction to transfer 98% to the recipient
+  const recipientInstruction = SystemProgram.transfer({
     fromPubkey,
-    toPubkey: toPubKey,
-    lamports,
+    toPubkey,
+    lamports: recipientLamports,
   });
+
+  // Instruction to transfer 2% to the treasury
+  const treasuryInstruction = SystemProgram.transfer({
+    fromPubkey,
+    toPubkey: new PublicKey(env.TREASURY_ADDRESS),
+    lamports: treasuryLamports,
+  });
+
+  // Return both instructions
+  return [recipientInstruction, treasuryInstruction];
 }
 
 /**

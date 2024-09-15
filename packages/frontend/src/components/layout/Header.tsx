@@ -9,7 +9,7 @@ import MyMultiButton from "./MyMultiButton";
 import Link from "next/link";
 import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
-export default function PrimarySearchAppBar() {
+export default function Header() {
   const { isDark, setIsDark } = useContext(ThemeContext);
   const [showLogo, setShowLogo] = useState(true);
 
@@ -76,6 +76,14 @@ export default function PrimarySearchAppBar() {
                 rel="noopener noreferrer"
               >
                 Docs
+              </Link>
+              <Link
+                href="/marketplace"
+                className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Marketplace
               </Link>
             </div>}
           </Box>

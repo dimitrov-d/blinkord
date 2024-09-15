@@ -26,14 +26,14 @@ export default function Footer() {
         <div className="flex items-center space-x-6 mt-4 md:mt-0">
           <a
             href="mailto:hi@blinkord.com?subject=Blinkord Feedback"
-            className={`text-[15px] font-bold navLink text-white`}
+            className="text-[15px] font-bold navLink text-white"
             rel="noopener noreferrer"
           >
             Feedback
           </a>
           <Link
             href="https://discord.gg/HugHTEPu4H"
-            className={`text-[15px] font-bold navLink text-white`}
+            className="text-[15px] font-bold navLink text-white"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -41,11 +41,19 @@ export default function Footer() {
           </Link>
           <Link
             href="https://docs.blinkord.com"
-            className={`text-[15px] font-bold navLink text-white`}
+            className="text-[15px] font-bold navLink text-white"
             target="_blank"
             rel="noopener noreferrer"
           >
             Docs
+          </Link>
+          <Link
+            href="/marketplace"
+            className="text-[15px] font-bold navLink text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Marketplace
           </Link>
         </div>
       </div>

@@ -52,6 +52,12 @@ export class Guild extends BaseEntity<Guild> {
   @Column({ type: 'text', nullable: true })
   domainsTld: string;
 
+  /**
+   * If the blink is hidden from the marketplace
+   */
+  @Column({ type: 'boolean', default: false })
+  hidden: boolean;
+
   @OneToMany(() => Role, (role) => role.guild, { onDelete: 'CASCADE' })
   roles: Role[];
 

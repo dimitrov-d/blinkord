@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
-import { BlinkPreview } from "@/components/blink/blink-display";
+import { BlinkDisplay } from "@/components/blink/blink-display";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
@@ -135,7 +135,7 @@ export default function SuccessPage() {
             <h2 className={`text-2xl font-semibold mb-4 ${isDark ? "text-white" : "text-navy-900"}`}>
               Your Blink
             </h2>
-            <BlinkPreview serverId={serverId} code={""} />
+            <BlinkDisplay serverId={serverId} code={""} />
           </motion.div>
 
           <motion.div

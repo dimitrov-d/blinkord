@@ -1,15 +1,15 @@
 "use client";
 
 import { Suspense } from "react";
-import LoadingSpinner from "../loading";
 import DiscordLogo3D from "../discord-3rf";
 import { ResponsiveConnectDiscordScreen } from "./hero";
+import OverlaySpinner from "../overlay-spinner";
 
 function OwnerFlow() {
   const handleConnectDiscord = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login?owner=true`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login?owner=true`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -28,7 +28,7 @@ function OwnerFlow() {
   return (
     <div className="flex flex-col">
       <main className="flex flex-row container mx-auto z-1">
-        <Suspense fallback={<LoadingSpinner />} />
+        <Suspense fallback={<div> <OverlaySpinner /> </div>} />
         <ResponsiveConnectDiscordScreen onConnect={handleConnectDiscord} />
         <DiscordLogo3D />
       </main>

@@ -88,8 +88,8 @@ export function HeroBase({ onConnect }: { onConnect: () => void }) {
               src="/transhumans-roboto.webp"
               alt=""
             />
-          <div className="inline-block flex-1 relative whitespace-nowrap">experiences with <span className="highlight-blue">Blinkord</span>.</div>
-          <motion.div
+            <div className="inline-block flex-1 relative whitespace-nowrap">experiences with <span className="highlight-blue">Blinkord</span>.</div>
+            <motion.div
               className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 border-t-2 border-r-2 border-neon-blue z-10"
               animate={{ rotate: 0 }}
               whileHover={{ rotate: -360 }}
@@ -97,8 +97,8 @@ export function HeroBase({ onConnect }: { onConnect: () => void }) {
             />
 
             <div className="absolute inset-0 -z-10 flex justify-center items-center">
-                 {/* //yellow */}
-                 <motion.div
+              {/* //yellow */}
+              <motion.div
                 className="absolute top-0 sm:-top-4  -left-4 w-0 h-0 border-l-[15px] sm:border-l-[20px] md:border-l-[25px] lg:border-l-[35px] xl:border-l-[45px] border-l-transparent border-r-[15px] sm:border-r-[20px] md:border-r-[25px] lg:border-r-[35px] xl:border-r-[45px] border-r-transparent border-b-[30px] sm:border-b-[40px] md:border-b-[50px] lg:border-b-[70px] xl:border-b-[90px] border-b-yellow-400 z-1"
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -121,7 +121,7 @@ export function HeroBase({ onConnect }: { onConnect: () => void }) {
             />
           </motion.span>
         </motion.h1>
-        
+
         <motion.div
           className="text-sm sm:text-base md:text-lg lg:text-xl text-center"
           variants={fadeInUp}
@@ -130,15 +130,15 @@ export function HeroBase({ onConnect }: { onConnect: () => void }) {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <p className="mb-1 md:mb-2">
-          Monetize your <span className="highlight-green">Discord</span>{" "}
-          server <span className="highlight-cyan">effortlessly</span>.
+            Monetize your <span className="highlight-green">Discord</span>{" "}
+            server <span className="highlight-cyan">effortlessly</span>.
           </p>
           <p className="opacity-50 dark:text-white text-black text-xs sm:text-sm md:text-base">
             Create shareable links that grant access to exclusive discord roles
             with just a few clicks.
           </p>
         </motion.div>
-        
+
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center w-full mb-4 md:mb-6 space-y-4 sm:space-y-0 sm:space-x-4"
           variants={fadeInUp}
@@ -151,7 +151,7 @@ export function HeroBase({ onConnect }: { onConnect: () => void }) {
               onClick={onConnect}
               className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
             >
-              <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Connect Discord
+              <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Get Started
             </Button>
           </div>
         </motion.div>

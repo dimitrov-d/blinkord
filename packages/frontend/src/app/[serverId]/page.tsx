@@ -31,7 +31,7 @@ export default function BlinkPage() {
   const authenticateUser = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/login`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login`,
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
@@ -50,11 +50,12 @@ export default function BlinkPage() {
     if (!code) {
       return;
     }
-    const serverId = localStorage.getItem("serverId");
+    const guildId = localStorage.getItem("state");
 
-    if (serverId) {
+    if (guildId === serverId) {
       return setIsAuthenticated(true);
     }
+    // If link was shared with code, use this measure to remove code from URL in case user did not log in yet
     const params = new URLSearchParams(window.location.search);
     params.delete("code");
 
@@ -86,18 +87,17 @@ export default function BlinkPage() {
                 {isAuthenticated || code ? (width! > 800 ? (<Illustration />) : null) : (
                   <CardContent className="text-center">
                     <Alert className="mb-4">
-                      <InfoIcon className="h-5 w-5" />
-                      <AlertTitle>Discord Connection Required</AlertTitle>
+                      <AlertTitle> <InfoIcon className="h-7 w-7 mr-2" style={{ display: 'inline' }} />Discord Connection Required</AlertTitle>
                       <AlertDescription className="mt-2">
-                        Please connect your Discord to proceed. This is required for Blinkord to assign the purchased role to your account.
+                        Please connect your Discord to proceed. Blinkord requires you to connect your Discord in order to assign you the purchased role
                       </AlertDescription>
                     </Alert>
                     <Button
                       onClick={onConnect}
                       className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
                     >
-                      <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Connect
-                      Discord
+                      <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" />
+                      Connect Discord
                     </Button>
                   </CardContent>
                 )}
@@ -113,7 +113,7 @@ export default function BlinkPage() {
           >
             <Card className="w-full h-auto">
               <CardContent>
-                <BlinkDisplay serverId={serverId} code={code} />
+                <BlinkDisplay serverId={serverId} code={code} hideError={true} />
               </CardContent>
             </Card>
           </motion.div>
