@@ -7,6 +7,7 @@ import { InfoIcon, Plus } from 'lucide-react';
 import OverlaySpinner from '@/components/overlay-spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from "sonner";
 
 const onConnect = async (owner: boolean) => {
   try {
@@ -37,6 +38,7 @@ const BlinkMarketplaceComponent = () => {
         setBlinks(data);
         setIsLoading(false);
       } catch (error) {
+        toast.error("Failed to get blinks");
         console.error('Failed to fetch blinks', error);
         setBlinks([]);
       }
