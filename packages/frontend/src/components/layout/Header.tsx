@@ -77,6 +77,14 @@ export default function Header() {
               >
                 Docs
               </Link>
+              <Link
+                href="/marketplace"
+                className="text-[#000000] dark:text-white text-[18px] font-bold navLink"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Marketplace
+              </Link>
             </div>}
           </Box>
           <Box
