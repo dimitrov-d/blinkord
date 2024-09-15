@@ -9,12 +9,13 @@ import { ThemeContext } from '@/lib/contexts/ThemeProvider'
 interface BlinkPreviewProps {
   serverId: string
   code?: string
+  hideError?: boolean
 }
 
-export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ serverId, code }) => {
+export const BlinkDisplay: React.FC<BlinkPreviewProps> = ({ serverId, code, hideError }) => {
   const { isDark } = useContext(ThemeContext);
 
-  const actionApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/${serverId}${code ? `?code=${code}` : ''}`;
+  const actionApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/${serverId}${code ? `?code=${code}` : hideError ? `?hideError=${hideError}` : ''}`;
 
   const { adapter } = useActionSolanaWalletAdapter(process.env.NEXT_PUBLIC_HELIUS_URL!)
   const { action } = useAction({ url: actionApiUrl, adapter })
@@ -31,5 +32,3 @@ export const BlinkPreview: React.FC<BlinkPreviewProps> = ({ serverId, code }) =>
     </div>
   )
 }
-
-export { BlinkPreview as BlinkDisplay }

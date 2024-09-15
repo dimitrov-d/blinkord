@@ -99,7 +99,7 @@ const BlinkMarketplaceComponent = () => {
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-0 space-y-0">
           {blinks.map((blink, index) => (
             <div key={index} className="mb-2 break-inside-avoid">
-              <BlinkDisplay serverId={blink} code={code} />
+              <BlinkDisplay serverId={blink} code={code} hideError={true} />
             </div>
           ))}
         </div>

@@ -46,7 +46,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
 
   console.info(`Sending action for guild ${guildId}`);
 
-  const { code } = req.query;
+  const { code, hideError } = req.query;
   const payload: Action<'action'> = {
     type: 'action',
     label: null,
@@ -61,7 +61,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
       })),
     },
     disabled: !code,
-    error: code ? null : { message: `Discord connect required, visit blinkord.com/${guildId}` },
+    error: code || !!hideError ? null : { message: `Discord connect required, visit blinkord.com/${guildId}` },
   };
 
   // Blinksights tracking API call fails

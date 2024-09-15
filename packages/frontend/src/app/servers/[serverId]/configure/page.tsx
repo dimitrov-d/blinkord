@@ -17,7 +17,7 @@ import {
 import { motion } from "framer-motion";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BlinkPreview } from "@/components/blink/blink-display";
+import { BlinkDisplay } from "@/components/blink/blink-display";
 import { toast } from "sonner";
 import { defaultSchema, ServerFormData, serverFormSchema } from "@/lib/zod-validation";
 import OverlaySpinner from "@/components/overlay-spinner";
@@ -331,7 +331,7 @@ export default function ConfigureServerPage() {
                 <Skeleton className="h-10 w-24" />
               </div>
             ) : (
-              <BlinkPreview
+              <BlinkDisplay
                 serverId={Array.isArray(serverId) ? serverId[0] : serverId}
               />
             )}
