@@ -14,17 +14,16 @@ export const blinksRouter = express.Router();
 const BASE_URL = env.APP_BASE_URL;
 const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
-blinksRouter.get('/', async (req: Request, res: Response) =>
-  res.json({
-    type: 'action',
-    title: 'Use Blinkord',
-    disabled: true,
-    label: 'Go to blinkord.com',
-    icon: `https://blinkord.com/images/banner_square.png`,
-    description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
-    error: { message: 'Go to blinkord.com to get started' },
-  } as Action<'action'>),
-);
+const generalAction = {
+  type: 'action',
+  title: 'Use Blinkord',
+  disabled: true,
+  label: 'Go to blinkord.com',
+  icon: `https://blinkord.com/images/banner_square.png`,
+  description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
+  error: { message: 'Go to blinkord.com to get started' },
+} as Action<'action'>;
+blinksRouter.get('/', async (req: Request, res: Response) => res.json(generalAction));
 /**
  * Returns an action based on data for a given guild
  * @param {string} guildId - Path parameter representing ID of the guild
@@ -33,6 +32,9 @@ blinksRouter.get('/', async (req: Request, res: Response) =>
  */
 blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
   const { guildId } = req.params;
+
+  // If guildId is not valid discord server ID
+  if (!/^\d{17,19}$/.test(guildId)) return res.json(generalAction);
 
   const guild = await findGuildById(guildId);
   if (!guild)
