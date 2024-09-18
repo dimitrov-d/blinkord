@@ -1,6 +1,5 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { toast } from "sonner";
-import { signMessageWithWallet, sendTransactionWithWallet } from "@/lib/wallet";
 
 export function useWalletActions() {
   const wallet = useWallet();
@@ -23,34 +22,27 @@ export function useWalletActions() {
   const signMessage = async (message: string) => {
     promptConnectWallet();
     if (!wallet.connected) return null;
-    const signature = await signMessageWithWallet(wallet, message);
-    if (!signature) {
-      toast.error("Failed to sign the message");
+    const { signMessage, publicKey, connected } = wallet;
+    if (!connected || !publicKey || !signMessage) {
+      console.error("Wallet not connected or signMessage not available");
+      return null;
     }
-    return signature;
-  };
 
-  // Send a transaction using the connected wallet
-  const sendTransaction = async (transactionData: {
-    message: string;
-    signature: string;
-    address: string;
-  }) => {
-    promptConnectWallet();
-    if (!wallet.connected) return { success: false };
-    const result = await sendTransactionWithWallet(wallet, transactionData);
-    if (!result.success) {
-      toast.error(result.error || "Transaction failed");
-    } else {
-      toast.success("Transaction sent successfully!");
+    const encodedMessage = new TextEncoder().encode(message);
+    try {
+      const signedMessage = await signMessage(encodedMessage);
+      return signedMessage
+        ? Buffer.from(signedMessage).toString("base64")
+        : null;
+    } catch (error) {
+      console.error("Error signing message:", error);
+      return null;
     }
-    return result;
   };
 
   return {
     wallet,
     signMessage,
-    sendTransaction,
     promptConnectWallet,
   };
 }

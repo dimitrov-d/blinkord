@@ -14,7 +14,6 @@ import {
 import ContextProvider from "@/lib/contexts/ContextProvider";
 import { ThemeProvider } from "@/lib/contexts/ThemeProvider";
 
-// Import wallet adapter styles
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 type LayoutWrapperProps = {
@@ -22,14 +21,10 @@ type LayoutWrapperProps = {
 };
 
 const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
-  // Set the network (devnet, testnet, or mainnet-beta)
-  const network = WalletAdapterNetwork.Devnet;
+  const network = WalletAdapterNetwork.Mainnet;
 
-  // Set the RPC endpoint
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
-  // Define the wallets to be used
-  // const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], [network]);
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
@@ -37,10 +32,10 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
     ],
     [network]
   );
-  
+
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider wallets={wallets} autoConnect={true}>
         <WalletModalProvider>
           <ContextProvider>
             <ThemeProvider>
