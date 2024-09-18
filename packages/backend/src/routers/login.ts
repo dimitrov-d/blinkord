@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { saveNewAccessToken as saveAccessToken } from '../database/database';
+import { getAllGuilds, saveNewAccessToken as saveAccessToken } from '../database/database';
 import env from '../services/env';
 import { discordApi, getDiscordAccessToken } from '../services/oauth';
 import { AccessToken } from '../database/entities/access-token';
@@ -78,7 +78,9 @@ loginRouter.get('/callback', async (req: Request, res: Response) => {
     const username = user.username;
     const token = jwt.sign({ userId, username, guildIds }, env.JWT_SECRET, { expiresIn: '1d' });
 
-    // Return the token, user data and filtered guilds with info if bot is in
+    const allGuilds = await getAllGuilds();
+
+    // Return the token, user data and filtered guilds with info if bot is in and if created in DB
     return res.json({
       token,
       userId,
@@ -88,6 +90,7 @@ loginRouter.get('/callback', async (req: Request, res: Response) => {
         name,
         image: icon ? `https://cdn.discordapp.com/icons/${id}/${icon}.png` : null,
         hasBot: botGuilds.some((g) => g.id === id),
+        created: allGuilds.some((g) => g.id === id),
       })),
     });
   } catch (err) {

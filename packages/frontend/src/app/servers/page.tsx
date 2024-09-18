@@ -17,6 +17,7 @@ interface Guild {
   name: string;
   image: string | null;
   hasBot: boolean;
+  created: boolean;
   roles?: { id: string; name: string }[];
 }
 
@@ -199,7 +200,7 @@ export default function Servers() {
             <Button
               variant="secondary"
               className={`py-2 px-4 text-sm font-semibold transition-all duration-300 ${guild.hasBot
-                ? "bg-cyan-400 hover:bg-cyan-600 text-white"
+                ? `bg-cyan-400 hover:bg-cyan-600 ${isDark ? "text-black" : "text-white"}`
                 : "bg-purple-500 hover:bg-purple-600 text-white"
                 }`}
               onClick={() =>
@@ -209,7 +210,7 @@ export default function Servers() {
               }
               disabled={loading[guild.id]}
             >
-              {loading[guild.id] ? (<SpinnerSvg />) : guild.hasBot ? "Configure" : "Add Bot"}
+              {loading[guild.id] ? (<SpinnerSvg />) : !guild.hasBot ? "Add Bot" : guild.created ? "Configure" : "Create"}
             </Button>
           </div>
         </CardContent>

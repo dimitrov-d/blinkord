@@ -46,6 +46,10 @@ export async function findAllGuildIdsSortedByCreateTime(): Promise<string[]> {
   return guilds.map(({ id }) => id);
 }
 
+export async function getAllGuilds(): Promise<Guild[]> {
+  return await guildRepository.find();
+}
+
 export async function insertGuild(guild: Guild): Promise<InsertResult> {
   return await dataSource.transaction(async (entityManager) => {
     const newGuild = await entityManager.insert(Guild, guild);
