@@ -148,6 +148,9 @@ export default function ConfigureServerPage() {
           toast.success("Blink data updated successfully");
           setShowBlinkPreview(false);
           setShowBlinkPreview(true);
+
+          const guild = await response.json();
+          setFormData(guild);
         } else {
           toast.error("Error updating server");
           setErrorOccurred(true);

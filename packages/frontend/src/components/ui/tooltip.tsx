@@ -29,17 +29,28 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-const HelpTooltip = (message: string) => <TooltipProvider>
-  <Tooltip delayDuration={0}>
-    <TooltipTrigger asChild>
-      <motion.span className="text-gray-500 cursor-pointer ml-2" whileHover={{ scale: 1.05 }}>
-        <HelpCircle />
-      </motion.span>
-    </TooltipTrigger>
-    <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
-      {message}
-    </TooltipContent>
-  </Tooltip>
-</TooltipProvider>
+const HelpTooltip = (message: string) => {
+  const formattedMessage = message.split('\n').map((line, index) => (
+    <React.Fragment key={index}>
+      {line}
+      <br />
+    </React.Fragment>
+  ));
+
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <motion.span className="text-gray-500 cursor-pointer ml-2" whileHover={{ scale: 1.05 }}>
+            <HelpCircle />
+          </motion.span>
+        </TooltipTrigger>
+        <TooltipContent sideOffset={8} className="bg-gray-700 text-white p-2 rounded">
+          {formattedMessage}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, HelpTooltip } 

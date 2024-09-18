@@ -5,6 +5,7 @@ export const defaultSchema = {
   name: "",
   iconUrl: "",
   description: "",
+  address: "",
   // details: "",
   roles: [],
   useSend: false,
@@ -35,6 +36,7 @@ export const serverFormSchema = z
         }
       ),
     description: z.string().min(1, "Description is required"),
+    address: z.string().min(1, "Address is required"),
     roles: z
       .array(
         z.object({

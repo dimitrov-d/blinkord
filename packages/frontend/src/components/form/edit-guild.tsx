@@ -135,6 +135,26 @@ function ServerFormEdit({
           </motion.p>
         )}
       </MotionCardContent>
+      <MotionCardContent
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <div className="flex flex-col">
+          <div className="flex items-center">
+            <Label htmlFor="payoutWallet" className="mr-2">Payout Wallet</Label>
+            {HelpTooltip("Role purchase payments from your blink will be sent to this address. \nTo change it, connect to a different address and save at the bottom of the page.")}
+          </div>
+          <MotionInput
+            id="payoutWallet"
+            value={formData.address}
+            readOnly
+            className="mt-2 w-full"
+            whileFocus={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          />
+        </div>
+      </MotionCardContent>
 
       <MotionCardContent
         initial={{ opacity: 0, y: 20 }}
