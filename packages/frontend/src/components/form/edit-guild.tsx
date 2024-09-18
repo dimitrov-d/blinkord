@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { ServerFormSkeleton } from "@/components/skeletons/server-form";
-import { SaveIcon } from "lucide-react";
+import { RotateCcw, SaveIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ServerFormProps } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -23,8 +23,10 @@ import {
   handleInputChange,
   handleDiscordRoleToggle,
   handleDiscordRolePriceChange,
+  refreshRoles,
 } from "./form-common";
 import { HelpTooltip } from "../ui/tooltip";
+import { SpinnerSvg } from "../loading";
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -43,6 +45,7 @@ function ServerFormEdit({
 }: ServerFormProps) {
   const wallet = useWallet();
   const [roleErrors, setRoleErrors] = useState<{ [key: string]: boolean }>({});
+  const [isRefreshingRoles, setIsRefreshingRoles] = useState(false);
 
   if (isLoading) {
     return <ServerFormSkeleton />;
@@ -320,6 +323,24 @@ function ServerFormEdit({
               <p className="text-gray-600">No roles available for this server.</p>
             )}
           </ScrollArea>
+          <div className="flex justify-center mt-4">
+            <MotionButton
+              onClick={() =>
+                refreshRoles(
+                  formData.id,
+                  roleData,
+                  setRoleData,
+                  setIsRefreshingRoles,
+                  setRoleErrors
+                )
+              }
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              disabled={isRefreshingRoles}
+            >
+              {isRefreshingRoles ? <SpinnerSvg /> : <><RotateCcw className="mr-2 h-4 w-4" />Refresh Roles</>}
+            </MotionButton>
+          </div>
         </MotionCardContent>
       </MotionCard>
       <p className="text-sm text-muted-foreground text-center mt-4">

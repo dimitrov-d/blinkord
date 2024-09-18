@@ -1,4 +1,7 @@
 import { RoleData, ServerFormProps } from "@/lib/types";
+import { fetchRoles } from "@/lib/actions/discord.actions";
+import { toast } from "sonner";
+import { Dispatch, SetStateAction } from "react";
 
 export const handleInputChange = (
   field: keyof ServerFormProps["formData"],
@@ -68,4 +71,31 @@ export const handleDiscordRolePriceChange = (
     }));
 
   setFormData((prev: any) => ({ ...prev, roles: enabledRoles }));
+};
+
+export const refreshRoles = async (
+  formDataId: string,
+  roleData: RoleData,
+  setRoleData: Dispatch<SetStateAction<any>>,
+  setIsRefreshingRoles: Dispatch<SetStateAction<boolean>>,
+  setRoleErrors: Dispatch<SetStateAction<{ [key: string]: boolean }>>
+) => {
+  setIsRefreshingRoles(true);
+  try {
+    const allRoles = await fetchRoles(formDataId);
+    const mergedRoles = allRoles.roles.map((role: any) => {
+      const selectedRole = roleData.roles.find((r: any) => r.id === role.id);
+      return selectedRole
+        ? { ...role, price: selectedRole.price, enabled: selectedRole.enabled }
+        : role;
+    });
+    setRoleData({ ...allRoles, roles: mergedRoles });
+    setRoleErrors({});
+    toast.success("Roles refreshed successfully");
+  } catch (error) {
+    console.error("Error refreshing roles", error);
+    toast.error("Failed to refresh roles");
+  } finally {
+    setIsRefreshingRoles(false);
+  }
 };
