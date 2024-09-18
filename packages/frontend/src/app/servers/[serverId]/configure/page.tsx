@@ -118,7 +118,7 @@ export default function ConfigureServerPage() {
       await promptConnectWallet();
 
       const validatedFormData = serverFormSchema.parse(formData);
-      const message = JSON.stringify(formData);
+      const message = `Confirm updating Blink for ${guildName}`
       const signature = await signMessage(message);
 
       if (signature) {

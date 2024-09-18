@@ -74,13 +74,12 @@ export default function CreateServerPage() {
     e.preventDefault();
     setOverlayVisible(true);
     setErrorOccurred(false);
+    setIsLoading(true);
 
     try {
       await promptConnectWallet();
       const validatedFormData = serverFormSchema.parse(formData);
-      const message = `Please confirm the following data is correct: ${JSON.stringify(formData)}`;
-      setIsLoading(true);
-
+      const message = `Confirm creating Blink for ${guildName}`
       const signature = await signMessage(message);
 
       if (signature) {

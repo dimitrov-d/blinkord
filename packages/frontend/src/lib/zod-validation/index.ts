@@ -36,7 +36,7 @@ export const serverFormSchema = z
         }
       ),
     description: z.string().min(1, "Description is required"),
-    address: z.string().min(1, "Address is required"),
+    address: z.string(),
     roles: z
       .array(
         z.object({
