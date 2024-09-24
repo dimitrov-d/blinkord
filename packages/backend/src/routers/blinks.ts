@@ -94,17 +94,23 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const role = guild.roles.find((r) => r.id === roleId);
   if (!role) return res.status(404).json({ error: 'Role not found' });
 
-  const accessToken = await findAccessTokenByCode(code);
-  if (!accessToken) return res.status(403).json({ error: 'Unauthorized: access_token not found.' });
+  const { account, isDiscordBot } = req.body;
+
+  if (!isDiscordBot) {
+    // This is here for the user's safety, to prevent sending a tx with an invalid discord grant code
+    // Not required if action made via the discord bot
+    const accessToken = await findAccessTokenByCode(code);
+    if (!accessToken) return res.status(403).json({ error: 'Unauthorized: access_token not found.' });
+  }
 
   console.info(`Generating transaction for guild ${guildId} and role ${roleId}`);
   try {
     // Instruction to add blinksights memo to transaction
-    const trackingInstruction = await blinkSights.getActionIdentityInstructionV2(req.body.account, req.url);
-    const transaction = await generateSendTransaction(req.body.account, role.amount, guild, trackingInstruction);
+    const trackingInstruction = await blinkSights.getActionIdentityInstructionV2(account, req.url);
+    const transaction = await generateSendTransaction(account, role.amount, guild, trackingInstruction);
 
     // Run in async, no need to await
-    blinkSights.trackActionV2(req.body.account, req.url);
+    blinkSights.trackActionV2(account, req.url);
 
     return res.json(
       await createPostResponse({
