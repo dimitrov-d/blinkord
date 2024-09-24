@@ -95,7 +95,7 @@ export default function Servers() {
     const redirectUri = encodeURIComponent(`${appUrl}/redirect`);
 
     const popup = window.open(
-      `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=268435457&integration_type=0&scope=bot+applications.commands&redirect_uri=${redirectUri}&response_type=code&guild_id=${serverId}`,
+      `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=268443649&integration_type=0&scope=bot+applications.commands&redirect_uri=${redirectUri}&response_type=code&guild_id=${serverId}`,
       "discordAuthPopup",
       `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`
     );
