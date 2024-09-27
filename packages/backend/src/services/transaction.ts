@@ -23,7 +23,7 @@ export async function generateSendTransaction(
   const toPubKey = new PublicKey(guild.address);
 
   const lamports = amount * LAMPORTS_PER_SOL;
-  if (lamports > (await getSolBalance(from))) {
+  if (!guild.useUsdc && lamports > (await getSolBalance(from))) {
     throw new Error(`Insufficient balance`);
   }
 
