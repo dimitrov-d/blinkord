@@ -89,29 +89,6 @@ export function HeroSmall({ onConnect }: { onConnect: () => void }) {
             </Button>
           </div>
         </motion.div>
-        <motion.div
-          className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 rounded-lg border border-gray-700 p-2 sm:p-3 md:p-4"
-          variants={fadeInUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.5, delay: 1 }}
-        >
-          <p className="dark:text-white font-bold uppercase text-black text-xs sm:text-sm w-full text-center mb-2">
-            Hackathon Sponsors:
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-2">
-            {['solana', 'alldomains', 'helius', 'dialect', 'bags'].map((sponsor) => (
-              <Image
-                key={sponsor}
-                className="h-4 sm:h-5 w-auto"
-                src={`/${sponsor}.svg`}
-                alt={sponsor}
-                width={100}
-                height={24}
-              />
-            ))}
-          </div>
-        </motion.div>
       </div>
     </div>
   );

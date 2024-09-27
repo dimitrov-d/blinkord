@@ -155,54 +155,6 @@ export function HeroBase({ onConnect }: { onConnect: () => void }) {
             </Button>
           </div>
         </motion.div>
-        <motion.div
-          className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 rounded-lg border border-gray-700 p-3 md:p-4"
-          variants={fadeInUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.5, delay: 1 }}
-        >
-          <p className="dark:text-white  font-excon font-bold  uppercase text-black text-xs sm:text-sm w-full text-center mb-2">
-            Hackathon Sponsors:
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-2">
-            <Image
-              className="h-4 md:h-5 w-auto"
-              src="/solana.svg"
-              alt="Solana"
-              width={100}
-              height={24}
-            />
-            <Image
-              className="h-4 md:h-5 w-auto"
-              src="/alldomains.svg"
-              alt="AllDomains"
-              width={100}
-              height={24}
-            />
-            <Image
-              className="h-4 md:h-5 w-auto"
-              src="/helius.svg"
-              alt="Helius"
-              width={100}
-              height={24}
-            />
-            <Image
-              className="h-4 md:h-5 w-auto"
-              src="/dialect.svg"
-              alt="Dialect"
-              width={100}
-              height={24}
-            />
-            <Image
-              className="h-4 md:h-5 w-auto"
-              src="/bags.svg"
-              alt="Bags"
-              width={100}
-              height={24}
-            />
-          </div>
-        </motion.div>
       </div>
     </div>
   );

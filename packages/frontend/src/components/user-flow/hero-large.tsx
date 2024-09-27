@@ -148,56 +148,6 @@ export function HeroLarge({ onConnect }: { onConnect: () => void }) {
           </Button>
         </div>
       </div>
-
-
-      <motion.div
-        className="w-full max-w-7xl h-full sm:my-2"
-        variants={fadeInUp}
-        initial="hidden"
-        animate="visible"
-        transition={{ duration: 0.5, delay: 1 }}
-      >
-        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 md:gap-6 rounded-lg border border-gray-700 p-3 md:p-4">
-          <p className="dark:text-white uppercase font-excon font-bold text-black text-xs sm:text-sm md:text-base w-full text-center mb-2">
-            Hackathon Sponsors:
-          </p>
-          <Image
-            className="h-3 sm:h-4 md:h-5 lg:h-6 w-auto"
-            src="/solana.svg"
-            alt="Solana"
-            width={100}
-            height={24}
-          />
-          <Image
-            className="h-3 sm:h-4 md:h-5 lg:h-6 w-auto"
-            src="/alldomains.svg"
-            alt="AllDomains"
-            width={100}
-            height={24}
-          />
-          <Image
-            className="h-3 sm:h-4 md:h-5 lg:h-6 w-auto"
-            src="/helius.svg"
-            alt="Helius"
-            width={100}
-            height={24}
-          />
-          <Image
-            className="h-3 sm:h-4 md:h-5 lg:h-6 w-auto"
-            src="/dialect.svg"
-            alt="Dialect"
-            width={100}
-            height={24}
-          />
-          <Image
-            className="h-3 sm:h-4 md:h-5 lg:h-6 w-auto"
-            src="/bags.svg"
-            alt="Bags"
-            width={100}
-            height={24}
-          />
-        </div>
-      </motion.div>
     </div>
   );
 }
