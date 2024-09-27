@@ -54,11 +54,10 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     label: null,
     title: guild.name,
     icon: guild.iconUrl,
-    description: `${guild.description}${guild.domainsTld ? `\n\n 10% discount for .${guild.domainsTld} domains` : ''}
-    ${guild.limitedTimeRoles ? `\n\n Roles are valid for ${guild.limitedTimeQuantity} ${guild.limitedTimeUnit}` : ''}`,
+    description: `${guild.description}${guild.limitedTimeRoles ? `\n\n Roles are valid for ${guild.limitedTimeQuantity} ${guild.limitedTimeUnit}` : ''}`,
     links: {
       actions: guild.roles.map(({ id, name, amount }) => ({
-        label: `${name} (${amount} ${guild.useSend ? 'SEND' : 'SOL'})`,
+        label: `${name} (${amount} ${guild.useUsdc ? 'USDC' : 'SOL'})`,
         href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
@@ -116,7 +115,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
       await createPostResponse({
         fields: {
           transaction,
-          message: `Buy role ${role.name} for ${role.amount} ${guild.useSend ? 'SEND' : 'SOL'}`,
+          message: `Buy role ${role.name} for ${role.amount} ${guild.useUsdc ? 'USDC' : 'SOL'}`,
           links: {
             next: {
               type: 'post',

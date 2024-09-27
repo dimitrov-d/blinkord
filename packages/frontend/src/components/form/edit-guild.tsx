@@ -162,50 +162,24 @@ function ServerFormEdit({
         transition={{ duration: 0.5, delay: 0.2 }}
         className="flex flex-row w-full space-x-4"
       >
-        <div className="flex flex-col w-1/2">
+        <div className="flex flex-col w-1/4">
           <div className="flex items-center">
-            <Label htmlFor="useSend" className="mr-1">Pay with $SEND</Label>
-            {HelpTooltip("Use $SEND token for payments instead of SOL")}
+            <Label htmlFor="useUsdc" className="mr-1">Pay in $USDC</Label>
+            {HelpTooltip("Use $USDC token for payments instead of SOL")}
           </div>
 
           <Switch
-            id="useSend"
-            checked={formData.useSend}
+            id="useUsdc"
+            checked={formData.useUsdc}
             onCheckedChange={(value) =>
-              handleInputChange("useSend", value, setFormData)
+              handleInputChange("useUsdc", value, setFormData)
             }
             className="mt-2"
           />
         </div>
-
-        <div className="flex flex-col w-1/2">
+        <div className="flex flex-col w-1/4">
           <div className="flex items-center">
-            <Label htmlFor="tld" className="mr-2">AllDomains TLD</Label>
-            {HelpTooltip("The TLD of your project on alldomains.id. Users who own a domain from your TLD get a 10% discount on roles.")}
-          </div>
-          <MotionInput
-            id="tld"
-            placeholder="bonk"
-            value={formData.domainsTld}
-            onChange={(e) =>
-              handleInputChange("domainsTld", e.target.value, setFormData)
-            }
-            whileFocus={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            className="mt-2 w-full"
-          />
-        </div>
-      </MotionCardContent>
-
-      <MotionCardContent
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-        className="flex flex-row w-full space-x-4"
-      >
-        <div className="flex flex-col w-1/2">
-          <div className="flex items-center">
-            <Label htmlFor="limitedTimeRoles" className="mr-2">Limited Time Roles</Label>
+            <Label htmlFor="limitedTimeRoles" className="mr-2">Limited Time</Label>
             {HelpTooltip("If toggled on, roles will be available to users for a limited time only and will be automatically removed afterwards.")}
           </div>
           <Switch
@@ -219,8 +193,8 @@ function ServerFormEdit({
         </div>
 
         {formData.limitedTimeRoles && (
-          <div className="flex flex-row w-1/2 space-x-4">
-            <div className="flex-1">
+          <>
+            <div className="flex flex-col w-1/4">
               <Label htmlFor="limitedTimeQuantity" className="mb-2">Amount</Label>
               <select
                 id="limitedTimeQuantity"
@@ -236,7 +210,7 @@ function ServerFormEdit({
               </select>
             </div>
 
-            <div className="flex-1">
+            <div className="flex flex-col w-1/4">
               <Label htmlFor="limitedTimeUnit" className="mb-2">Unit</Label>
               <select
                 id="limitedTimeUnit"
@@ -252,7 +226,7 @@ function ServerFormEdit({
                 <option value="Months">Months</option>
               </select>
             </div>
-          </div>
+          </>
         )}
       </MotionCardContent>
 
@@ -314,7 +288,7 @@ function ServerFormEdit({
                         step="0.00000001"
                         transition={{ type: "spring", stiffness: 300 }}
                       />
-                      <span className="text-gray-600">{formData.useSend ? 'SEND' : 'SOL'}</span>
+                      <span className="text-gray-600">{formData.useUsdc ? 'USDC' : 'SOL'}</span>
                     </div>
                   </div>
                   {roleErrors[role.id] && (

@@ -11,7 +11,6 @@ import { Guild } from '../database/entities/guild';
 import nacl from 'tweetnacl';
 import { decodeUTF8 } from 'tweetnacl-util';
 import env from './env';
-import { getOwnedDomainsFromTld } from './alldomains';
 import { createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 
 export async function generateSendTransaction(
@@ -23,16 +22,6 @@ export async function generateSendTransaction(
   const fromPubkey = new PublicKey(from);
   const toPubKey = new PublicKey(guild.address);
 
-  if (guild.domainsTld) {
-    // If user owns any domain from the guild's TLD, give them a 10% discount
-    const walletDomains = await getOwnedDomainsFromTld(from, guild.domainsTld).catch(() => []);
-    if (walletDomains?.length > 0) {
-      const discount = 0.1;
-      // Multiply as integers (avoiding floating-point precision issues)
-      amount = (Math.round(amount * 100) * Math.round((1 - discount) * 100)) / 10_000;
-    }
-  }
-
   const lamports = amount * LAMPORTS_PER_SOL;
   if (lamports > (await getSolBalance(from))) {
     throw new Error(`Insufficient balance`);
@@ -41,8 +30,8 @@ export async function generateSendTransaction(
   const connection = new Connection(env.SOLANA_RPC_URL);
   const { blockhash } = await connection.getLatestBlockhash();
 
-  const instructions = guild.useSend
-    ? await getTransferSendInstructions(fromPubkey, toPubKey, lamports)
+  const instructions = guild.useUsdc
+    ? await getTransferUsdcInstructions(fromPubkey, toPubKey, lamports)
     : getTransferSolInstructions(fromPubkey, toPubKey, lamports);
 
   if (trackingInstruction) instructions.push(trackingInstruction);
@@ -71,18 +60,18 @@ export function isCorrectSignature(address: string, message: string, signature: 
   }
 }
 
-async function getTransferSendInstructions(
+async function getTransferUsdcInstructions(
   fromPubkey: PublicKey,
   toPubKey: PublicKey,
   lamports: number,
 ): Promise<TransactionInstruction[]> {
-  const mintAddress = new PublicKey('SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa');
+  const mintAddress = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
   // Fetch or create associated token accounts for sender and recipient
   const fromTokenAccount = await getAssociatedTokenAddress(mintAddress, fromPubkey);
   const toTokenAccount = await getAssociatedTokenAddress(mintAddress, toPubKey);
-  // SEND token has 6 decimals, SOL has 9
+  // USDC token has 6 decimals, SOL has 9
   lamports /= 10 ** 3;
-  // Create an instruction to transfer SEND token from one wallet to another
+  // Create an instruction to transfer USDC token from one wallet to another
   return [createTransferInstruction(fromTokenAccount, toTokenAccount, fromPubkey, lamports)];
 }
 

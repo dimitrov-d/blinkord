@@ -41,16 +41,10 @@ export class Guild extends BaseEntity<Guild> {
   details: string;
 
   /**
-   * If the guild owner wants to receive payment in SEND tokens
+   * If the guild owner wants to receive payment in USDC tokens
    */
   @Column({ type: 'boolean', default: false })
-  useSend: boolean;
-
-  /**
-   * TLD of user domains, used to give discounts for buying roles
-   */
-  @Column({ type: 'text', nullable: true })
-  domainsTld: string;
+  useUsdc: boolean;
 
   /**
    * If the blink is hidden from the marketplace

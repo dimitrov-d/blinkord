@@ -8,8 +8,7 @@ export const defaultSchema = {
   address: "",
   // details: "",
   roles: [],
-  useSend: false,
-  domainsTld: "",
+  useUsdc: false,
   limitedTimeRoles: false,
   limitedTimeQuantity: "1",
   limitedTimeUnit: "Months",
@@ -52,8 +51,7 @@ export const serverFormSchema = z
         })
       )
       .min(1, "At least one role is required"),
-    useSend: z.boolean().default(false),
-    domainsTld: z.string(),
+    useUsdc: z.boolean().default(false),
     limitedTimeRoles: z.boolean().default(false),
     limitedTimeQuantity: z
       .string()
