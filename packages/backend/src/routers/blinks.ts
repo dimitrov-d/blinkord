@@ -15,21 +15,15 @@ const BASE_URL = env.APP_BASE_URL;
 const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
 const generalAction = {
+  type: 'action',
   title: 'Use Blinkord',
+  disabled: true,
   label: 'Go to blinkord.com',
   icon: `https://blinkord.com/images/banner_square.png`,
   description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
-  links: {
-    actions: [{ type: 'external-link', label: 'Go to blinkord.com', href: `${BASE_URL}/blinks/external-link` }],
-  },
+  error: { message: 'Go to blinkord.com to get started' },
 } as Action<'action'>;
-
-blinksRouter.get('/', async (req, res) => res.json(generalAction));
-
-blinksRouter.post('/external-link', async (req, res) =>
-  res.json({ type: 'external-link', externalLink: 'https://blinkord.com' }),
-);
-
+blinksRouter.get('/', async (req: Request, res: Response) => res.json(generalAction));
 /**
  * Returns an action based on data for a given guild
  * @param {string} guildId - Path parameter representing ID of the guild
@@ -62,21 +56,11 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     icon: guild.iconUrl,
     description: `${guild.description}${guild.limitedTimeRoles ? `\n\n Roles are valid for ${guild.limitedTimeQuantity} ${guild.limitedTimeUnit}` : ''}`,
     links: {
-      actions:
-        code || !!hideError
-          ? guild.roles.map(({ id, name, amount }) => ({
-              type: 'post',
-              disabled: !code,
-              label: `${name} (${amount} ${guild.useUsdc ? 'USDC' : 'SOL'})`,
-              href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
-            }))
-          : [
-              {
-                type: 'external-link',
-                label: 'Connect Discord',
-                href: `https://blinkord.com/${guildId}`,
-              },
-            ],
+      actions: guild.roles.map(({ id, name, amount }) => ({
+        type: 'post',
+        label: `${name} (${amount} ${guild.useUsdc ? 'USDC' : 'SOL'})`,
+        href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
+      })),
     },
     disabled: !code,
     error: code || !!hideError ? null : { message: `Discord connect required, visit blinkord.com/${guildId}` },
@@ -131,7 +115,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
     return res.json(
       await createPostResponse({
         fields: {
-          type: 'post',
+          type: 'transaction',
           transaction,
           message: `Buy role ${role.name} for ${role.amount} ${guild.useUsdc ? 'USDC' : 'SOL'}`,
           links: {
