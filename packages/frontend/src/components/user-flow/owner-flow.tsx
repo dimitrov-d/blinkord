@@ -1,9 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
 import DiscordLogo3D from "../discord-3rf";
 import { ResponsiveConnectDiscordScreen } from "./hero";
-import OverlaySpinner from "../overlay-spinner";
 
 function OwnerFlow() {
   const handleConnectDiscord = async () => {
@@ -26,13 +24,10 @@ function OwnerFlow() {
   };
 
   return (
-    <div className="flex flex-col">
-      <main className="flex flex-row container mx-auto z-1">
-        <Suspense fallback={<div> <OverlaySpinner /> </div>} />
-        <ResponsiveConnectDiscordScreen onConnect={handleConnectDiscord} />
-        <DiscordLogo3D />
-      </main>
-    </div>
+    <>
+      <ResponsiveConnectDiscordScreen onConnect={handleConnectDiscord} />
+      <DiscordLogo3D />
+    </>
   );
 }
 
