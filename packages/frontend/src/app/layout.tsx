@@ -100,22 +100,17 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
 
           <script src="/scripts/mailgo.min.js" />
-          <meta name="dscvr:canvas:version" content="vNext" /></head>
+          <meta name="dscvr:canvas:version" content="vNext" />
+        </head>
         <body
           className={cn(
             "min-h-screen font-sans antialiased",
             fontSans.variable
           )}
         >
-          <div className="fixed inset-0 h-screen w-full items-center bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]" />
-
-          {/* Main Content */}
-          <div className="relative z-10 flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-
+          <Header />
+          {children}
+          <Footer />
           <Toaster position="bottom-right" />
         </body>
       </html>
