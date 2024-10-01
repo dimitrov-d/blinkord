@@ -1,23 +1,43 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { CircleCheck } from "lucide-react";
-import Image from "next/image";
+import blinkordBlack from "./assets/blinkord-black.png";
+import blinkordWhite from "./assets/blinkord-white.png";
 
 function MeetTheBot() {
   return (
-    <section className="">
+    <section className="bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
       <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
-        <div className="flex flex-col md:flex-row md:items-center gap-10">
-          <div className="relative h-32 w-full bg-background rounded-xl">
-            <Image
-              className="dark:hidden object-contain"
-              src="/images/blinkord-black.png"
-              fill
+        <div className="flex flex-col justify-center md:flex-row md:items-center gap-10">
+          <div className="relative h-28 md:h-40 w-full rounded-xl py-10 flex justify-center">
+            <motion.img
+              className="dark:hidden object-contain -mt-8"
+              src={blinkordBlack.src}
               alt="Blinkord"
+              animate={{
+                translateY: [-7, 7],
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 1,
+                ease: "easeInOut",
+              }}
             />
-            <Image
-              className="hidden dark:block object-contain"
-              src="/images/blinkord-white.png"
-              fill
+            <motion.img
+              className="hidden dark:block object-contain -mt-8"
+              src={blinkordWhite.src}
               alt="Blinkord"
+              animate={{
+                translateY: [-7, 7],
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 1,
+                ease: "easeInOut",
+              }}
             />
           </div>
           <div>

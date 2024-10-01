@@ -3,7 +3,7 @@ import Image from "next/image";
 
 function HowItWorks() {
   return (
-    <section className="bg-builderz-blue/70">
+    <section className="bg-[#62d1ab]">
       <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
         <div className="flex flex-col md:flex-row md:items-center gap-10">
           <div>
@@ -46,7 +46,7 @@ function HowItWorks() {
               </li>
             </ul>
           </div>
-          <div className="relative h-[500px] w-full bg-background rounded-xl">
+          <div className="relative h-[500px] w-full rounded-xl">
             <Image
               className="dark:hidden object-contain"
               src="/images/blinkord-community-light.png"

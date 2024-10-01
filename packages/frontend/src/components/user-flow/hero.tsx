@@ -1,16 +1,15 @@
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { LogIn } from "lucide-react";
 import Image from "next/image";
+import GetStartedButton from "../common/get-started-button";
 
-export function Hero({ onConnect }: { onConnect: () => void }) {
+export function Hero() {
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
 
   return (
-    <div className="relative lg:mt-24 font-excon z-10">
+    <div className="relative lg:mt-24 z-10">
       {/* Gradient bubbles */}
       <motion.div
         className="absolute top-10 left-10 w-24 h-24 md:w-40 md:h-40 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20"
@@ -89,12 +88,7 @@ export function Hero({ onConnect }: { onConnect: () => void }) {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.8 }}
         >
-          <Button
-            onClick={onConnect}
-            className="mt-10 w-full sm:w-fit bg-builderz-blue hover:bg-neon-cyan text-black font-bold px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-          >
-            <LogIn className="mr-2 h-4 w-4 sm:h-5 sm:w-5" /> Get Started
-          </Button>
+          <GetStartedButton className="mt-10 w-full sm:w-fit" />
         </motion.div>
       </div>
     </div>

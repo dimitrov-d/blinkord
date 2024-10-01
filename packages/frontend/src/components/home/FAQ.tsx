@@ -8,10 +8,12 @@ import { faq } from "./helpers";
 
 function FAQ() {
   return (
-    <section className="bg-builderz-blue/70">
+    <section className="">
       <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row gap-10">
-          <h1 className="text-3xl text-center">Frequently Asked Questions</h1>
+          <h1 className="text-3xl text-center py-4">
+            Frequently Asked Questions
+          </h1>
 
           <div className="flex-1">
             <Accordion type="single" collapsible className="w-full">

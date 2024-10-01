@@ -6,7 +6,7 @@ import MeetTheBot from "@/components/home/MeetTheBot";
 
 const Index: React.FC = () => {
   return (
-    <main>
+    <main className="font-excon">
       <HeroSection />
       <Features />
       <HowItWorks />

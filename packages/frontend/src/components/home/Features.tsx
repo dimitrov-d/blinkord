@@ -20,7 +20,7 @@ export default function Features() {
               <AnimatePresence>
                 {hoveredIndex === idx && (
                   <motion.span
-                    className="absolute inset-0 h-full w-full bg-neon-green/[0.2] rounded-xl"
+                    className="absolute inset-0 h-full w-full bg-neon-cyan/[0.2] rounded-xl"
                     layoutId="hoverBackground"
                     initial={{ opacity: 0 }}
                     animate={{
@@ -45,8 +45,8 @@ export default function Features() {
 
 function FeatureCard({ feature }: { feature: (typeof features)[0] }) {
   return (
-    <div className="flex flex-col gap-4 bg-builderz-green rounded-xl text-foreground dark:text-background p-10 h-full">
-      <div className="rounded-full p-3 bg-neon-green w-fit">{feature.icon}</div>
+    <div className="flex flex-col gap-4 bg-builderz-blue rounded-xl text-foreground dark:text-background p-10 h-full">
+      <div className="rounded-full p-3 bg-neon-blue w-fit">{feature.icon}</div>
       <h3>{feature.title}</h3>
       <p className="text-sm text-foreground/70 dark:text-background/70 font-medium">
         {feature.description}
