@@ -18,11 +18,17 @@ function FAQ() {
           <div className="flex-1">
             <Accordion type="single" collapsible className="w-full">
               {faq.map((ele) => (
-                <AccordionItem key={ele.id} value={`item-${ele.id + 1}`}>
-                  <AccordionTrigger className="text-left">
+                <AccordionItem
+                  key={ele.id}
+                  value={`item-${ele.id + 1}`}
+                  className="py-2"
+                >
+                  <AccordionTrigger className="text-left text-base font-semibold">
                     {ele.question}
                   </AccordionTrigger>
-                  <AccordionContent>{ele.answer}</AccordionContent>
+                  <AccordionContent className="text-lg text-foreground/70">
+                    {ele.answer}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
