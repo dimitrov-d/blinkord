@@ -1,7 +1,5 @@
-"use client";
-
+import { Hero } from "./hero";
 import DiscordLogo3D from "../discord-3rf";
-import { ResponsiveConnectDiscordScreen } from "./hero";
 
 function OwnerFlow() {
   const handleConnectDiscord = async () => {
@@ -25,7 +23,7 @@ function OwnerFlow() {
 
   return (
     <>
-      <ResponsiveConnectDiscordScreen onConnect={handleConnectDiscord} />
+      <Hero onConnect={handleConnectDiscord} />
       <DiscordLogo3D />
     </>
   );
