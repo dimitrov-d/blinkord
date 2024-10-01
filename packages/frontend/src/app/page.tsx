@@ -3,6 +3,7 @@ import HeroSection from "@/components/home/HeroSection";
 import HowItWorks from "@/components/home/HowItWorks";
 import Features from "@/components/home/Features";
 import MeetTheBot from "@/components/home/MeetTheBot";
+import CTA from "@/components/home/CTA";
 
 const Index: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const Index: React.FC = () => {
       <HowItWorks />
       <MeetTheBot />
       <FAQ />
+      <CTA />
     </main>
   );
 };

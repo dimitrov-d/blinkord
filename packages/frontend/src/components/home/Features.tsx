@@ -21,7 +21,10 @@ export default function Features() {
   return (
     <section className="">
       <div className="relative z-10 bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 dark:bg-gradient-to-r dark:from-stone-800/5 dark:via-stone-800/5 p-4 w-full min-h-[384px] sm:h-full flex flex-col flex-1 transition-colors duration-300 ease-in-out delay-50 items-center justify-center">
-        <GridPatternBg gridBlocks={gridBlocks} />
+        <GridPatternBg
+          className="[mask-image:linear-gradient(85deg,black,transparent)]"
+          gridBlocks={gridBlocks}
+        />
         <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
           <div className="flex flex-col gap-2">
             <div className="flex flex-col lg:flex-row w-full gap-2">
@@ -99,7 +102,7 @@ function HoverableFeatureCard({
       <AnimatePresence>
         {hoveredIndex === index && (
           <motion.span
-            className="absolute inset-0 h-full w-full bg-neon-cyan/[0.2] rounded-xl"
+            className="absolute inset-0 h-full w-full bg-[#008FE7]/[0.2] rounded-xl"
             layoutId="hoverBackground"
             initial={{ opacity: 0 }}
             animate={{
@@ -129,11 +132,11 @@ function FeatureCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 bg-builderz-blue/90 rounded-xl text-foreground dark:text-background p-10 h-full backdrop-filter backdrop-blur-sm",
+        "flex flex-col gap-4 bg-blink-green rounded-xl text-foreground dark:text-background p-10 h-full backdrop-filter backdrop-blur-sm",
         className
       )}
     >
-      <div className="rounded-full p-3 bg-neon-blue w-fit">{feature.icon}</div>
+      <div className="rounded-full p-3 bg-[#008FE7] w-fit">{feature.icon}</div>
       <h3>{feature.title}</h3>
       <p className="text-sm text-foreground/70 dark:text-background/70 font-medium">
         {feature.description}

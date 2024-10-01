@@ -32,6 +32,7 @@ const config = {
         "neon-orange": "#ff6600",
         "neon-cyan": "#00ffff",
         "neon-magenta": "#ff00ff",
+        "blink-green": "#62d1ab",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

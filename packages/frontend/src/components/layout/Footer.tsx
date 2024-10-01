@@ -4,18 +4,18 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="w-full py-10 bg-builderz-blue">
+    <footer className="w-full py-10 bg-blink-green">
       <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between">
         <div className="flex items-center space-x-2 mt-8 md:mt-0">
           <span className="text-gray-700 text-base">
-            © 2024 Blinkord. All rights reserved.
+            © {new Date().getFullYear()} Blinkord. All rights reserved.
           </span>
         </div>
         <div className="flex items-center space-x-6 mt-4 md:mt-0">
           {/* Feedback */}
-          <a
+          <Link
             href="mailto:hi@blinkord.com?subject=Blinkord Feedback"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             rel="noopener noreferrer"
           >
             <svg
@@ -33,12 +33,12 @@ export default function Footer() {
               <rect width="20" height="16" x="2" y="4" rx="2" />
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
-          </a>
+          </Link>
 
           {/* Discord */}
           <Link
             href="https://discord.gg/HugHTEPu4H"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -55,7 +55,7 @@ export default function Footer() {
           {/* Twitter */}
           <Link
             href="https://twitter.com/"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -72,7 +72,7 @@ export default function Footer() {
           {/* Marketplace */}
           <Link
             href="/marketplace"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -99,7 +99,7 @@ export default function Footer() {
           {/* Docs */}
           <Link
             href="https://docs.blinkord.com"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
