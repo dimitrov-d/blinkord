@@ -1,4 +1,4 @@
-# Blinkord: Seamless Premium Role Access for Discord Communities
+# Blinkord: Monetize your Discord Community Effortlessly
 
 <p align="center">
     <img src="https://blinkord.com/banner.png" alt="Blinkord Banner" width="500">
