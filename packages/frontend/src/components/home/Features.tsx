@@ -132,12 +132,16 @@ function FeatureCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 bg-blink-green rounded-xl text-foreground dark:text-background p-10 h-full backdrop-filter backdrop-blur-sm",
+        "flex flex-col gap-4 bg-blink-green/70 rounded-xl text-foreground dark:text-background p-10 h-full backdrop-filter backdrop-blur-sm",
         className
       )}
     >
-      <div className="rounded-full p-3 bg-[#008FE7] w-fit">{feature.icon}</div>
-      <h3>{feature.title}</h3>
+      <div className="flex items-center gap-3">
+        <div className="rounded-full p-3 bg-[#008FE7] w-fit">
+          {feature.icon}
+        </div>
+        <h3>{feature.title}</h3>
+      </div>
       <p className="text-sm text-foreground/70 dark:text-background/70 font-medium">
         {feature.description}
       </p>
