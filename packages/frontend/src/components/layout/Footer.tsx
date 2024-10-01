@@ -1,19 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
-import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
 export default function Footer() {
-  const { isDark } = useContext(ThemeContext);
-
   return (
-    <footer className="w-full py-10 bg-gradient-to-r from-green-400 to-blue-500 dark:from-green-600 dark:to-blue-700">
+    <footer className="w-full py-10 bg-builderz-blue">
       <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between">
         <div className="flex items-center space-x-2 mt-8 md:mt-0">
-          <span
-            className={`${isDark ? "text-gray-300" : "text-gray-700"} text-base`}
-          >
+          <span className="text-gray-700 text-base">
             © 2024 Blinkord. All rights reserved.
           </span>
         </div>
