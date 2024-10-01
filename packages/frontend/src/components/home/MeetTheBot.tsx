@@ -17,9 +17,9 @@ function MeetTheBot() {
         <GridPatternBg gridBlocks={gridBlocks} />
         <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl relative z-10">
           <div className="flex flex-col justify-center md:flex-row md:items-center gap-10">
-            <div className="relative h-28 md:h-40 w-full rounded-xl py-10 flex justify-center">
+            <div className="md:w-1/2 rounded-xl py-10 flex justify-center">
               <motion.img
-                className="dark:hidden object-contain -mt-8 w-60 h-60"
+                className="dark:hidden object-contain w-60 h-60"
                 src="/images/logo-black.svg"
                 alt="Blinkord"
                 animate={{
@@ -33,7 +33,7 @@ function MeetTheBot() {
                 }}
               />
               <motion.img
-                className="hidden dark:block object-contain -mt-8 w-60 h-60"
+                className="hidden dark:block object-contain w-60 h-60"
                 src="/images/logo-white.svg"
                 alt="Blinkord"
                 animate={{

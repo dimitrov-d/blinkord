@@ -99,7 +99,7 @@ function HoverableFeatureCard({
       <AnimatePresence>
         {hoveredIndex === index && (
           <motion.span
-            className="absolute inset-0 h-full w-full bg-neon-cyan/[0.2] rounded-xl"
+            className="absolute inset-0 h-full w-full bg-[#008FE7]/[0.2] rounded-xl"
             layoutId="hoverBackground"
             initial={{ opacity: 0 }}
             animate={{
@@ -129,11 +129,11 @@ function FeatureCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 bg-builderz-blue/90 rounded-xl text-foreground dark:text-background p-10 h-full backdrop-filter backdrop-blur-sm",
+        "flex flex-col gap-4 bg-blink-green rounded-xl text-foreground dark:text-background p-10 h-full backdrop-filter backdrop-blur-sm",
         className
       )}
     >
-      <div className="rounded-full p-3 bg-neon-blue w-fit">{feature.icon}</div>
+      <div className="rounded-full p-3 bg-[#008FE7] w-fit">{feature.icon}</div>
       <h3>{feature.title}</h3>
       <p className="text-sm text-foreground/70 dark:text-background/70 font-medium">
         {feature.description}

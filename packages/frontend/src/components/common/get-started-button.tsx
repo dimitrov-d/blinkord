@@ -39,7 +39,7 @@ export default function GetStartedButton({
     <Button
       onClick={handleConnectDiscord}
       className={cn(
-        "bg-builderz-blue hover:bg-neon-cyan text-black font-bold px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50",
+        "bg-blink-green hover:bg-neon-cyan text-black font-bold px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50",
         {
           "opacity-30": loading,
         },
