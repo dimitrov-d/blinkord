@@ -21,7 +21,10 @@ export default function Features() {
   return (
     <section className="">
       <div className="relative z-10 bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 dark:bg-gradient-to-r dark:from-stone-800/5 dark:via-stone-800/5 p-4 w-full min-h-[384px] sm:h-full flex flex-col flex-1 transition-colors duration-300 ease-in-out delay-50 items-center justify-center">
-        <GridPatternBg gridBlocks={gridBlocks} />
+        <GridPatternBg
+          className="[mask-image:linear-gradient(85deg,black,transparent)]"
+          gridBlocks={gridBlocks}
+        />
         <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
           <div className="flex flex-col gap-2">
             <div className="flex flex-col lg:flex-row w-full gap-2">

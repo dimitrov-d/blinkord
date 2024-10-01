@@ -14,7 +14,10 @@ function HowItWorks() {
   return (
     <section className="bg-[#62d1ab]">
       <div className="relative bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 dark:bg-gradient-to-r dark:from-stone-800/5 dark:via-stone-800/5 p-4 w-full min-h-[384px] sm:h-full flex flex-col flex-1 transition-colors duration-300 ease-in-out delay-50 items-center justify-center">
-        <GridPatternBg gridBlocks={gridBlocks} />
+        <GridPatternBg
+          className="dark:stroke-indigo-600/20"
+          gridBlocks={gridBlocks}
+        />
         <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl relative z-10">
           <div className="flex flex-col md:flex-row md:items-center gap-10 dark:text-black">
             <div>
