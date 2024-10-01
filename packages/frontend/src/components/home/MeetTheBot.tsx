@@ -17,7 +17,7 @@ function MeetTheBot() {
     <section className="bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
       <div className="relative bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 dark:bg-gradient-to-r dark:from-stone-800/5 dark:via-stone-800/5 p-4 w-full min-h-[384px] sm:h-full flex flex-col flex-1 transition-colors duration-300 ease-in-out delay-50 items-center justify-center">
         <GridPatternBg gridBlocks={gridBlocks} />
-        <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
+        <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl relative z-10">
           <div className="flex flex-col justify-center md:flex-row md:items-center gap-10">
             <div className="relative h-28 md:h-40 w-full rounded-xl py-10 flex justify-center">
               <motion.img
