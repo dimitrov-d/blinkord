@@ -58,7 +58,7 @@ function DiscordLogo() {
 
 export default function DiscordLogo3D() {
   return (
-    <div className="absolute inset-0 pointer-events-auto opacity-30">
+    <div className="absolute inset-0 pointer-events-auto opacity-60">
       <Canvas>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
