@@ -53,7 +53,7 @@ function MeetTheBot() {
                   ease: "easeInOut",
                 }}
               />
-              <AddBlinkordBotButton/>
+              <AddBlinkordBotButton />
             </div>
             <div>
               <h1 className="text-4xl mb-10">Meet The Blinkord Bot</h1>
@@ -63,21 +63,21 @@ function MeetTheBot() {
                     <CircleCheck className="w-8" />
                   </div>
                   Displays Blink actions in Discord, allowing users to interact
-                  and send transactions directly within the app.
+                  and send transactions directly within the app
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
                     <CircleCheck className="w-8" />
                   </div>
                   Detects Blink URLs and instantly provides available actions,
-                  simplifying user interactions.
+                  simplifying user interactions
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
                     <CircleCheck className="w-8" />
                   </div>
                   Enables users to create and manage a secure Solana wallet
-                  without leaving the Discord app.
+                  without leaving the Discord app
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
@@ -91,7 +91,7 @@ function MeetTheBot() {
                     <CircleCheck className="w-8" />
                   </div>
                   Automatically assigns premium roles to members after
-                  successful payments, giving instant access.
+                  successful payments, giving instant access
                 </li>
               </ul>
             </div>

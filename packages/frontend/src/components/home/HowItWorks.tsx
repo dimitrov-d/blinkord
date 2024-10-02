@@ -29,14 +29,14 @@ function HowItWorks() {
                     <CircleCheck className="w-8" />
                   </div>
                   Create a customized blink for your Discord Server, obtain a
-                  dedicated payment link.
+                  dedicated payment link
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
                     <CircleCheck className="w-8" />
                   </div>
                   Share your custom link with your community on any media
-                  channel.
+                  channel
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
@@ -44,14 +44,14 @@ function HowItWorks() {
                   </div>
                   Members open the link, authorize with Discord, select their
                   desired subscription, and pay securely using their Solana
-                  wallet. - all in just a few clicks
+                  wallet - all in just a few clicks
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
                     <CircleCheck className="w-8" />
                   </div>
                   Upon payment, Blinkord automatically assigns the premium role,
-                  giving members immediate access to exclusive content.
+                  giving members immediate access to exclusive content
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
