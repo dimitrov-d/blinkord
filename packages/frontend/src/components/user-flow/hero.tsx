@@ -77,8 +77,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <p className="font-medium opacity-50 mt-3 text-sm md:text-base">
-            Create shareable links that grant access to exclusive discord roles
-            with just a few clicks.
+            Create shareable links that grant access enable Solana interactions within your Discord Server
           </p>
         </motion.div>
 
@@ -88,7 +87,7 @@ export function Hero() {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.8 }}
         >
-          <GetStartedButton className="mt-10 w-full sm:w-fit" />
+          <GetStartedButton className="bg-neon-cyan w-fit mt-10" />
         </motion.div>
       </div>
     </div>

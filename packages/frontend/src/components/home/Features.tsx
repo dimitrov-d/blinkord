@@ -27,23 +27,21 @@ export default function Features() {
         />
         <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl">
           <div className="flex flex-col gap-2">
-            <div className="flex flex-col lg:flex-row w-full gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
               <HoverableFeatureCard
                 feature={features[0]}
-                className="lg:w-3/4 h-auto"
+                className="h-auto"
                 hoveredIndex={hoveredIndex}
                 index={0}
                 setHoveredIndex={setHoveredIndex}
               />
               <HoverableFeatureCard
                 feature={features[1]}
-                className="lg:w-1/4 h-auto"
+                className="h-auto"
                 hoveredIndex={hoveredIndex}
                 index={1}
                 setHoveredIndex={setHoveredIndex}
               />
-            </div>
-            <div className="flex flex-col lg:flex-row w-full gap-2">
               <HoverableFeatureCard
                 feature={features[2]}
                 className="h-auto"
@@ -65,14 +63,14 @@ export default function Features() {
                 index={4}
                 setHoveredIndex={setHoveredIndex}
               />
+              <HoverableFeatureCard
+                feature={features[5]}
+                className="h-auto"
+                hoveredIndex={hoveredIndex}
+                index={5}
+                setHoveredIndex={setHoveredIndex}
+              />
             </div>
-            <HoverableFeatureCard
-              feature={features[5]}
-              className="h-auto"
-              hoveredIndex={hoveredIndex}
-              index={5}
-              setHoveredIndex={setHoveredIndex}
-            />
           </div>
         </div>
       </div>

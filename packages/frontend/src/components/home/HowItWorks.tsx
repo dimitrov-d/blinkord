@@ -3,6 +3,7 @@
 import { CircleCheck } from "lucide-react";
 import Image from "next/image";
 import GridPatternBg from "../common/grid-pattern-bg";
+import GetStartedButton from "../common/get-started-button";
 
 function HowItWorks() {
   const gridBlocks = [
@@ -76,6 +77,9 @@ function HowItWorks() {
                 alt="Blinkord Community"
               />
             </div>
+          </div>
+          <div className="flex justify-center mt-10">
+            <GetStartedButton className="bg-neon-cyan w-fit" />
           </div>
         </div>
       </div>

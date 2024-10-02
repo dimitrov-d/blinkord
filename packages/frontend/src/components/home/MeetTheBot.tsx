@@ -1,8 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, PlusCircle } from "lucide-react";
 import GridPatternBg from "../common/grid-pattern-bg";
+import GetStartedButton from "../common/get-started-button";
+import { cn } from "@/lib/utils";
+import Button from "@mui/material/Button";
+import AddBlinkordBotButton from "../common/discord-bot-button";
 
 function MeetTheBot() {
   const gridBlocks = [
@@ -20,7 +24,7 @@ function MeetTheBot() {
         />
         <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl relative z-10">
           <div className="flex flex-col justify-center md:flex-row md:items-center gap-10">
-            <div className="md:w-1/2 rounded-xl py-10 flex justify-center">
+            <div className="md:w-1/2 rounded-xl py-10 flex flex-col items-center">
               <motion.img
                 className="dark:hidden object-contain w-60 h-60"
                 src="/images/logo-black.svg"
@@ -49,17 +53,11 @@ function MeetTheBot() {
                   ease: "easeInOut",
                 }}
               />
+              <AddBlinkordBotButton/>
             </div>
             <div>
-              <h1 className="text-4xl mb-10">Meet The Bot</h1>
+              <h1 className="text-4xl mb-10">Meet The Blinkord Bot</h1>
               <ul className="flex flex-col gap-5">
-                <li className="flex items-center gap-2">
-                  <div>
-                    <CircleCheck className="w-8" />
-                  </div>
-                  Automatically assigns premium roles to members after
-                  successful payments, giving instant access.
-                </li>
                 <li className="flex items-center gap-2">
                   <div>
                     <CircleCheck className="w-8" />
@@ -86,7 +84,14 @@ function MeetTheBot() {
                     <CircleCheck className="w-8" />
                   </div>
                   Ensures wallet security by using a dedicated Key Management
-                  Service (KMS).
+                  Service (KMS) and using MPC wallet solutions (🔜)
+                </li>
+                <li className="flex items-center gap-2">
+                  <div>
+                    <CircleCheck className="w-8" />
+                  </div>
+                  Automatically assigns premium roles to members after
+                  successful payments, giving instant access.
                 </li>
               </ul>
             </div>
