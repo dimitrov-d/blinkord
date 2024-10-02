@@ -1,53 +1,78 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
-import { ThemeContext } from "@/lib/contexts/ThemeProvider";
+import { Book, Mail, Store } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
-  const { isDark } = useContext(ThemeContext);
-
   return (
-
-    <footer className="w-full py-4 bg-gradient-to-r from-green-400 to-blue-500 dark:from-green-600 dark:to-blue-700">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <span className={`${isDark ? "text-gray-300" : "text-gray-700"} text-[12px]`}>
-            © 2024 Blinkord. All rights reserved.
+    <footer className="w-full py-10 bg-blink-green">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between">
+        <div className="flex items-center space-x-2 mt-8 md:mt-0">
+          <span className="text-gray-700 text-sm">
+            © {new Date().getFullYear()} Blinkord. All rights reserved.
           </span>
         </div>
         <div className="flex items-center space-x-6 mt-4 md:mt-0">
-          <a
+          {/* Feedback */}
+          <Link
             href="mailto:hi@blinkord.com?subject=Blinkord Feedback"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             rel="noopener noreferrer"
           >
-            Feedback
-          </a>
+            <Mail className="h-6 w-6" />
+          </Link>
+
+          {/* Discord */}
           <Link
             href="https://discord.gg/HugHTEPu4H"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Discord
+            <Image
+              src="/images/discord-outline.svg"
+              alt="Discord"
+              width={35}
+              height={35}
+              className="mr-2"
+            />
           </Link>
+
+          {/* X */}
           <Link
-            href="https://docs.blinkord.com"
-            className="text-[15px] font-bold navLink text-white"
+            href="https://x.com/blinkord_sol"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Docs
+            <Image
+              src="/images/x-outline.svg"
+              alt="X"
+              width={20}
+              height={20}
+              className="mr-2"
+            />
           </Link>
+
+          {/* Marketplace */}
           <Link
             href="/marketplace"
-            className="text-[15px] font-bold navLink text-white"
+            className="text-[15px] font-bold navLink text-black"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Marketplace
+            <Store className="h-6 w-6" />
+          </Link>
+
+          {/* Docs */}
+          <Link
+            href="https://docs.blinkord.com"
+            className="text-[15px] font-bold navLink text-black"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Book className="h-6 w-6" />
           </Link>
         </div>
       </div>
