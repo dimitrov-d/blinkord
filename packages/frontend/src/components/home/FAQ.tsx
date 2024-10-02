@@ -18,7 +18,7 @@ function FAQ() {
 
   return (
     <section className="">
-      <div className="relative bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 dark:bg-gradient-to-r dark:from-stone-800/5 dark:via-stone-800/5 p-4 w-full min-h-[384px] sm:h-full flex flex-col flex-1 transition-colors duration-300 ease-in-out delay-50 items-center justify-center">
+      <div className="relative bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 p-4 w-full min-h-[384px] sm:h-full flex flex-col flex-1 transition-colors duration-300 ease-in-out delay-50 items-center justify-center">
         <GridPatternBg
           className="[mask-image:linear-gradient(85deg,black,transparent)]"
           gridBlocks={gridBlocks}
@@ -28,7 +28,7 @@ function FAQ() {
             Frequently Asked Questions
           </h1>
           <div className="flex flex-col gap-10 items-center">
-            <div className="flex-1 w-full max-w-3xl bg-white/70 p-6 rounded-lg shadow-lg">
+            <div className="flex-1 w-full max-w-3xl bg-white/70 dark:bg-gray-800/70 p-6 rounded-lg shadow-lg">
               <Accordion type="single" collapsible className="w-full">
                 {faq.map((ele) => (
                   <AccordionItem
@@ -39,7 +39,7 @@ function FAQ() {
                     <AccordionTrigger className="text-left text-base font-semibold">
                       {ele.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-lg text-foreground/70">
+                    <AccordionContent className="text-lg text-foreground/70 dark:text-gray-300">
                       {ele.answer}
                     </AccordionContent>
                   </AccordionItem>

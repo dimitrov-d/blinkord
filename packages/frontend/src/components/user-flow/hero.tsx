@@ -77,7 +77,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <p className="font-medium opacity-50 mt-3 text-sm md:text-base">
-            Create shareable links that grant access enable Solana interactions within your Discord Server
+            Create shareable links that enable Solana interactions directly within your Discord Server
           </p>
         </motion.div>
 

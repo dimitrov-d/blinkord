@@ -66,10 +66,10 @@ export default function Header() {
                     rel="noopener noreferrer"
                   >
                     <Image
-                      src="/images/discord-outline.svg"
+                      src={isDark ? "/images/discord-outline-white.svg" : "/images/discord-outline.svg"}
                       alt="Discord"
-                      width={35}
-                      height={35}
+                      width={25}
+                      height={25}
                       className="mr-2"
                     />
                     Discord
@@ -80,7 +80,7 @@ export default function Header() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Book className="h-6 w-6 mr-2" />
+                    <Book className="h-4 w-4 mr-2" />
                     Docs
                   </Link>
                   <Link
@@ -89,7 +89,7 @@ export default function Header() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Store className="h-6 w-6 mr-2" />
+                    <Store className="h-4 w-4 mr-2" />
                     Marketplace
                   </Link>
                 </div>

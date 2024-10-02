@@ -23,11 +23,11 @@ export default function CTA() {
             <div className="absolute -bottom-20 right-20 w-36 h-36 md:w-60 md:h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-40" />
 
             <h1 className="max-w-3xl mx-auto">
-              Unlock Premium Discord Access with Blinkord
+              Bring Solana to your Discord Server with Blinkord
             </h1>
             <p className="font-medium opacity-50 mt-3 text-base md:text-xl max-w-3xl mx-auto">
-              Effortlessly monetize your Discord server by creating shareable
-              links that grant exclusive role access with just a few clicks.
+              Craft unique experiences for your Discord community by creating shareable
+              links that enable Solana interactions within your Discord Server.
             </p>
             <GetStartedButton className="bg-neon-cyan w-fit mt-10" />
           </div>
