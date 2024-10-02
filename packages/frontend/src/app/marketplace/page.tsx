@@ -8,6 +8,7 @@ import OverlaySpinner from '@/components/overlay-spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from "sonner";
+import GridPatternBg from "@/components/common/grid-pattern-bg";
 
 const onConnect = async (owner: boolean) => {
   try {
@@ -65,8 +66,12 @@ const BlinkMarketplaceComponent = () => {
 
   return (
     <section className="py-20 relative">
-      <div className="2xl:container 2xl:mx-auto px-4 sm:px-8">
-        <h1 className="text-3xl font-bold text-center mb-6 mt-12">Blinkord Marketplace - {blinks.length} blinks</h1>
+      <GridPatternBg
+        gridBlocks={[]}
+        className="[mask-image:linear-gradient(-85deg,lightgrey,lightgrey)]"
+      />
+      <div className="2xl:container 2xl:mx-auto px-4 sm:px-8 relative z-10 text-center">
+        <h1 className="text-3xl font-bold text-center mb-6 mt-12 bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Blinkord Marketplace - {blinks.length} blinks</h1>
 
         {!code && (
           <div className="flex flex-col sm:flex-row justify-center items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
@@ -110,12 +115,12 @@ const BlinkMarketplaceComponent = () => {
       {/* Floating Button */}
       <Button
         onClick={() => onConnect(true)}
-        className="fixed h-[4rem] bottom-16 right-8 sm:bottom-16 sm:right-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold rounded-full flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+        className="fixed h-[4rem] bottom-16 right-8 sm:bottom-16 sm:right-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold rounded-full flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 z-20"
       >
         <Plus className="h-7 w-7 mr-0" />
         <span className="hidden sm:block text-lg">Add a blink</span>
       </Button>
-    </section>
+    </section >
   );
 };
 
