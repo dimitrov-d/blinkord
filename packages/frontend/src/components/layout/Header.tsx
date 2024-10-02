@@ -97,7 +97,7 @@ export default function Header() {
               <div className="flex items-center gap-2">
                 <ThemeSwitcherComponent isDark={isDark} setIsDark={setIsDark} />
                 {pathname === '/' ? (
-                  <GetStartedButton className="bg-neon-cyan w-fit" />
+                  <GetStartedButton />
                 ) : (
                   <MyMultiButton />
                 )}

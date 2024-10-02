@@ -29,7 +29,7 @@ export default function CTA() {
               Craft unique experiences for your Discord community by creating shareable
               links that enable Solana interactions within your Discord Server.
             </p>
-            <GetStartedButton className="bg-neon-cyan w-fit mt-10" />
+            <GetStartedButton className="mt-10" />
           </div>
         </div>
       </div>

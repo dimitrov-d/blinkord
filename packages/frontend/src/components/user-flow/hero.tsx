@@ -87,7 +87,7 @@ export function Hero() {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.8 }}
         >
-          <GetStartedButton className="bg-neon-cyan w-fit mt-10" />
+          <GetStartedButton className="mt-10" />
         </motion.div>
       </div>
     </div>

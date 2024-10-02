@@ -79,7 +79,7 @@ function HowItWorks() {
             </div>
           </div>
           <div className="flex justify-center mt-10">
-            <GetStartedButton className="bg-neon-cyan w-fit" />
+            <GetStartedButton />
           </div>
         </div>
       </div>
