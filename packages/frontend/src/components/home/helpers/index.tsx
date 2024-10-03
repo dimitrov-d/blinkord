@@ -255,13 +255,31 @@ export const faq = [
   },
   {
     id: 8,
+    question: "How to use Blinkord within Discord?",
+    answer: (
+      <div>
+        <p>
+          Instead of using the platform, you can directly interact with blinks on Discord with the help of the Blinkord Bot. The bot recognizes Solana action URLs, unfurls the links and displays all the actions as clickable buttons. You can learn more about the bot{" "}
+          <a className="text-blue-700 cursor-pointer" href="https://docs.blinkord.com/blinkord-bot" target="_blank">
+            here
+          </a>.
+          and add it to your server{" "}
+          <a className="text-blue-700 cursor-pointer" href="https://discord.com/oauth2/authorize?client_id=1277276051592052787&permissions=268443649&integration_type=0&scope=bot+applications.commands" target="_blank">
+            by using this link
+          </a>.
+        </p>
+      </div>
+    ),
+  },
+  {
+    id: 9,
     question:
       "Are there any fees associated with purchasing roles on Blinkord?",
     answer:
       "While Blinkord does not charge users any fees for purchasing roles, standard Solana network transaction fees (usually minimal) apply when making payments. These fees are paid to the network validators to process your transaction.",
   },
   {
-    id: 9,
+    id: 10,
     question: "Is Blinkord Free?",
     answer: (
       <div>
@@ -281,7 +299,7 @@ export const faq = [
     ),
   },
   {
-    id: 10,
+    id: 11,
     question: "How does Blinkord handle role expiration and management?",
     answer: (
       <div>
@@ -308,7 +326,7 @@ export const faq = [
     ),
   },
   {
-    id: 11,
+    id: 12,
     question: "What is the Blinkord Marketplace?",
     answer: (
       <div>
