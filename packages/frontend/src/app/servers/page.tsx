@@ -219,44 +219,48 @@ export default function Servers() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <motion.h1
-        className="text-5xl font-bold text-center mb-16"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        Select a server
-        {guilds?.length ? (
-          <>
-            <p className="text-sm text-muted-foreground text-center mt-4">
-              Please choose a server you want to create a blink for.
-            </p>
-            <p className="text-sm text-muted-foreground text-center mt-4">
-              The Blinkord Bot will be added to your server in order to assign roles to your members.
-            </p>
-          </>
-        ) : (
-          <p className="text-center text-lg text-muted-foreground mt-4">
-            You are not an owner or admin of any guild. Please check your Discord permissions or create a new server.
-          </p>
-        )}
-      </motion.h1>
-
-      {isFetchingGuilds ? (
-        <LoadingSpinner />
-      ) : (
-        guilds?.length > 0 && (
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full justify-center text-center"
-            initial={{ opacity: 0, y: 20 }}
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-grow">
+        <div className="container mx-auto px-4 py-12">
+          <motion.h1
+            className="text-5xl font-bold text-center mb-16"
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5 }}
           >
-            {guilds.map((guild, index) => renderGuildCard(guild, index))}
-          </motion.div>
-        )
-      )}
+            Select a server
+            {guilds?.length ? (
+              <>
+                <p className="text-sm text-muted-foreground text-center mt-4">
+                  Please choose a server you want to create a blink for.
+                </p>
+                <p className="text-sm text-muted-foreground text-center mt-4">
+                  The Blinkord Bot will be added to your server in order to assign roles to your members.
+                </p>
+              </>
+            ) : (
+              <p className="text-center text-lg text-muted-foreground mt-4">
+                You are not an owner or admin of any guild. Please check your Discord permissions or create a new server.
+              </p>
+            )}
+          </motion.h1>
+
+          {isFetchingGuilds ? (
+            <LoadingSpinner />
+          ) : (
+            guilds?.length > 0 && (
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full justify-center text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                {guilds.map((guild, index) => renderGuildCard(guild, index))}
+              </motion.div>
+            )
+          )}
+        </div>
+      </div>
     </div>
   );
 }

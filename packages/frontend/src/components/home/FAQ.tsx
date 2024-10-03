@@ -23,7 +23,7 @@ function FAQ() {
           className="[mask-image:linear-gradient(85deg,black,transparent)]"
           gridBlocks={gridBlocks}
         />
-        <div className="container py-20 md:py-24 lg:py-36 mx-auto max-w-7xl relative z-10">
+        <div className="container py-10 md:py-12 lg:py-18 mx-auto max-w-7xl relative z-10">
           <h1 className="text-3xl text-center py-4">
             Frequently Asked Questions
           </h1>

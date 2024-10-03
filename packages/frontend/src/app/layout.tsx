@@ -104,7 +104,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </head>
         <body
           className={cn(
-            "min-h-screen font-sans antialiased",
+            "min-h-screen font-sans antialiased bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_10%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_10%,#63e_100%)]",
             fontSans.variable
           )}
         >
