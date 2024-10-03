@@ -63,7 +63,7 @@ function HowItWorks() {
                 </li>
               </ul>
             </div>
-            <div className="relative h-[500px] w-full rounded-xl">
+            <div className="relative h-[500px] w-full rounded-xl transform transition-transform duration-300 hover:scale-105">
               <Image
                 className="dark:hidden object-contain"
                 src="/images/blinkord-community-light.png"

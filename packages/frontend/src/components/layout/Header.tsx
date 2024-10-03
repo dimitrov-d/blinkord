@@ -52,16 +52,16 @@ export default function Header() {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "space-between", // Adjusted to space-between
-                width: "100%", // Ensure full width
+                justifyContent: "space-between",
+                width: "100%",
               }}
             >
               <Logo isDark={isDark} />
               {showLogo && (
-                <div className="hidden lg:flex items-center justify-center px-10 gap-6 "> {/* Adjusted to justify-center */}
+                <div className="hidden lg:flex items-center justify-center px-10 gap-6 ">
                   <Link
                     href="https://discord.gg/HugHTEPu4H"
-                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink flex items-center"
+                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -76,7 +76,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="https://docs.blinkord.com"
-                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink flex items-center"
+                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -85,7 +85,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/marketplace"
-                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink flex items-center"
+                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

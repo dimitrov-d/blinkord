@@ -17,16 +17,16 @@ export const features = [
   },
   {
     id: 1,
-    title: "Elevated User Satisfaction",
+    title: "Elevated User Engagement",
     description:
-      "By using Blinkord, your users are able to interact with the vast Solana dapp ecosystem and execute transactions directly within your Discord Server.",
+      "By using Blinkord, your community members are able to interact with the vast Solana dapp ecosystem and execute transactions directly within your Discord Server.",
     icon: <Laugh />,
   },
   {
     id: 2,
     title: "Higher Conversion Rates",
     description:
-      "Turn interest into commitment. Blinkord's frictionless payment and role assignment process reduces barriers, making it more likely for visitors to become paying members.",
+      "Turn interest into commitment. Blinkord's frictionless payment and wallet connection process reduces barriers, making it more likely for visitors to become paying members.",
     icon: <ArrowLeftRight />,
   },
   {

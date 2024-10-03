@@ -10,7 +10,7 @@ export const Logo = ({ isDark }: any) => (
     <Image
       src={!isDark === true ? Brand : BrandW}
       alt=""
-      className="min-w-[30px] w-20 md:w-32 lg:w-64 max-w-[140px] cursor-pointer"
+      className="min-w-[30px] w-20 md:w-32 lg:w-64 max-w-[140px] cursor-pointer navLink"
     />
   </Link>
 );
