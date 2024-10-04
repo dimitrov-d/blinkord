@@ -49,7 +49,7 @@ export function Hero() {
             whileHover={{ scale: 1.05 }}
           >
             <Bot /> experiences with{" "}
-            <span className="highlight-blue">Blinkord</span>.{" "}
+            <span className="highlight-blue">Blinkord</span>{" "}
             <motion.div
               className="absolute -top-1 -right-1 md:-top-2 md:-right-2 w-4 h-4 md:w-6 md:h-6 lg:w-8 lg:h-8 border-t-2 border-r-2 border-neon-blue z-10"
               animate={{ rotate: 0 }}
@@ -67,7 +67,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           Monetize your <span className="highlight-green">Discord</span> community{" "}
-          <span className="highlight-cyan">effortlessly</span>.
+          <span className="highlight-cyan">effortlessly</span>
         </motion.h2>
 
         <motion.div
