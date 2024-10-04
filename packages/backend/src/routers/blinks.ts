@@ -15,15 +15,34 @@ const BASE_URL = env.APP_BASE_URL;
 const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
 const generalAction = {
-  type: 'action',
   title: 'Use Blinkord',
-  disabled: true,
   label: 'Go to blinkord.com',
+  type: 'action',
+  links: {
+    actions: [
+      {
+        type: 'external-link',
+        href: `${BASE_URL}/blinks/link`,
+        label: 'Go to blinkord.com',
+      },
+    ],
+  },
   icon: `https://blinkord.com/images/banner_square.png`,
   description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
   error: { message: 'Go to blinkord.com to get started' },
 } as Action<'action'>;
+
+blinksRouter.post('/link/:serverId?', async (req: Request, res: Response) => {
+  const { serverId } = req.params;
+  const externalLink = serverId ? `https://blinkord.com/${serverId}` : 'https://blinkord.com';
+  res.json({
+    type: 'external-link',
+    externalLink,
+  });
+});
+
 blinksRouter.get('/', async (req: Request, res: Response) => res.json(generalAction));
+
 /**
  * Returns an action based on data for a given guild
  * @param {string} guildId - Path parameter representing ID of the guild
@@ -48,13 +67,37 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
 
   console.info(`Sending action for guild ${guildId}`);
 
-  const { code, hideError } = req.query;
+  const { code, showRoles } = req.query;
+
+  const guildBlinkData = {
+    title: guild.name,
+    description: `${guild.description}${guild.limitedTimeRoles ? `\n\n Roles are valid for ${guild.limitedTimeQuantity} ${guild.limitedTimeUnit}` : ''}`,
+    icon: guild.iconUrl,
+  };
+
+  // showRoles=true is from the blinkord platform, to show the roles even if disabled
+  if (!code && !showRoles) {
+    return res.json({
+      ...guildBlinkData,
+      label: `Go to blinkord.com`,
+      type: 'action',
+      links: {
+        actions: [
+          {
+            type: 'external-link',
+            href: `${BASE_URL}/blinks/link/${guildId}`,
+            label: `Go to blinkord.com`,
+          },
+        ],
+      },
+    } as Action<'action'>);
+  }
+
   const payload: Action<'action'> = {
     type: 'action',
     label: null,
-    title: guild.name,
-    icon: guild.iconUrl,
-    description: `${guild.description}${guild.limitedTimeRoles ? `\n\n Roles are valid for ${guild.limitedTimeQuantity} ${guild.limitedTimeUnit}` : ''}`,
+    ...guildBlinkData,
+    disabled: !code,
     links: {
       actions: guild.roles.map(({ id, name, amount }) => ({
         type: 'post',
@@ -62,14 +105,10 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
         href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
       })),
     },
-    disabled: !code,
-    error: code || !!hideError ? null : { message: `Discord connect required, visit blinkord.com/${guildId}` },
   };
 
-  // Blinksights tracking API call fails
   const response = await blinkSights.createActionGetResponseV1(req.url, payload);
   return res.json(response);
-  // return res.json(payload);
 });
 
 /**

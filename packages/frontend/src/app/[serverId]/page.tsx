@@ -113,7 +113,7 @@ export default function BlinkPage() {
           >
             <Card className="w-full h-auto">
               <CardContent>
-                <BlinkDisplay serverId={serverId} code={code} hideError={true} />
+                <BlinkDisplay serverId={serverId} code={code} />
               </CardContent>
             </Card>
           </motion.div>

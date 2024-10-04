@@ -10,13 +10,12 @@ import { BlinkCardSkeleton } from '../skeletons/blink-skeleton'
 interface BlinkPreviewProps {
   serverId: string
   code?: string
-  hideError?: boolean
 }
 
-export const BlinkDisplay: React.FC<BlinkPreviewProps> = ({ serverId, code, hideError }) => {
+export const BlinkDisplay: React.FC<BlinkPreviewProps> = ({ serverId, code }) => {
   const { isDark } = useContext(ThemeContext);
 
-  const actionApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/${serverId}${code ? `?code=${code}` : hideError ? `?hideError=${hideError}` : ''}`;
+  const actionApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/${serverId}?showRoles=true${code ? `&code=${code}` : ''}`;
 
   const { adapter } = useActionSolanaWalletAdapter(process.env.NEXT_PUBLIC_HELIUS_URL!)
   const { action, isLoading } = useAction({ url: actionApiUrl, adapter });
