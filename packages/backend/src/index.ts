@@ -15,7 +15,7 @@ initializeDatabase();
 const app = express();
 app.use(express.json());
 app.use(helmet());
-app.use(actionCorsMiddleware({ chainId: BLOCKCHAIN_IDS.mainnet, actionVersion: '2' }));
+app.use(actionCorsMiddleware({ chainId: BLOCKCHAIN_IDS.mainnet, /*actionVersion: '2'*/ }));
 app.use((req, res, next) => {
   // Redirect API URL to website
   if (req.hostname === 'api.blinkord.com' && req.path === '/') {
