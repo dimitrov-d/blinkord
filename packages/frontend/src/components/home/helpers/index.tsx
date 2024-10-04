@@ -57,7 +57,7 @@ export const faq = [
     id: 0,
     question: "What is Blinkord?",
     answer:
-      "Blinkord is a platform that enables Discord server owners to offer exclusive, paid roles to their members through simple, shareable links called Blinks. By integrating with the Solana blockchain, Blinkord facilitates secure and fast transactions using SOL (Solana's native cryptocurrency), providing a seamless experience for both server owners and members.",
+      "Blinkord is a platform that enables Discord server owners to enable Solana interactions within their Discord community through shareable links called Solana Actions and Blinks. By integrating with the Solana blockchain, Blinkord facilitates secure and fast transactions using SOL (Solana’s native cryptocurrency), providing a seamless experience for both server owners and members.",
   },
   {
     id: 1,
@@ -97,7 +97,7 @@ export const faq = [
           >
             Discord OAuth
           </a>{" "}
-          for role assignments:
+          for role assignments. You are able to perform any Solana action through Blinkord, all within a few clicks and within the Discord app.
         </p>
         <br />
         <ul>
