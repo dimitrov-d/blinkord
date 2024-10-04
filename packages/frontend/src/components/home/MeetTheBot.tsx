@@ -1,11 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CircleCheck, PlusCircle } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import GridPatternBg from "../common/grid-pattern-bg";
-import GetStartedButton from "../common/get-started-button";
-import { cn } from "@/lib/utils";
-import Button from "@mui/material/Button";
 import AddBlinkordBotButton from "../common/discord-bot-button";
 
 function MeetTheBot() {

@@ -43,7 +43,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Unlock premium <Evolve /> Discord
+          Unlock unique <Evolve /> Discord
           <motion.div
             className="relative md:-mt-1"
             whileHover={{ scale: 1.05 }}
@@ -66,7 +66,7 @@ export function Hero() {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Monetize your <span className="highlight-green">Discord</span> server{" "}
+          Monetize your <span className="highlight-green">Discord</span> community{" "}
           <span className="highlight-cyan">effortlessly</span>.
         </motion.h2>
 

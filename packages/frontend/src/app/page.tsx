@@ -5,17 +5,15 @@ import Features from "@/components/home/Features";
 import MeetTheBot from "@/components/home/MeetTheBot";
 import CTA from "@/components/home/CTA";
 
-const Index: React.FC = () => {
-  return (
-    <main className="font-excon">
-      <HeroSection />
-      <Features />
-      <HowItWorks />
-      <MeetTheBot />
-      <FAQ />
-      <CTA />
-    </main>
-  );
-};
+const Index: React.FC = () => (
+  <main className="font-excon">
+    <HeroSection />
+    <Features />
+    <HowItWorks />
+    <MeetTheBot />
+    <FAQ />
+    <CTA />
+  </main>
+);
 
 export default Index;

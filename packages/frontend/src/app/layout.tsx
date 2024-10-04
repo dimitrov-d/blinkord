@@ -10,22 +10,27 @@ import { Toaster } from "sonner";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 export const metadata: Metadata = {
-  title: "Blinkord - Monetize your Discord Community",
+  title: "Blinkord - Monetize your Discord Community effortlessly",
   description:
-    "Blinkord simplifies premium access for your Discord server. Create shareable links that unlock exclusive roles. Secure payments in SOL via Solana Actions.",
+    "Monetize your Discord Community effortlessly. Blinkord enables you to integrate Solana interactions directly within your Discord server. Create custom links for premium content, NFTs, token swaps, donations, and more. Secure, fast payments in SOL via Solana Actions, all within Discord.",
   keywords: [
-    "Discord server premium access",
-    "Monetize Discord server",
-    "Solana payments",
-    "Custom links for Discord",
-    "Premium Discord roles",
+    "Discord premium content",
+    "Monetize Discord server with blockchain",
+    "Solana payments on Discord",
+    "Custom Solana blinks",
+    "NFT purchases on Discord",
+    "Token swaps in Discord",
+    "DAO voting in Discord",
     "Secure payments in SOL",
-    "Discord OAuth integration",
+    "Discord role management",
+    "Solana integration for Discord",
+    "Blockchain transactions in Discord",
+    "Blinkord Bot for Solana",
   ],
   openGraph: {
-    title: "Blinkord - Monetize your Discord Community",
+    title: "Blinkord - Monetize and Power Your Discord with Solana",
     description:
-      "Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server roles instantly. Powered by Solana for fast, secure transactions.",
+      "Transform your Discord community with Blinkord. Enable Solana-powered transactions for premium roles, NFT trading, token swaps, and more. All secured through blockchain technology and made seamless with Blinkord Bot.",
     url: "https://blinkord.com",
     type: "website",
     images: [
@@ -33,15 +38,15 @@ export const metadata: Metadata = {
         url: "https://blinkord.com/images/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Blinkord platform interface",
+        alt: "Blinkord platform enabling Solana transactions in Discord",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blinkord - Monetize your Discord Community",
+    title: "Blinkord - Power Your Discord with Solana",
     description:
-      "Monetize your Discord server effortlessly with Blinkord. Secure payments in SOL and instant premium access with custom links.",
+      "Monetize your Discord server with Blinkord. Enable Solana interactions directly within your Discord Server.",
     images: ["https://blinkord.com/images/og-image.png"],
   },
 };
@@ -73,7 +78,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
           <meta
             property="og:description"
-            content="Enhance your Discord community with Blinkord. Create custom links that allow users to access premium server roles instantly. Powered by Solana for fast, secure transactions."
+            content="Monetize your Discord server effortlessly. Create shareable links that enable Solana interactions directly within your Discord Server"
           />
           <meta property="og:url" content="https://blinkord.com" />
           <meta property="og:type" content="website" />
@@ -92,7 +97,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           />
           <meta
             name="twitter:description"
-            content="Monetize your Discord server effortlessly with Blinkord. Secure payments in SOL and instant premium access with custom links."
+            content="Monetize your Discord server effortlessly. Create shareable links that enable Solana interactions directly within your Discord Server"
           />
           <meta
             name="twitter:image"
