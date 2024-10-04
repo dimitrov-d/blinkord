@@ -28,7 +28,7 @@ const generalAction = {
     ],
   },
   icon: `https://blinkord.com/images/banner_square.png`,
-  description: 'Create shareable links for purchasing exclusive roles on your Discord server!',
+  description: 'Create shareable links that enable Solana interactions directly within your Discord Server',
   error: { message: 'Go to blinkord.com to get started' },
 } as Action<'action'>;
 
