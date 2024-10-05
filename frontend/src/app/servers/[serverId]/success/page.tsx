@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 
 export default function SuccessPage() {
-  const [blinkUrl, setBlinkUrl] = useState("");
   const [serverId, setServerId] = useState("");
   const [customUrl, setCustomUrl] = useState("");
   const { toast } = useToast();
@@ -32,7 +31,6 @@ export default function SuccessPage() {
       return;
     }
 
-    setBlinkUrl(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/${serverId}`);
     setCustomUrl(`${process.env.NEXT_PUBLIC_APP_BASE_URL}/${serverId}`);
 
     const shootConfetti = () => {
@@ -72,7 +70,7 @@ export default function SuccessPage() {
       window.open(`https://discord.com/channels/${serverId}`, "_blank");
     } else if (platform === "x") {
       window.open(
-        `https://twitter.com/intent/tweet?text=Check%20out%20my%20Blink!%20${encodeURIComponent(blinkUrl)}`,
+        `https://twitter.com/intent/tweet?text=Check%20out%20my%20Blink!%20${encodeURIComponent(customUrl)}`,
         "_blank"
       );
     }
