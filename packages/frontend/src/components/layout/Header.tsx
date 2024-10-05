@@ -12,6 +12,7 @@ import MyMultiButton from "./MyMultiButton";
 import { usePathname } from 'next/navigation'
 import { Book, Store } from "lucide-react";
 import Image from "next/image";
+import Drawer from "../drawer";
 
 export default function Header() {
   const { isDark, setIsDark } = useContext(ThemeContext);
@@ -56,7 +57,10 @@ export default function Header() {
                 width: "100%",
               }}
             >
-              <Logo isDark={isDark} />
+              <div className="flex items-center">
+                <Drawer />
+                <Logo isDark={isDark} />
+              </div>
               {showLogo && (
                 <div className="hidden lg:flex items-center justify-center px-10 gap-6 ">
                   <Link

@@ -16,7 +16,7 @@ export default function Footer() {
         <div className="flex items-center space-x-6 mt-4 md:mt-0">
           {/* Feedback */}
           <Link
-            href="mailto:hi@blinkord.com?subject=Blinkord Feedback"
+            href="mailto:hi@blinkord.com"
             className="text-[15px] font-bold navLink text-black"
             rel="noopener noreferrer"
           >

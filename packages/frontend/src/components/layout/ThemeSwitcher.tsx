@@ -53,7 +53,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
   "@media (max-width: 600px)": {
     width: 40,
-    height: 20,
+    height: 25,
     padding: 4,
     "& .MuiSwitch-thumb": {
       width: 20,
@@ -83,6 +83,11 @@ export default function ThemeSwitcherComponent({ isDark, setIsDark }: any) {
           }}
         />
       }
+      sx={{
+        "@media (max-width: 600px)": {
+          marginRight: -1
+        },
+      }}
     />
   );
 }
