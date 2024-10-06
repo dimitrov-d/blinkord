@@ -258,6 +258,9 @@ export const faq = [
             permissions and does not have access to personal messages or server
             administration.
           </li>
+          <li>
+            <strong>Wallet Security:</strong> Undoubtedly one of the most important aspects of security is the protection of your wallet, which is achieved through advanced encryption and decentralized signing methods. This ensures that your assets remain secure, with transactions only being executed upon your direct authorization through the Blinkord Bot, giving you full control over your wallet at all times.
+          </li>
         </ul>
       </div>
     ),
