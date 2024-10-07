@@ -1,0 +1,14 @@
+{
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug",
+      "runtimeExecutable": "nodemon",
+      "runtimeArgs": ["src/index.ts"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}

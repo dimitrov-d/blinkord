@@ -1,0 +1,46 @@
+{
+  "name": "blinkord-bot",
+  "version": "1.0.0",
+  "description": "Blinkord Bot - Interact with Solana Blinks on Discord",
+  "main": "index.ts",
+  "scripts": {
+    "start": "nodemon ./src/index.ts",
+    "start-pm2": "pm2 -l ./bot-logs.txt --name blinkord-bot start ts-node -- -P tsconfig.json ./src/index.ts",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src",
+    "deploy": "ts-node ./src/deploy-commands.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-kms": "^3.665.0",
+    "@solana/web3.js": "^1.95.3",
+    "axios": "^1.7.7",
+    "bs58": "^6.0.0",
+    "console-stamp": "^3.1.2",
+    "discord.js": "^14.16.2",
+    "dotenv": "^16.4.5",
+    "mongodb": "^5.9.2",
+    "pg": "^8.13.0",
+    "qrcode": "^1.5.4",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "@typescript-eslint/parser": "8.6.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.3",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^7.1.0",
+    "eslint-plugin-security": "^3.0.1",
+    "eslint-plugin-sonarjs": "^2.0.2",
+    "nodemon": "^3.1.6",
+    "pm2": "^5.4.2",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.6.2"
+  }
+}
