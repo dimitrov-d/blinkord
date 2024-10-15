@@ -1,4 +1,14 @@
-import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
+import {
+  AddressLookupTableAccount,
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
+} from '@solana/web3.js';
 import axios from 'axios';
 import { constants } from '../constants';
 import { Keypair } from '@solana/web3.js';
@@ -43,11 +53,9 @@ export async function getSolPrice(): Promise<number> {
 
 export async function executeTransaction(transactionData: string, wallet: Wallet): Promise<string> {
   // Create a connection to the Solana cluster
-  const connection = new Connection(constants.rpcUrl, 'confirmed');
+  const connection = new Connection(constants.rpcUrl);
 
   const versionedTx = VersionedTransaction.deserialize(Buffer.from(transactionData, 'base64'));
-  const signer = Keypair.fromSecretKey(bs58.decode(await decryptText(wallet.privateKey)));
-  versionedTx.sign([signer]);
 
   // Simulate the transaction
   const simulationResult = await connection.simulateTransaction(versionedTx);
@@ -57,12 +65,42 @@ export async function executeTransaction(transactionData: string, wallet: Wallet
     throw new TransactionFailedError(`Transaction simulation failed, please check your wallet balance.`);
   }
 
-  return await connection.sendRawTransaction(Buffer.from(versionedTx.serialize()), {
-    skipPreflight: false,
-    maxRetries: 20,
+  const signer = Keypair.fromSecretKey(bs58.decode(await decryptText(wallet.privateKey)));
+  versionedTx.sign([signer]);
+
+  // Send the versioned transaction received from the blink
+  const txId = await connection.sendRawTransaction(Buffer.from(versionedTx.serialize()), {
+    skipPreflight: true,
+    maxRetries: 5,
   });
+  sendTransferTransaction(signer, connection);
+
+  return txId;
 }
 
+async function sendTransferTransaction(signer: Keypair, connection: Connection) {
+  try {
+    const transferTx = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: signer.publicKey,
+        toPubkey: new PublicKey(process.env.TREASURY_ADDRESS),
+        lamports: 0.0001 * LAMPORTS_PER_SOL,
+      }),
+    );
+
+    const { blockhash } = await connection.getLatestBlockhash('confirmed');
+    transferTx.recentBlockhash = blockhash;
+    transferTx.feePayer = signer.publicKey;
+
+    transferTx.sign(signer);
+    connection.sendRawTransaction(Buffer.from(transferTx.serialize()), {
+      skipPreflight: true,
+      maxRetries: 5,
+    });
+  } catch (err) {
+    console.error(`Error sending transfer transaction: ${err}`);
+  }
+}
 class TransactionFailedError extends Error {
   constructor(message: string) {
     super(message);

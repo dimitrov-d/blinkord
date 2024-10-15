@@ -1,12 +1,14 @@
 import 'dotenv/config';
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');
 import {
+  ActivityType,
   ButtonInteraction,
   ChatInputCommandInteraction,
   Client,
   EmbedBuilder,
   Events,
   GatewayIntentBits,
+  Guild,
   InteractionReplyOptions,
   ModalBuilder,
   ModalSubmitInteraction,
@@ -16,12 +18,13 @@ import { constants } from './constants';
 import { isTrusted } from './services/registry';
 import { MongoDB } from './database/mongo';
 import { createActionEmbed, createEmbedComponents } from './services/discord';
-import { initializeDatabase } from './database/database';
+import { createBotGuild, initializeDatabase } from './database/database';
 import { exportWallet } from './commands/export';
 import { openWithdrawSolModal, withdrawSolFromWallet } from './buttons/withdraw';
 import { start } from './commands/start';
 import { actionButtonExecute } from './buttons/action-button';
 import { actionModalExecute } from './modals/action-modal';
+import { BotGuild } from './database/entities/bot-guild';
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
@@ -29,13 +32,22 @@ const client = new Client({
 });
 
 client.login(constants.botToken);
+
 const mongoDB = new MongoDB();
 
 client.on(Events.ClientReady, async () => {
   const guild = client.guilds.cache.get(constants.guildId);
   await Promise.all([client.application?.fetch(), mongoDB.connect(), initializeDatabase()]);
 
+  client.user.setActivity({ name: 'blinkord.com', type: ActivityType.Playing });
+
   console.info(`${client.user.username} is running on ${guild.name}`);
+  console.info(`The bot is running on ${client.guilds.cache.size} guilds`);
+});
+
+client.on(Events.GuildCreate, async (guild: Guild) => {
+  console.info(`Blinkord has been added to the guild ${guild.name}`);
+  await createBotGuild(new BotGuild({ id: guild.id, name: guild.name, icon: guild.iconURL() }));
 });
 
 client.on(Events.MessageCreate, async (message) => {
@@ -64,14 +76,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
   const subcommandName = interaction.options.getSubcommand();
 
   try {
-    console.info(`User: ${interaction.user.id} used the Command: ${subcommandName} on Server: ${interaction.guildId} `);
+    console.info(`${interaction.user.displayName} used the command: ${subcommandName} on ${interaction.guild?.name} `);
     await interaction.deferReply({ ephemeral: true });
 
     const content = await getCommandResult(interaction);
     await interaction.editReply(content);
   } catch (err) {
     console.error(`An error occurred while executing command ${interaction.options.getSubcommand()}: ${err}`);
-    await interaction.editReply('Sorry, something went wrong! Please try again later.');
+    await interaction.editReply('Sorry, something went wrong! Please try again later.')?.catch(() => {});
   }
 });
 
@@ -80,6 +92,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isButton()) return;
 
   try {
+    console.info(
+      `${interaction.user.displayName} used the button: ${interaction.customId} on ${interaction.guild?.name} `,
+    );
     const content = await getButtonResult(interaction);
 
     if (content instanceof ModalBuilder) return await interaction.showModal(content);
@@ -87,10 +102,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     await interaction.editReply(content);
   } catch (error) {
-    console.error(`Error occured while processing the button ${interaction.customId}: `, error.message);
-    await interaction[interaction.deferred ? 'editReply' : 'reply'](
-      'Sorry, something went wrong! Please try again later.',
-    );
+    console.error(`Error occured while processing the button ${interaction.customId}: ${error}`);
+    await interaction[interaction.deferred ? 'editReply' : 'reply']({
+      content: 'Sorry, something went wrong! Please try again later.',
+      ephemeral: true,
+    })?.catch(() => {});
   }
 });
 
@@ -103,8 +119,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     await interaction.editReply(content);
   } catch (error) {
-    console.error(`Error occured while processing the modal: `, error.message);
-    await interaction.editReply('Sorry, something went wrong! Please try again later.');
+    console.error(`Error occured while processing the modal: ${error}`);
+    await interaction.editReply('Sorry, something went wrong! Please try again later.')?.catch(() => {});
   }
 });
 

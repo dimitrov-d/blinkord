@@ -8,6 +8,7 @@ import { addBlinkordRole, createActionEmbed } from './discord';
 export async function executeAction(
   interaction: ButtonInteraction | ModalSubmitInteraction,
   action: LinkedAction,
+  actionUrl: string,
 ): Promise<InteractionReplyOptions | string> {
   // Get the user's wallet from the database
   const wallet = await getUserWallet(interaction.user.id);
@@ -33,9 +34,9 @@ export async function executeAction(
     if (guildId && roleId) addBlinkordRole(guildId, roleId, interaction.user.id);
     // Handle action chaining
     else if (links?.next) {
-      const { type, action, href } = links.next;
-      if (type === 'inline' && action) {
-        return { content, ...createActionEmbed(action, href) };
+      const { type, action: nextAction, href } = links.next;
+      if (type === 'inline' && nextAction) {
+        return { content, ...createActionEmbed(nextAction, href || actionUrl) };
       } else if (type === 'post' && href) {
         const { data: nextActionData } = await axios.post(href, { ...body, signature });
         return { content, ...createActionEmbed(nextActionData, href) };

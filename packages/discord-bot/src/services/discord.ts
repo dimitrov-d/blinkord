@@ -4,6 +4,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ChatInputCommandInteraction,
+  Colors,
   EmbedBuilder,
   TextChannel,
 } from 'discord.js';
@@ -17,23 +18,30 @@ export function createActionEmbed(action: Action, url: string) {
     .setTitle(action.title || 'Action')
     .setURL(new URL(url).origin)
     .setDescription(action.description || '\u200B')
-    .setImage(action.icon || '\u200B');
+    .setImage(action.icon || '\u200B')
+    .setColor('Random');
 
   const components = createEmbedComponents(action, url);
   return { embeds: [embed], components };
 }
-export function createEmbedComponents(actionResponse: any, url: string): ActionRowBuilder<ButtonBuilder>[] {
+export function createEmbedComponents(actionResponse: Action, url: string): ActionRowBuilder<ButtonBuilder>[] {
   const actionRow = new ActionRowBuilder<ButtonBuilder>();
 
   if (actionResponse.links?.actions?.length) {
     actionRow.addComponents(
       ...actionResponse.links.actions.map((action: LinkedAction, index: number) =>
-        new ButtonBuilder().setCustomId(`action_${index}_${url}`).setLabel(action.label).setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId(`action_${index}_${url}_${!!action.parameters?.length}`)
+          .setLabel(action.label)
+          .setStyle(ButtonStyle.Primary),
       ),
     );
   } else if (actionResponse.label) {
     actionRow.addComponents(
-      new ButtonBuilder().setCustomId(`action_0_${url}`).setLabel(actionResponse.label).setStyle(ButtonStyle.Primary),
+      new ButtonBuilder()
+        .setCustomId(`action_0_${url}_false`)
+        .setLabel(actionResponse.label)
+        .setStyle(ButtonStyle.Primary),
     );
   }
 

@@ -9,14 +9,43 @@ export async function actionModalExecute(interaction: ModalSubmitInteraction, mo
   const action = actionData?.links?.actions[+index];
   if (!action) return `Action not found`;
 
-  const params: Record<string, string> = {};
-  action.parameters?.forEach((param) => {
-    params[param.name] = interaction.fields.getTextInputValue(param.name);
-  });
+  const params = action.parameters
+    // Modals support max 5 components
+    .slice(0, 5)
+    .map((param) => {
+      const value = interaction.fields.getTextInputValue(param.name);
+      return { [param.name]: { type: param.type, value } };
+    })
+    .reduce((acc, param) => ({ ...acc, ...param }), {});
 
-  for (const [key, value] of Object.entries(params)) {
-    action.href = action.href.replace(`{${key}}`, encodeURIComponent(value));
+  for (const [name, { type, value }] of Object.entries(params)) {
+    switch (type) {
+      case 'number':
+        if (isNaN(Number(value))) {
+          return `Invalid value for ${name}: must be a number`;
+        }
+        break;
+      case 'email':
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return `Invalid value for ${name}: must be a valid email`;
+        }
+        break;
+      case 'url':
+        try {
+          new URL(value);
+        } catch (_) {
+          return `Invalid value for ${name}: must be a valid URL`;
+        }
+        break;
+      case 'date':
+      case 'datetime-local':
+        if (isNaN(Date.parse(value))) {
+          return `Invalid value for ${name}: must be a valid date`;
+        }
+        break;
+    }
+    action.href = action.href.replace(`{${name}}`, encodeURIComponent(value));
   }
 
-  return await executeAction(interaction, action);
+  return await executeAction(interaction, action, url);
 }

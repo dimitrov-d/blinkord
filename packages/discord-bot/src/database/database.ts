@@ -3,9 +3,10 @@ import { DataSource, Repository } from 'typeorm';
 import { Wallet } from './entities/wallet';
 import { encryptText } from '../services/crypto';
 import { generateSolanaKeypair } from '../services/solana';
+import { BotGuild } from './entities/bot-guild';
 
 let walletRepository: Repository<Wallet>;
-
+let botGuildRepository: Repository<BotGuild>;
 export async function initializeDatabase() {
   const dataSource = new DataSource({
     host: process.env.DATABASE_HOST,
@@ -16,7 +17,7 @@ export async function initializeDatabase() {
     database: 'postgres',
     port: 5432,
     driver: require('pg'),
-    entities: [Wallet],
+    entities: [Wallet, BotGuild],
   });
   await dataSource
     .initialize()
@@ -24,6 +25,7 @@ export async function initializeDatabase() {
     .catch((err) => console.error('Error during database initialization', err));
 
   walletRepository = dataSource.getRepository(Wallet);
+  botGuildRepository = dataSource.getRepository(BotGuild);
 }
 
 export function getUserWallet(discordUserId: string) {
@@ -39,4 +41,8 @@ export async function getOrCreateWallet(discordUserId: string) {
   const wallet = new Wallet(publicKey, discordUserId, await encryptText(privateKey));
 
   return await walletRepository.save(wallet);
+}
+
+export async function createBotGuild(botGuild: Partial<BotGuild>) {
+  return await botGuildRepository.save(botGuild);
 }
