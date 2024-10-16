@@ -17,7 +17,7 @@ import {
 import { constants } from './constants';
 import { isTrusted } from './services/registry';
 import { MongoDB } from './database/mongo';
-import { createActionEmbed, createEmbedComponents } from './services/discord';
+import { createActionEmbed } from './services/discord';
 import { createBotGuild, initializeDatabase } from './database/database';
 import { exportWallet } from './commands/export';
 import { openWithdrawSolModal, withdrawSolFromWallet } from './buttons/withdraw';

@@ -1,4 +1,5 @@
 import { KMS } from '@aws-sdk/client-kms';
+import { createHash } from 'crypto';
 
 const kms = new KMS({
   credentials: {
@@ -25,4 +26,8 @@ export async function decryptText(encryptedText: string): Promise<string> {
     CiphertextBlob: Buffer.from(encryptedText, 'base64'),
   });
   return new TextDecoder().decode(Plaintext);
+}
+
+export function hash(text: string): string {
+  return createHash('sha256').update(text).digest('hex').slice(0, 30);
 }

@@ -2,6 +2,7 @@ import { MongoClient, Db, Collection } from 'mongodb';
 import { Action } from '../types/types';
 import axios from 'axios';
 import { ActionsURLMapper } from '../services/action-mapper';
+import { hash } from '../services/crypto';
 
 export class MongoDB {
   private client: MongoClient;
@@ -26,13 +27,18 @@ export class MongoDB {
     }
   }
 
-  async getActionCache(origin: string): Promise<Action> {
-    const doc = await this.collection.findOne({ origin });
+  async getActionCache(urlHash: string): Promise<Action> {
+    const doc = await this.collection.findOne({ urlHash });
     return doc?.data;
   }
 
-  async setActionCache(origin: string, data: Action): Promise<void> {
-    await this.collection.updateOne({ origin }, { $set: { data, timestamp: new Date() } }, { upsert: true });
+  async setActionCache(url: string, data: Action): Promise<void> {
+    await this.collection.updateOne(
+      // Hash the URL to prevent URL length issues for customId
+      { urlHash: hash(url) },
+      { $set: { data: { ...data, url }, timestamp: new Date() } },
+      { upsert: true },
+    );
   }
 
   async closeConnection() {

@@ -12,6 +12,7 @@ import { Action, LinkedAction } from '../types/types';
 import { toDataURL } from 'qrcode';
 import { constants } from '../constants';
 import axios from 'axios';
+import { hash } from './crypto';
 
 export function createActionEmbed(action: Action, url: string) {
   const embed = new EmbedBuilder()
@@ -31,7 +32,7 @@ export function createEmbedComponents(actionResponse: Action, url: string): Acti
     actionRow.addComponents(
       ...actionResponse.links.actions.map((action: LinkedAction, index: number) =>
         new ButtonBuilder()
-          .setCustomId(`action_${index}_${url}_${!!action.parameters?.length}`)
+          .setCustomId(`action_${index}_${hash(url)}_${!!action.parameters?.length}`)
           .setLabel(action.label)
           .setStyle(ButtonStyle.Primary),
       ),
@@ -39,7 +40,7 @@ export function createEmbedComponents(actionResponse: Action, url: string): Acti
   } else if (actionResponse.label) {
     actionRow.addComponents(
       new ButtonBuilder()
-        .setCustomId(`action_0_${url}_false`)
+        .setCustomId(`action_0_${hash(url)}_false`)
         .setLabel(actionResponse.label)
         .setStyle(ButtonStyle.Primary),
     );

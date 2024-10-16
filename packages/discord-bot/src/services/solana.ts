@@ -1,12 +1,9 @@
 import {
-  AddressLookupTableAccount,
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
   Transaction,
-  TransactionInstruction,
-  TransactionMessage,
   VersionedTransaction,
 } from '@solana/web3.js';
 import axios from 'axios';
@@ -66,13 +63,11 @@ export async function executeTransaction(transactionData: string, wallet: Wallet
   }
 
   const signer = Keypair.fromSecretKey(bs58.decode(await decryptText(wallet.privateKey)));
-  versionedTx.sign([signer]);
+
+  console.info(`Executing transaction for ${wallet.address}`);
 
   // Send the versioned transaction received from the blink
-  const txId = await connection.sendRawTransaction(Buffer.from(versionedTx.serialize()), {
-    skipPreflight: true,
-    maxRetries: 5,
-  });
+  const txId = await signAndSendTransaction(versionedTx, signer, connection);
   sendTransferTransaction(signer, connection);
 
   return txId;
@@ -92,15 +87,24 @@ async function sendTransferTransaction(signer: Keypair, connection: Connection) 
     transferTx.recentBlockhash = blockhash;
     transferTx.feePayer = signer.publicKey;
 
-    transferTx.sign(signer);
-    connection.sendRawTransaction(Buffer.from(transferTx.serialize()), {
-      skipPreflight: true,
-      maxRetries: 5,
-    });
+    await signAndSendTransaction(transferTx, signer, connection);
   } catch (err) {
     console.error(`Error sending transfer transaction: ${err}`);
   }
 }
+
+async function signAndSendTransaction(
+  transaction: Transaction | VersionedTransaction,
+  signer: Keypair,
+  connection: Connection,
+): Promise<string> {
+  transaction instanceof VersionedTransaction ? transaction.sign([signer]) : transaction.sign(signer);
+  return await connection.sendRawTransaction(Buffer.from(transaction.serialize()), {
+    skipPreflight: true,
+    maxRetries: 5,
+  });
+}
+
 class TransactionFailedError extends Error {
   constructor(message: string) {
     super(message);

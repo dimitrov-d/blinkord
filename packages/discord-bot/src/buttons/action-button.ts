@@ -7,7 +7,7 @@ import { LinkedAction } from '../types/types';
 
 export async function actionButtonExecute(interaction: ButtonInteraction, mongoDB: MongoDB) {
   const customId = interaction.customId;
-  const [, index, url, hasParams] = customId.split('_');
+  const [, index, urlHash, hasParams] = customId.split('_');
 
   // Defer the interaction if there are no parameters, otherwise show the modal
   if (hasParams && hasParams === 'false' && !interaction.deferred) await interaction.deferReply({ ephemeral: true });
@@ -19,20 +19,20 @@ export async function actionButtonExecute(interaction: ButtonInteraction, mongoD
   const balance = await getWalletBalance(wallet.address);
   if (!balance) return 'Your wallet balance is empty, run `/start` to get started.';
 
-  const actionData = await mongoDB.getOrSetActionData(url);
+  const actionData = await mongoDB.getOrSetActionData(urlHash);
   if (!actionData) return 'Action not found';
 
   let action = actionData?.links?.actions[+index] as LinkedAction;
-  if (!action) action = { href: url, ...actionData };
+  if (!action) action = { href: actionData.url, ...actionData };
 
   if (!action.parameters?.length) {
     if (!interaction.deferred) await interaction.deferReply({ ephemeral: true });
-    return await executeAction(interaction, action, url);
+    return await executeAction(interaction, action, actionData.url);
   }
 
   // Handle parameters in a modal
   return new ModalBuilder()
-    .setCustomId(`action_${index}_${url}`)
+    .setCustomId(`action_${index}_${urlHash}`)
     .setTitle(action.label)
     .addComponents(
       // Modals support max 5 components
