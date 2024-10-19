@@ -290,3 +290,35 @@ body::-webkit-scrollbar-thumb {
   border-radius: 0.2rem;
   color: white;
 }
+
+/* Terms and Privacy Policy pages */
+.terms-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200vh;
+  padding: 20px;
+  margin-top: 50px;
+}
+
+.terms-content {
+  max-width: 800px;
+  text-align: justify;
+  font-size: 14px;
+  max-height: 200vh;
+  overflow-y: auto;
+}
+
+.terms-title {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.terms-paragraph {
+  margin-top: 10px;
+}
+
+.terms-section-title {
+  margin-top: 30px;
+  text-align: center;
+}
