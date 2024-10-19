@@ -23,11 +23,12 @@ export async function actionButtonExecute(interaction: ButtonInteraction, mongoD
   if (!actionData) return 'Action not found';
 
   let action = actionData?.links?.actions[+index] as LinkedAction;
-  if (!action) action = { href: actionData.url, ...actionData };
+  // Legacy support for actions without the `href` property
+  if (!action) action = { href: actionData.href || urlHash, ...actionData };
 
   if (!action.parameters?.length) {
     if (!interaction.deferred) await interaction.deferReply({ ephemeral: true });
-    return await executeAction(interaction, action, actionData.url);
+    return await executeAction(interaction, action, actionData.href);
   }
 
   // Handle parameters in a modal

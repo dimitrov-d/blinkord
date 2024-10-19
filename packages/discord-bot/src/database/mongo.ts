@@ -36,7 +36,7 @@ export class MongoDB {
     await this.collection.updateOne(
       // Hash the URL to prevent URL length issues for customId
       { urlHash: hash(url) },
-      { $set: { data: { ...data, url }, timestamp: new Date() } },
+      { $set: { data: { ...data, href: url }, timestamp: new Date() } },
       { upsert: true },
     );
   }

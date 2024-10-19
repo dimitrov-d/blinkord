@@ -18,7 +18,7 @@ export interface Action {
   /** optional (non-fatal) error message */
   error?: ActionError;
   /** original URL of the action */
-  url: string;
+  href: string;
 }
 
 export interface LinkedAction {
