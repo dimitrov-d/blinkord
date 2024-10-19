@@ -20,7 +20,7 @@ The Blinkord bot has the utility of being able to "unfurl" Solana action URLs. B
 
 ### Add the bot to your server
 
-To add the bot into your server, use this [Bot Invite link](https://discord.com/oauth2/authorize?client_id=1277276051592052787&permissions=268443649&integration_type=0&scope=bot+applications.commands&redirect_uri=https%3A%2F%2Fblinkord.com%2Fredirect&response_type=code)
+To add the bot into your server, use this [Bot Invite link](https://blinkord.com/install-bot)
 
 ## Solana Wallet Security
 

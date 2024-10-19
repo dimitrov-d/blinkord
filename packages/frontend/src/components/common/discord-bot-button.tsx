@@ -15,7 +15,7 @@ export default function AddBlinkordBotButton({
   const handleAuthorizeDiscord = () => {
     setLoading(true);
     window.open(
-      "https://discord.com/oauth2/authorize?client_id=1277276051592052787&permissions=268443649&integration_type=0&scope=bot+applications.commands",
+      `${process.env.NEXT_PUBLIC_APP_BASE_URL!}/install-bot`,
       "popup",
       "width=600,height=600"
     );

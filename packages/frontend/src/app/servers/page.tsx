@@ -90,12 +90,10 @@ export default function Servers() {
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
 
-    const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
     const appUrl = process.env.NEXT_PUBLIC_APP_BASE_URL!;
-    const redirectUri = encodeURIComponent(`${appUrl}/redirect`);
 
     const popup = window.open(
-      `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=268443649&integration_type=0&scope=bot+applications.commands&redirect_uri=${redirectUri}&response_type=code&guild_id=${serverId}`,
+      `${appUrl}/install-bot?redirect=true&guild_id=${serverId}`,
       "discordAuthPopup",
       `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`
     );
