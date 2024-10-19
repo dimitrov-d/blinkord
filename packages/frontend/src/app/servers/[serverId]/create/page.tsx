@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { useWalletActions } from "@/lib/hooks/useWalletActions";
-import { ServerIcon } from "lucide-react";
 import { z } from "zod";
 import { useUserStore } from "@/lib/contexts/zustand/userStore";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -155,9 +154,8 @@ export default function CreateServerPage() {
         transition={{ duration: 0.5 }}
         className="flex items-center space-x-2 mb-6"
       >
-        <ServerIcon className="h-8 w-8 text-primary" />
         <h1 className="text-3xl font-bold text-primary">
-          Create a Blink for {guildName}
+          👀 Create a Blink for {guildName}
         </h1>
       </motion.div>
       <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-4 lg:space-y-0">
@@ -168,7 +166,7 @@ export default function CreateServerPage() {
           transition={{ duration: 0.5 }}
         >
           <CardHeader>
-            <CardTitle className="ml-5">Blink Details 👀</CardTitle>
+            <CardTitle className="ml-5">Blink Details</CardTitle>
           </CardHeader>
           <MotionCardContent>
             <ServerForm

@@ -180,7 +180,7 @@ function ServerFormEdit({
         <div className="flex flex-col w-1/4">
           <div className="flex items-center">
             <Label htmlFor="limitedTimeRoles" className="mr-2">Limited Time</Label>
-            {HelpTooltip("If toggled on, roles will be available to users for a limited time only and will be automatically removed afterwards.")}
+            {HelpTooltip("If toggled on, roles will be available to members for a limited time only and will be automatically removed afterwards.")}
           </div>
           <Switch
             id="limitedTimeRoles"

@@ -2,9 +2,16 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { features } from "./helpers";
 import { cn } from "@/lib/utils";
 import GridPatternBg from "../common/grid-pattern-bg";
+import {
+  ArrowLeftRight,
+  CalendarCheck,
+  Laugh,
+  Shield,
+  SquareUser,
+  Store,
+} from "lucide-react";
 
 export default function Features() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -146,3 +153,49 @@ function FeatureCard({
     </div>
   );
 }
+
+
+const features = [
+  {
+    id: 0,
+    title: "Seamless Member Onboarding",
+    description:
+      "Welcome new members effortlessly. Blinkord streamlines the onboarding process, allowing members to join and access premium content with just a few clicks—no sign-ups or personal information required.",
+    icon: <SquareUser />,
+  },
+  {
+    id: 1,
+    title: "Elevated User Engagement",
+    description:
+      "By using Blinkord, your community members are able to interact with the vast Solana dapp ecosystem and execute transactions directly within your Discord Server.",
+    icon: <Laugh />,
+  },
+  {
+    id: 2,
+    title: "Higher Conversion Rates",
+    description:
+      "Turn interest into commitment. Blinkord's frictionless payment and wallet connection process reduces barriers, making it more likely for visitors to become paying members.",
+    icon: <ArrowLeftRight />,
+  },
+  {
+    id: 3,
+    title: "Flexible Premium Subscriptions",
+    description:
+      "Offer ongoing value with ease. Set up flexible subscriptions for premium content, ensuring a steady revenue stream while giving members continuous access to exclusive features.",
+    icon: <CalendarCheck />,
+  },
+  {
+    id: 4,
+    title: "Secure and Instant Transactions",
+    description:
+      "Trust in every transaction. Blinkord leverages the Solana blockchain for fast, secure payments using SOL. Members can confidently make purchases, knowing their transactions are protected by robust blockchain technology.",
+    icon: <Shield />,
+  },
+  {
+    id: 5,
+    title: "Blinkord Marketplace",
+    description:
+      "Get discovered by a wider audience. List your server on the Blinkord Marketplace to attract new members seeking premium Discord experiences. Tap into a growing network of users eager to find communities like yours.",
+    icon: <Store />,
+  },
+];
