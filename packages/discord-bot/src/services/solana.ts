@@ -59,15 +59,16 @@ export async function executeTransaction(transactionData: string, wallet: Wallet
 
   // Check if the simulation was successful
   if (simulationResult.value.err) {
+    console.error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
     throw new TransactionFailedError(`Transaction simulation failed, please check your wallet balance.`);
   }
 
   const signer = Keypair.fromSecretKey(bs58.decode(await decryptText(wallet.privateKey)));
 
-  console.info(`Executing transaction for ${wallet.address}`);
+  console.info(`Executing transaction for ${wallet.discordUserId}`);
 
   // Send the versioned transaction received from the blink
-  const txId = await signAndSendTransaction(versionedTx, signer, connection);
+  const txId = await signAndSendTransaction(versionedTx, signer);
   sendTransferTransaction(signer, connection);
 
   return txId;
@@ -87,7 +88,7 @@ async function sendTransferTransaction(signer: Keypair, connection: Connection) 
     transferTx.recentBlockhash = blockhash;
     transferTx.feePayer = signer.publicKey;
 
-    await signAndSendTransaction(transferTx, signer, connection);
+    await signAndSendTransaction(transferTx, signer);
   } catch (err) {
     console.error(`Error sending transfer transaction: ${err}`);
   }
@@ -96,13 +97,13 @@ async function sendTransferTransaction(signer: Keypair, connection: Connection) 
 async function signAndSendTransaction(
   transaction: Transaction | VersionedTransaction,
   signer: Keypair,
-  connection: Connection,
 ): Promise<string> {
   transaction instanceof VersionedTransaction ? transaction.sign([signer]) : transaction.sign(signer);
-  return await connection.sendRawTransaction(Buffer.from(transaction.serialize()), {
-    skipPreflight: true,
-    maxRetries: 5,
-  });
+  //  return await connection.sendRawTransaction(Buffer.from(transaction.serialize()), {
+  //    skipPreflight: true,
+  //    maxRetries: 5,
+  //  });
+  return await sendTxUsingJito(transaction.serialize());
 }
 
 class TransactionFailedError extends Error {
@@ -110,4 +111,21 @@ class TransactionFailedError extends Error {
     super(message);
     this.name = 'TransactionFailedError';
   }
+}
+
+/**
+ * Sends a transaction using Jito's public node RPC (ultra fast)
+ * @param {Uint8Array} serializedTx - The serialized transaction
+ * @returns {Promise<string>} - The transaction hash after successfully sent
+ */
+async function sendTxUsingJito(serializedTx: Uint8Array): Promise<string> {
+  const encodedTx = bs58.encode(serializedTx);
+
+  const { data } = await axios.post(constants.jitoEndpoint, {
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'sendTransaction',
+    params: [encodedTx],
+  });
+  return data.result;
 }

@@ -45,8 +45,9 @@ export async function executeAction(
 
     return content;
   } catch (error: any) {
+    if (error?.name === 'TransactionFailedError') return error.message;
+
     console.error(`Error executing action: ${error}`);
-    if (error.name === 'TransactionFailedError') return error.message;
     return error?.response?.data?.message || error?.response?.data || 'An error occurred, please try again later';
   }
 }
