@@ -18,13 +18,17 @@ import { constants } from './constants';
 import { isTrusted } from './services/registry';
 import { MongoDB } from './database/mongo';
 import { createActionEmbed } from './services/discord';
-import { createBotGuild, initializeDatabase } from './database/database';
+import { createBotGuild, getBotGuild, initializeDatabase } from './database/database';
 import { exportWallet } from './commands/export';
 import { openWithdrawSolModal, withdrawSolFromWallet } from './buttons/withdraw';
 import { start } from './commands/start';
 import { actionButtonExecute } from './buttons/action-button';
 import { actionModalExecute } from './modals/action-modal';
 import { BotGuild } from './database/entities/bot-guild';
+import { whitelistedDomains } from './commands/whitelisted-domains';
+import { modifyWhitelistedDomains } from './buttons/modify-whitelisted-domains';
+import { modifyWhitelistedDomainsExecute } from './modals/modify-whitelisted-domains';
+import { clearWhitelistedDomains } from './buttons/clear-whitelisted-domains';
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
@@ -56,8 +60,15 @@ client.on(Events.MessageCreate, async (message) => {
   const url = message.content.match(/(https?:\/\/[^\s]+)/g)[0];
 
   try {
-    const { origin } = new URL(url);
+    const { origin, hostname } = new URL(url);
     if (!(await isTrusted(origin))) return;
+
+    const botGuild = await getBotGuild(message.guild.id);
+    if (botGuild?.whitelistedDomains) {
+      const whitelistedDomains = botGuild.whitelistedDomains.split(',').map((domain) => domain.trim());
+
+      if (!whitelistedDomains.includes(hostname)) return;
+    }
 
     const actionData = await mongoDB.getOrSetActionData(url);
     if (!actionData) return;
@@ -70,16 +81,18 @@ client.on(Events.MessageCreate, async (message) => {
   }
 });
 
-// Slash commands
+// Slash command
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
-  const subcommandName = interaction.options.getSubcommand();
+
+  const commandName = interaction.commandName;
+  const subcommandName = commandName === 'blinkord' ? interaction.options.getSubcommand() : commandName;
 
   try {
     console.info(`${interaction.user.displayName} used the command: ${subcommandName} on ${interaction.guild?.name} `);
     await interaction.deferReply({ ephemeral: true });
 
-    const content = await getCommandResult(interaction);
+    const content = await getCommandResult(interaction, subcommandName);
     await interaction.editReply(content);
   } catch (err) {
     console.error(`An error occurred while executing command ${interaction.options.getSubcommand()}: ${err}`);
@@ -124,14 +137,60 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
+// Context Menu
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (!interaction.isMessageContextMenuCommand()) return;
+
+  await interaction.deferReply({ ephemeral: true });
+
+  try {
+    console.info(
+      `${interaction.user.displayName} used the context menu: ${interaction.commandName} on ${interaction.guild?.name} `,
+    );
+    const targetMessage = interaction.targetMessage;
+    if (!targetMessage.reference)
+      return interaction.editReply(
+        'No parent message found. Only use this command on a message which contains a Blink with actions',
+      );
+
+    if (targetMessage.author.id !== constants.applicationId)
+      return interaction.editReply('The message must be from the Blinkord Bot.');
+
+    const parentMessage = await targetMessage.channel.messages.fetch(targetMessage.reference.messageId);
+
+    const actionUrl = parentMessage.content;
+    console.info(`Parent message content: ${actionUrl}`);
+
+    // Refresh the action data
+    const actionData = await mongoDB.getOrSetActionData(actionUrl, true);
+
+    if (!actionData) {
+      return await interaction.editReply('Failed to refresh the action data.');
+    }
+
+    // Edit the target message with the updated embed
+    await targetMessage.edit(createActionEmbed(actionData, actionUrl));
+
+    await interaction.editReply('Action data refreshed successfully.');
+  } catch (error) {
+    console.error(`Error occurred while processing the context menu ${interaction.commandName}: ${error}`);
+    await interaction.editReply('Sorry, something went wrong! Please try again later.').catch(() => {});
+  }
+});
+
 export async function getCommandResult(
   interaction: ChatInputCommandInteraction,
+  subCommandName: string,
 ): Promise<InteractionReplyOptions | string> {
-  switch (interaction.options.getSubcommand()) {
+  switch (subCommandName) {
     case 'start':
       return start(interaction);
     case 'export':
       return exportWallet(interaction);
+    case 'clear-cache':
+      return mongoDB.clearCollection();
+    case 'whitelisted-domains':
+      return whitelistedDomains(interaction);
     default:
       const embed = new EmbedBuilder().setDescription('❌ Please enter a valid command.');
       return { embeds: [embed] };
@@ -149,6 +208,10 @@ async function getButtonResult(
       return openWithdrawSolModal();
     case 'export':
       return exportWallet(interaction);
+    case 'modifyWhitelistedDomains':
+      return modifyWhitelistedDomains();
+    case 'clearWhitelistedDomains':
+      return clearWhitelistedDomains(interaction);
     default:
       const embed = new EmbedBuilder().setColor('Red').setDescription('❌ Invalid interaction');
       return { embeds: [embed] };
@@ -162,6 +225,8 @@ async function getModalResult(interaction: ModalSubmitInteraction) {
       return withdrawSolFromWallet(interaction);
     case 'action':
       return actionModalExecute(interaction, mongoDB);
+    case 'whitelistedDomainsModal':
+      return modifyWhitelistedDomainsExecute(interaction);
     default:
       const embed = new EmbedBuilder().setColor('Red').setDescription('❌ Invalid interaction');
       return { embeds: [embed] };

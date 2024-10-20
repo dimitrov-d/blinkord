@@ -15,6 +15,9 @@ export class BotGuild {
   @Column({ type: 'varchar', nullable: true })
   icon: string;
 
+  @Column({ type: 'text', nullable: true })
+  whitelistedDomains: string;
+
   @CreateDateColumn()
   createTime: Date;
 }

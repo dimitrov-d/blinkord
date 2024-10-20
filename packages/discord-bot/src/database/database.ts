@@ -46,3 +46,11 @@ export async function getOrCreateWallet(discordUserId: string) {
 export async function createBotGuild(botGuild: Partial<BotGuild>) {
   return await botGuildRepository.save(botGuild);
 }
+
+export function getBotGuild(guildId: string) {
+  return botGuildRepository.findOne({ where: { id: guildId } });
+}
+
+export function modifyWhitelistedDomains(guildId: string, whitelistedDomains: string) {
+  return botGuildRepository.update(guildId, { whitelistedDomains });
+}
