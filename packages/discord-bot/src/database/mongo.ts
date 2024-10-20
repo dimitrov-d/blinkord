@@ -45,12 +45,12 @@ export class MongoDB {
     await this.client.close();
   }
 
-  async getOrSetActionData(url: string): Promise<Action | null> {
+  async getOrSetActionData(url: string, forceRefresh: boolean = false): Promise<Action | null> {
     try {
       // Check if the action URL is already in MongoDB
       const actionResponse = await this.getActionCache(url);
 
-      if (actionResponse) return actionResponse;
+      if (actionResponse && !forceRefresh) return actionResponse;
 
       const { data: actionsJson } = await axios.get(`${new URL(url).origin}/actions.json`);
       let actionApiUrl = new ActionsURLMapper(actionsJson).mapUrl(new URL(url));
@@ -79,6 +79,15 @@ export class MongoDB {
         }
       }
       console.error(`Error getting or setting action data: ${err}`);
+    }
+  }
+
+  async clearCollection(): Promise<string> {
+    try {
+      await this.collection.deleteMany({});
+      return 'Successfully cleared the cache.';
+    } catch (err) {
+      return `Error clearing the cache: ${err}`;
     }
   }
 }
