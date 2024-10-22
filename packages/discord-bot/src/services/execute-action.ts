@@ -4,11 +4,13 @@ import { getUserWallet } from '../database/database';
 import { LinkedAction } from '../types/types';
 import { executeTransaction } from './solana';
 import { addBlinkordRole, createActionEmbed } from './discord';
+import { MongoDB } from '../database/mongo';
 
 export async function executeAction(
   interaction: ButtonInteraction | ModalSubmitInteraction,
   action: LinkedAction,
   actionUrl: string,
+  mongoDB: MongoDB,
 ): Promise<InteractionReplyOptions | string> {
   // Get the user's wallet from the database
   const wallet = await getUserWallet(interaction.user.id);
@@ -39,6 +41,8 @@ export async function executeAction(
         return { content, ...createActionEmbed(nextAction, href || actionUrl) };
       } else if (type === 'post' && href) {
         const { data: nextActionData } = await axios.post(href, { ...body, signature });
+        // Add the subsequent action to the cache so it can be fetched from button interaction
+        mongoDB.setActionCache(href, nextActionData);
         return { content, ...createActionEmbed(nextActionData, href) };
       }
     }

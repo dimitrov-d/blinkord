@@ -47,5 +47,5 @@ export async function actionModalExecute(interaction: ModalSubmitInteraction, mo
     action.href = action.href.replace(`{${name}}`, encodeURIComponent(value));
   }
 
-  return await executeAction(interaction, action, url);
+  return await executeAction(interaction, action, url, mongoDB);
 }
