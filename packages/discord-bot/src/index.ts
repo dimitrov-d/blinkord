@@ -70,7 +70,7 @@ client.on(Events.MessageCreate, async (message) => {
       if (!whitelistedDomains.includes(hostname)) return;
     }
 
-    const actionData = await mongoDB.getOrSetActionData(url);
+    const actionData = await mongoDB.getOrSetActionData(url, true);
     if (!actionData) return;
 
     // await message.delete();
@@ -158,7 +158,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     const parentMessage = await targetMessage.channel.messages.fetch(targetMessage.reference.messageId);
 
-    const actionUrl = parentMessage.content;
+    const actionUrl = parentMessage.content.match(/(https?:\/\/[^\s]+)/g)?.[0];
     console.info(`Parent message content: ${actionUrl}`);
 
     // Refresh the action data

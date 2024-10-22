@@ -18,7 +18,7 @@ const applicationCommandsArray = [
   new SlashCommandBuilder()
     .setName('whitelisted-domains')
     .setDescription('View and modify the whitelisted domains for your server')
-    .setDefaultMemberPermissions(0),
+    .setDefaultMemberPermissions(0), // admin-only
 
   new ContextMenuCommandBuilder().setName('Refresh Action Data').setType(ApplicationCommandType.Message),
 ];

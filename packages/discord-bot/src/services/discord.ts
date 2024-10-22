@@ -4,7 +4,6 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ChatInputCommandInteraction,
-  Colors,
   EmbedBuilder,
   TextChannel,
 } from 'discord.js';
@@ -25,23 +24,23 @@ export function createActionEmbed(action: Action, url: string) {
   const components = createEmbedComponents(action, url);
   return { embeds: [embed], components };
 }
-export function createEmbedComponents(actionResponse: Action, url: string): ActionRowBuilder<ButtonBuilder>[] {
+export function createEmbedComponents(action: Action, url: string): ActionRowBuilder<ButtonBuilder>[] {
   const actionRow = new ActionRowBuilder<ButtonBuilder>();
 
-  if (actionResponse.links?.actions?.length) {
+  if (action.links?.actions?.length) {
     actionRow.addComponents(
-      ...actionResponse.links.actions.map((action: LinkedAction, index: number) =>
+      ...action.links.actions.map((action: LinkedAction, index: number) =>
         new ButtonBuilder()
           .setCustomId(`action_${index}_${hash(url)}_${!!action.parameters?.length}`)
           .setLabel(action.label)
           .setStyle(ButtonStyle.Primary),
       ),
     );
-  } else if (actionResponse.label) {
+  } else if (action.label) {
     actionRow.addComponents(
       new ButtonBuilder()
         .setCustomId(`action_0_${hash(url)}_false`)
-        .setLabel(actionResponse.label)
+        .setLabel(action.label)
         .setStyle(ButtonStyle.Primary),
     );
   }

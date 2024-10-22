@@ -20,7 +20,7 @@ export class MongoDB {
       this.collection = this.db.collection('action-cache');
 
       // Create an index to automatically delete documents after 1 day
-      await this.collection.createIndex({ timestamp: 1 }, { expireAfterSeconds: 86_400 });
+      // await this.collection.createIndex({ timestamp: 1 }, { expireAfterSeconds: 86_400 });
       console.info('MongoDB connected successfully');
     } catch (error) {
       console.error('MongoDB connection error:', error);
@@ -47,10 +47,11 @@ export class MongoDB {
 
   async getOrSetActionData(url: string, forceRefresh: boolean = false): Promise<Action | null> {
     try {
-      // Check if the action URL is already in MongoDB
-      const actionResponse = await this.getActionCache(url);
-
-      if (actionResponse && !forceRefresh) return actionResponse;
+      if (!forceRefresh) {
+        // Check if the action URL is already in MongoDB
+        const actionResponse = await this.getActionCache(url);
+        if (actionResponse) return actionResponse;
+      }
 
       const { data: actionsJson } = await axios.get(`${new URL(url).origin}/actions.json`);
       let actionApiUrl = new ActionsURLMapper(actionsJson).mapUrl(new URL(url));

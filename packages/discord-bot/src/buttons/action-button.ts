@@ -19,16 +19,26 @@ export async function actionButtonExecute(interaction: ButtonInteraction, mongoD
   const balance = await getWalletBalance(wallet.address);
   if (!balance) return 'Your wallet balance is empty, run `/start` to get started.';
 
-  const actionData = await mongoDB.getOrSetActionData(urlHash);
-  if (!actionData) return 'Action not found';
+  let backupUrl: string;
+  let actionData = await mongoDB.getOrSetActionData(urlHash);
+  if (!actionData) {
+    // Edge case, in case the action URL hash is not found in the cache
+    const referenceMessage = await interaction.message.fetchReference().catch(() => null);
+    // Try to get the action URL from the reference message
+    if (referenceMessage) {
+      backupUrl = referenceMessage.content.match(/(https?:\/\/[^\s]+)/g)?.[0];
+      actionData = await mongoDB.getOrSetActionData(backupUrl, true);
+    }
+    if (!actionData) return 'Action not found';
+  }
 
   let action = actionData?.links?.actions[+index] as LinkedAction;
   // Legacy support for actions without the `href` property
-  if (!action) action = { href: actionData.href || urlHash, ...actionData };
+  if (!action) action = { href: actionData.href || backupUrl || urlHash, ...actionData };
 
   if (!action.parameters?.length) {
     if (!interaction.deferred) await interaction.deferReply({ ephemeral: true });
-    return await executeAction(interaction, action, actionData.href);
+    return await executeAction(interaction, action, actionData.href, mongoDB);
   }
 
   // Handle parameters in a modal

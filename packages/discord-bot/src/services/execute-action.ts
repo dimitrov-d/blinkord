@@ -48,6 +48,10 @@ export async function executeAction(
     if (error?.name === 'TransactionFailedError') return error.message;
 
     console.error(`Error executing action: ${error}`);
+    if (axios.isAxiosError(error)) {
+      console.error(`Axios error: ${error.response?.data}`);
+      return 'The action returned a server error, please try again';
+    }
     return error?.response?.data?.message || error?.response?.data || 'An error occurred, please try again later';
   }
 }
