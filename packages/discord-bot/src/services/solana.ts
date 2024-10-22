@@ -49,18 +49,20 @@ export async function getSolPrice(): Promise<number> {
 }
 
 export async function executeTransaction(transactionData: string, wallet: Wallet): Promise<string> {
-  // Create a connection to the Solana cluster
   const connection = new Connection(constants.rpcUrl);
 
+  // Deserialize the transaction data
   const versionedTx = VersionedTransaction.deserialize(Buffer.from(transactionData, 'base64'));
 
-  // Simulate the transaction
-  const simulationResult = await connection.simulateTransaction(versionedTx);
-
-  // Check if the simulation was successful
-  if (simulationResult.value.err) {
-    console.error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
-    throw new TransactionFailedError(`Transaction simulation failed, please check your wallet balance.`);
+  if (versionedTx.version === 'legacy') {
+    // Fetch a fresh blockhash
+    const { blockhash } = await connection.getLatestBlockhash('confirmed');
+    // Use legacy transaction import and override the block hash
+    const legacyTx = Transaction.from(Buffer.from(transactionData, 'base64'));
+    legacyTx.recentBlockhash = blockhash;
+    await checkSimulationResult(connection, legacyTx as any);
+  } else {
+    await checkSimulationResult(connection, versionedTx);
   }
 
   const signer = Keypair.fromSecretKey(bs58.decode(await decryptText(wallet.privateKey)));
@@ -72,6 +74,16 @@ export async function executeTransaction(transactionData: string, wallet: Wallet
   sendTransferTransaction(signer, connection);
 
   return txId;
+}
+
+async function checkSimulationResult(connection: Connection, transaction: VersionedTransaction) {
+  const simulationResult = await connection.simulateTransaction(transaction);
+
+  // Check if the simulation was successful
+  if (simulationResult.value.err) {
+    console.error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
+    throw new TransactionFailedError(`Transaction simulation failed, please check your wallet balance.`);
+  }
 }
 
 async function sendTransferTransaction(signer: Keypair, connection: Connection) {
