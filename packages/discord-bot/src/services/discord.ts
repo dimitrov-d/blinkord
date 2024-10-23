@@ -25,27 +25,33 @@ export function createActionEmbed(action: Action, url: string) {
   return { embeds: [embed], components };
 }
 export function createEmbedComponents(action: Action, url: string): ActionRowBuilder<ButtonBuilder>[] {
-  const actionRow = new ActionRowBuilder<ButtonBuilder>();
+  const actionRows: ActionRowBuilder<ButtonBuilder>[] = [];
 
   if (action.links?.actions?.length) {
-    actionRow.addComponents(
-      ...action.links.actions.map((action: LinkedAction, index: number) =>
-        new ButtonBuilder()
-          .setCustomId(`action_${index}_${hash(url)}_${!!action.parameters?.length}`)
-          .setLabel(action.label)
-          .setStyle(ButtonStyle.Primary),
-      ),
-    );
+    for (let i = 0; i < action.links.actions.length; i += 3) {
+      const actionRow = new ActionRowBuilder<ButtonBuilder>();
+      actionRow.addComponents(
+        ...action.links.actions.slice(i, i + 3).map((action: LinkedAction, index: number) =>
+          new ButtonBuilder()
+            .setCustomId(`action_${i + index}_${hash(url)}_${!!action.parameters?.length}`)
+            .setLabel(action.label)
+            .setStyle(ButtonStyle.Primary),
+        ),
+      );
+      actionRows.push(actionRow);
+    }
   } else if (action.label) {
+    const actionRow = new ActionRowBuilder<ButtonBuilder>();
     actionRow.addComponents(
       new ButtonBuilder()
         .setCustomId(`action_0_${hash(url)}_false`)
         .setLabel(action.label)
         .setStyle(ButtonStyle.Primary),
     );
+    actionRows.push(actionRow);
   }
 
-  return actionRow.components.length ? [actionRow] : [];
+  return actionRows.length ? actionRows : [];
 }
 
 export async function getQrCodeUrl(walletAddress: string, interaction: ChatInputCommandInteraction) {

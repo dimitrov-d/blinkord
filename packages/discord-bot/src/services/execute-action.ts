@@ -27,7 +27,7 @@ export async function executeAction(
       data: { transaction, message, error, links },
     } = await axios.post(action.href, body);
 
-    if (error) return `❌ Error: ${error}`;
+    if (error) return `❌ Error: ${error.message || error}`;
 
     const signature = transaction ? await executeTransaction(transaction, wallet) : undefined;
     const content = `✅ Success\n${message || ''}\n${signature ? `Transaction: https://solscan.io/tx/${signature}` : ''}`;
@@ -40,10 +40,11 @@ export async function executeAction(
       if (type === 'inline' && nextAction) {
         return { content, ...createActionEmbed(nextAction, href || actionUrl) };
       } else if (type === 'post' && href) {
-        const { data: nextActionData } = await axios.post(href, { ...body, signature });
+        const apiUrl = href.startsWith('http') ? href : `${new URL(actionUrl).origin}${href}`;
+        const { data: nextActionData } = await axios.post(apiUrl, { ...body, signature });
         // Add the subsequent action to the cache so it can be fetched from button interaction
-        mongoDB.setActionCache(href, nextActionData);
-        return { content, ...createActionEmbed(nextActionData, href) };
+        mongoDB.setActionCache(apiUrl, nextActionData);
+        return { content, ...createActionEmbed(nextActionData, apiUrl) };
       }
     }
 
