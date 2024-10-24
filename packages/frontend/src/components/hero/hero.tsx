@@ -66,8 +66,8 @@ export function Hero() {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Monetize your <span className="highlight-green">Discord</span> community{" "}
-          <span className="highlight-cyan">effortlessly</span>
+          Bring <span className="highlight-green">Blinks</span> into your{" "}
+          <span className="highlight-cyan">Discord</span> community
         </motion.h2>
 
         <motion.div
@@ -77,7 +77,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <p className="font-medium opacity-50 mt-3 text-sm md:text-base">
-            Create shareable links that enable Solana interactions directly within your Discord Server
+            Create and share links that enable Solana interactions directly within your Discord Server
           </p>
         </motion.div>
 

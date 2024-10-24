@@ -10,9 +10,9 @@ import { Toaster } from "sonner";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 export const metadata: Metadata = {
-  title: "Blinkord - Monetize your Discord Community effortlessly",
+  title: "Blinkord - Bring Solana Blinks into your Discord Community",
   description:
-    "Monetize your Discord Community effortlessly. Blinkord enables you to integrate Solana interactions directly within your Discord server. Create custom links for premium content, NFTs, token swaps, donations, and more. Secure, fast payments in SOL via Solana Actions, all within Discord.",
+    "Create and share links that enable Solana interactions directly within your Discord Server. Blinkord allows you to integrate Solana transactions for premium content, NFTs, token swaps, donations, and more. Secure, fast payments in SOL via Solana Actions, all within Discord.",
   keywords: [
     "Discord premium content",
     "Monetize Discord server with blockchain",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     "Blinkord Bot for Solana",
   ],
   openGraph: {
-    title: "Blinkord - Monetize and Power Your Discord with Solana",
+    title: "Blinkord - Bring Solana Blinks into your Discord Community",
     description:
-      "Transform your Discord community with Blinkord. Enable Solana-powered transactions for premium roles, NFT trading, token swaps, and more. All secured through blockchain technology and made seamless with Blinkord Bot.",
+      "Create and share links that enable Solana interactions directly within your Discord Server. Blinkord allows you to integrate Solana transactions for premium content, NFTs, token swaps, donations, and more. Secure, fast payments in SOL via Solana Actions, all within Discord.",
     url: "https://blinkord.com",
     type: "website",
     images: [
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blinkord - Power Your Discord with Solana",
+    title: "Blinkord - Bring Solana Blinks into your Discord Community",
     description:
-      "Monetize your Discord server with Blinkord. Enable Solana interactions directly within your Discord Server.",
+      "Create and share links that enable Solana interactions directly within your Discord Server. Blinkord allows you to integrate Solana transactions for premium content, NFTs, token swaps, donations, and more. Secure, fast payments in SOL via Solana Actions, all within Discord.",
     images: ["https://blinkord.com/images/og-image.png"],
   },
 };
@@ -74,11 +74,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Open Graph & Twitter Cards */}
           <meta
             property="og:title"
-            content="Blinkord - Monetize your Discord Community"
+            content="Blinkord - Bring Solana Blinks into your Discord Community"
           />
           <meta
             property="og:description"
-            content="Monetize your Discord server effortlessly. Create shareable links that enable Solana interactions directly within your Discord Server"
+            content="Create and share links that enable Solana interactions directly within your Discord Server"
           />
           <meta property="og:url" content="https://blinkord.com" />
           <meta property="og:type" content="website" />
@@ -93,11 +93,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <meta name="twitter:card" content="summary_large_image" />
           <meta
             name="twitter:title"
-            content="Blinkord - Monetize your Discord Community"
+            content="Blinkord - Bring Solana Blinks into your Discord Community"
           />
           <meta
             name="twitter:description"
-            content="Monetize your Discord server effortlessly. Create shareable links that enable Solana interactions directly within your Discord Server"
+            content="Create and share links that enable Solana interactions directly within your Discord Server"
           />
           <meta
             name="twitter:image"
