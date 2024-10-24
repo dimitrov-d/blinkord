@@ -11,9 +11,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
 
-import { IconButton, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Book, HomeIcon, Mail, Store } from "lucide-react";
+import { Book, HomeIcon, Mail, Store, SquareChartGantt } from "lucide-react";
 import { Logo } from "../logo";
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -32,6 +32,8 @@ function getLink(text: string) {
       return "https://x.com/blinkord_sol";
     case "Contact":
       return "mailto:hi@blinkord.com";
+    case "My Blinks":
+      return "/servers";
     default:
       return "/";
   }
@@ -51,6 +53,8 @@ function getIcon(text: string) {
       return <Image src="/images/x-outline.svg" alt="Twitter" width={20} height={20} />;
     case "Contact":
       return <Mail />;
+    case "My Blinks":
+      return <SquareChartGantt />;
     default:
       return null;
   }
@@ -115,9 +119,9 @@ export default function Drawer() {
                 </div>
                 <Divider />
                 <List>
-                  {["Home", "Marketplace", "Docs"].map((text, index) => (
+                  {["Home", "Marketplace", "Docs", "My Blinks"].map((text, index) => (
                     <ListItem key={text} disablePadding>
-                      <ListItemButton href={getLink(text)} target="_blank">
+                      <ListItemButton href={getLink(text)} target={text === "Docs" ? "_blank" : "_self"}>
                         <ListItemIcon>
                           {getIcon(text)}
                         </ListItemIcon>

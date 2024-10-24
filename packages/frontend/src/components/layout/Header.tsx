@@ -10,7 +10,7 @@ import { ThemeContext } from "@/lib/contexts/ThemeProvider";
 import GetStartedButton from "../common/get-started-button";
 import MyMultiButton from "./MyMultiButton";
 import { usePathname } from 'next/navigation'
-import { Book, Store } from "lucide-react";
+import { Book, SquareChartGantt, Store } from "lucide-react";
 import Image from "next/image";
 import Drawer from "../drawer";
 
@@ -62,7 +62,7 @@ export default function Header() {
                 <Logo isDark={isDark} />
               </div>
               {showLogo && (
-                <div className="hidden lg:flex items-center justify-center px-10 gap-6 ">
+                <div className="hidden lg:flex items-center justify-center px-10 gap-8 ">
                   <Link
                     href="https://discord.gg/HugHTEPu4H"
                     className="text-[#000000] dark:text-white text-[16px] font-bold navLink"
@@ -90,11 +90,20 @@ export default function Header() {
                   <Link
                     href="/marketplace"
                     className="text-[#000000] dark:text-white text-[16px] font-bold navLink"
-                    target="_blank"
+                    target="_self"
                     rel="noopener noreferrer"
                   >
                     <Store className="h-4 w-4 mr-2" />
                     Marketplace
+                  </Link>
+                  <Link
+                    href="/servers"
+                    className="text-[#000000] dark:text-white text-[16px] font-bold navLink"
+                    target="_self"
+                    rel="noopener noreferrer"
+                  >
+                    <SquareChartGantt className="h-4 w-4 mr-2" />
+                    My Blinks
                   </Link>
                 </div>
               )}

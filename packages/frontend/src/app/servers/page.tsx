@@ -11,6 +11,7 @@ import LoadingSpinner, { SpinnerSvg } from "@/components/loading";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { ThemeContext } from "@/lib/contexts/ThemeProvider";
+import { handleConnectDiscord } from "@/components/common/get-started-button";
 
 interface Guild {
   id: string;
@@ -48,7 +49,8 @@ export default function Servers() {
       return;
     }
 
-    router.push("/");
+    // If not logged in, authorize with Discord to get server list
+    handleConnectDiscord();
   }, [discordConnected, router]);
 
   const fetchGuilds = async () => {
@@ -76,6 +78,10 @@ export default function Servers() {
     );
 
     const data = await response.json();
+    if (response.status === 401) {
+      // If not logged in, authorize with Discord to get server list
+      return handleConnectDiscord();
+    }
 
     if (data?.guild?.id) {
       router.push(`/servers/${guildId}/configure`);

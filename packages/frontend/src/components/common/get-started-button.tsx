@@ -5,6 +5,25 @@ import { LogIn } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
+export const handleConnectDiscord = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/login?owner=true`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    const data = await response.json();
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  } catch (error) {
+    console.error("Failed to connect Discord", error);
+  }
+};
+
 export default function GetStartedButton({
   className,
 }: {
@@ -12,32 +31,15 @@ export default function GetStartedButton({
 }) {
   const [loading, setLoading] = useState(false);
 
-  const handleConnectDiscord = async () => {
+  const handleGetStartedClick = async () => {
     setLoading(true);
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/login?owner=true`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Failed to connect Discord", error);
-    } finally {
-      setLoading(false);
-    }
+    await handleConnectDiscord();
+    setLoading(false);
   };
 
   return (
     <Button
-      onClick={handleConnectDiscord}
+      onClick={handleGetStartedClick}
       className={cn(
         "w-fit bg-builderz-blue hover:bg-neon-cyan text-black font-bold px-6 py-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50",
         {
