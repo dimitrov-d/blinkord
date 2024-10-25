@@ -6,6 +6,7 @@ export const defaultSchema = {
   iconUrl: "",
   description: "",
   address: "",
+  website: "",
   // details: "",
   roles: [],
   useUsdc: false,
@@ -36,6 +37,20 @@ export const serverFormSchema = z
       ),
     description: z.string().min(1, "Description is required"),
     address: z.string(),
+    website: z
+      .string()
+      .nullable()
+      .refine(
+        (url) => {
+          if (!url) return true;
+          return /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-./?%&=]*)?$/i.test(
+            url
+          );
+        },
+        {
+          message: "Invalid URL. Please enter a valid URL.",
+        }
+      ),
     roles: z
       .array(
         z.object({

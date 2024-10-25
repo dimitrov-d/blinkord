@@ -41,6 +41,12 @@ export class Guild extends BaseEntity<Guild> {
   details: string;
 
   /**
+   * The guild's website link
+   */
+  @Column({ type: 'text', nullable: true })
+  website: string;
+
+  /**
    * If the guild owner wants to receive payment in USDC tokens
    */
   @Column({ type: 'boolean', default: false })

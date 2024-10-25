@@ -135,6 +135,34 @@ function ServerFormEdit({
           </motion.p>
         )}
       </MotionCardContent>
+
+      <MotionCardContent
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <Label htmlFor="website">Website Link</Label>
+        <MotionInput
+          id="website"
+          placeholder="Enter the website URL"
+          value={formData.website || ""}
+          onChange={(e) =>
+            handleInputChange("website", e.target.value, setFormData)
+          }
+          whileFocus={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        />
+        {formErrors.website && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-destructive text-sm mt-1"
+          >
+            {formErrors.website}
+          </motion.p>
+        )}
+      </MotionCardContent>
+
       <MotionCardContent
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
