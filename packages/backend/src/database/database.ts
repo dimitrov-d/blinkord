@@ -122,25 +122,30 @@ export async function saveRolePurchase(rolePurchase: RolePurchase): Promise<Role
 
 /**
  * Get all role purchases where guild and role is not null, guild.limitedTimeRoles is true
- * And based on expiresAt it expires in this hour
+ * And based on expiresAt it expires in less than three days
  * @returns {Promise<RolePurchase[]>}
  */
 export async function getExpiringRoles(): Promise<RolePurchase[]> {
   const now = new Date();
-  const startOfCurrentHour = new Date(now.setMinutes(0, 0, 0));
-  const startOfNextHour = new Date(startOfCurrentHour);
-  startOfNextHour.setHours(startOfNextHour.getHours() + 1);
+  // Subtract hour to avoid edge case where expiresAt is at the exact time or minutes are before current time
+  now.setHours(now.getHours() - 1);
+  const threeDaysFromNow = new Date(now);
+  threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+  // Add hour to avoid edge case where expiresAt is at the exact time or minutes are after current time
+  threeDaysFromNow.setHours(threeDaysFromNow.getHours() + 2);
 
   return await rolePurchaseRepository
     .createQueryBuilder('rolePurchase')
     .leftJoinAndSelect('rolePurchase.guild', 'guild')
     .leftJoinAndSelect('rolePurchase.role', 'role')
-    .where('rolePurchase.expiresAt BETWEEN :startOfCurrentHour AND :startOfNextHour', {
-      startOfCurrentHour,
-      startOfNextHour,
+    .where('rolePurchase.expiresAt <= :threeDaysFromNow', {
+      threeDaysFromNow,
+    })
+    .andWhere('rolePurchase.expiresAt > :now', {
+      now,
     })
     .andWhere('guild.id IS NOT NULL')
     .andWhere('role.id IS NOT NULL')
-    .andWhere('guild.limitedTimeRoles = true')
+    // .andWhere('guild.limitedTimeRoles = true')
     .getMany();
 }
