@@ -13,6 +13,9 @@ const applicationCommandsArray = [
 
     .addSubcommand((subcommand) =>
       subcommand.setName('export').setDescription('Export the private keys to your wallet'),
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName('info').setDescription('Display information about the Blinkord Bot'),
     ),
 
   new SlashCommandBuilder()
@@ -24,10 +27,10 @@ const applicationCommandsArray = [
 ];
 
 const guildCommandsArray = [
-  new SlashCommandBuilder()
-    .setName('clear-cache')
-    .setDescription('Clear the bot cache (Admin only)')
-    .setDefaultMemberPermissions(0),
+  // new SlashCommandBuilder()
+  //   .setName('clear-cache')
+  //   .setDescription('Clear the bot cache (Admin only)')
+  //   .setDefaultMemberPermissions(0),
 ];
 
 const applicationCommands = applicationCommandsArray.map((command) => command.toJSON());

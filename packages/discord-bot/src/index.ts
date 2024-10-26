@@ -29,6 +29,7 @@ import { whitelistedDomains } from './commands/whitelisted-domains';
 import { modifyWhitelistedDomains } from './buttons/modify-whitelisted-domains';
 import { modifyWhitelistedDomainsExecute } from './modals/modify-whitelisted-domains';
 import { clearWhitelistedDomains } from './buttons/clear-whitelisted-domains';
+import { info } from './commands/info';
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
@@ -187,6 +188,8 @@ export async function getCommandResult(
       return start(interaction);
     case 'export':
       return exportWallet(interaction);
+    case 'info':
+      return info();
     case 'clear-cache':
       return mongoDB.clearCollection();
     case 'whitelisted-domains':
