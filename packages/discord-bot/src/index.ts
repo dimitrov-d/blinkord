@@ -208,7 +208,9 @@ async function getButtonResult(
     case 'action':
       return actionButtonExecute(interaction, mongoDB);
     case 'withdraw':
-      return openWithdrawSolModal();
+      return openWithdrawSolModal(false);
+    case 'withdrawAll':
+      return openWithdrawSolModal(true);
     case 'export':
       return exportWallet(interaction);
     case 'modifyWhitelistedDomains':
@@ -222,10 +224,10 @@ async function getButtonResult(
 }
 
 async function getModalResult(interaction: ModalSubmitInteraction) {
-  const [modalType] = interaction.customId.split('_');
+  const [modalType, param] = interaction.customId.split('_');
   switch (modalType) {
     case 'withdrawSolModal':
-      return withdrawSolFromWallet(interaction);
+      return withdrawSolFromWallet(interaction, param === 'true');
     case 'action':
       return actionModalExecute(interaction, mongoDB);
     case 'whitelistedDomainsModal':

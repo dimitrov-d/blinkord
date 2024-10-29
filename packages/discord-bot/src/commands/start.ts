@@ -34,8 +34,9 @@ To deposit SOL into your Blinkord bot wallet, copy the wallet address above or s
 
   const components = [
     new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder().setCustomId('withdraw').setLabel('Withdraw').setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder().setCustomId('export').setLabel('Export').setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('withdraw').setLabel('Withdraw').setStyle(ButtonStyle.Primary),
+      new ButtonBuilder().setCustomId('withdrawAll').setLabel('Withdraw 100%').setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder().setCustomId('export').setLabel('Export').setStyle(ButtonStyle.Danger),
     ),
   ];
 

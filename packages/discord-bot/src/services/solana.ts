@@ -21,14 +21,14 @@ export function generateSolanaKeypair() {
   return { publicKey, privateKey };
 }
 
-export async function getWalletBalance(publicKey: string): Promise<number> {
+export async function getWalletBalance(publicKey: string, round = true): Promise<number> {
   const connection = new Connection(constants.rpcUrl, 'confirmed');
 
   try {
     // Get the SOL balance of the wallet
     const balance = await connection.getBalance(new PublicKey(publicKey));
     // Convert lamports to sol and show only 4 decimals
-    return +(balance / 10 ** 9).toFixed(4);
+    return +(balance / LAMPORTS_PER_SOL).toFixed(round ? 4 : 9);
   } catch (err) {
     console.error(`Error fetching SOL balance: ${err}`);
     return NaN;

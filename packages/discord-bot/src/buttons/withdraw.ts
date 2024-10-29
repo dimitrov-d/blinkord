@@ -22,52 +22,62 @@ import { decryptText } from '../services/crypto';
 import { getWalletBalance } from '../services/solana';
 
 // Modals for getting input values of wallet address and amount
-export async function openWithdrawSolModal(): Promise<ModalBuilder> {
-  return new ModalBuilder()
-    .setCustomId('withdrawSolModal')
-    .setTitle('Withdraw')
-    .addComponents(
-      new ActionRowBuilder<TextInputBuilder>().addComponents(
-        new TextInputBuilder()
-          .setCustomId('toWalletAddress')
-          .setLabel('To Address')
-          .setStyle(TextInputStyle.Short)
-          .setPlaceholder('Enter the wallet address you want to withdraw to')
-          .setRequired(true),
-      ),
+export async function openWithdrawSolModal(withdrawAll = false): Promise<ModalBuilder> {
+  const components = [
+    new ActionRowBuilder<TextInputBuilder>().addComponents(
+      new TextInputBuilder()
+        .setCustomId('toWalletAddress')
+        .setLabel('To Address')
+        .setStyle(TextInputStyle.Short)
+        .setPlaceholder('Enter the wallet address you want to withdraw to')
+        .setRequired(true),
+    ),
+  ];
+  if (!withdrawAll) {
+    components.push(
       new ActionRowBuilder<TextInputBuilder>().addComponents(
         new TextInputBuilder()
           .setCustomId('withdrawAmount')
           .setLabel(`Amount`)
           .setStyle(TextInputStyle.Short)
-          .setPlaceholder(`Enter the amount of SOL you want to withdraw`)
+          .setPlaceholder('Enter the amount of SOL you want to withdraw')
           .setRequired(true),
       ),
     );
+  }
+
+  return new ModalBuilder()
+    .setCustomId(`withdrawSolModal_${withdrawAll}`)
+    .setTitle('Withdraw')
+    .addComponents(...components);
 }
 
 export async function withdrawSolFromWallet(
   interaction: ModalSubmitInteraction,
+  withdrawAll = false,
 ): Promise<InteractionReplyOptions | string> {
   const toAddress = interaction.fields.getTextInputValue('toWalletAddress');
-  const amount = parseFloat(interaction.fields.getTextInputValue('withdrawAmount'));
   if (!toAddress || !new RegExp(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`).test(toAddress))
     return 'Please enter a valid withdrawal address';
 
-  const discordUserId = interaction.user.id;
-  const wallet = await getUserWallet(discordUserId);
+  const wallet = await getUserWallet(interaction.user.id);
   if (!wallet) return 'No wallet found, run `/start` to get started.';
+
+  const walletBalance = await getWalletBalance(wallet.address, false);
+
+  // Adjust the amount to account for transaction fees
+  const amount = withdrawAll
+    ? walletBalance - 5000 / LAMPORTS_PER_SOL
+    : parseFloat(interaction.fields.getTextInputValue('withdrawAmount'));
+
   // Initialize connection and wallets
   const connection = new Connection(constants.rpcUrl, 'confirmed');
   const fromWallet = Keypair.fromSecretKey(bs58.decode(await decryptText(wallet.privateKey)));
-  const toWallet = new PublicKey(toAddress);
 
-  // Get the balance of the fromWallet
-  const balance = (await getWalletBalance(wallet.address)) * LAMPORTS_PER_SOL;
-  const transferAmount = amount * LAMPORTS_PER_SOL - 5000; // Adjust for a small fee buffer
+  const transferAmount = amount * LAMPORTS_PER_SOL;
 
   // If balance is less than the minimum required to transfer, return
-  if (balance < transferAmount) {
+  if (walletBalance * LAMPORTS_PER_SOL < transferAmount) {
     return 'Insufficient balance to make a transfer.';
   }
 
@@ -75,7 +85,7 @@ export async function withdrawSolFromWallet(
   const transaction = new Transaction().add(
     SystemProgram.transfer({
       fromPubkey: fromWallet.publicKey,
-      toPubkey: toWallet,
+      toPubkey: new PublicKey(toAddress),
       lamports: transferAmount,
     }),
   );
