@@ -2,9 +2,11 @@ import {
   ActionRowBuilder,
   AttachmentBuilder,
   ButtonBuilder,
+  ButtonInteraction,
   ButtonStyle,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  ModalSubmitInteraction,
   TextChannel,
 } from 'discord.js';
 import { Action, LinkedAction } from '../types/types';
@@ -64,13 +66,32 @@ export async function getQrCodeUrl(walletAddress: string, interaction: ChatInput
   return qrCodeMessage.attachments.first().url;
 }
 
-export async function addBlinkordRole(guildId: string, roleId: string, discordUserId: string) {
+export async function addBlinkordRole(
+  guildId: string,
+  roleId: string,
+  interaction: ButtonInteraction | ModalSubmitInteraction,
+) {
   try {
     await axios.put(
-      `https://discord.com/api/v10/guilds/${guildId}/members/${discordUserId}/roles/${roleId}`,
+      `https://discord.com/api/v10/guilds/${guildId}/members/${interaction.user.id}/roles/${roleId}`,
       {},
       { headers: { Authorization: `Bot ${constants.botToken}` } },
     );
+    const subscriptionChannel = (await interaction.client.channels.fetch(
+      constants.subscriptionsChannelId,
+    )) as TextChannel;
+
+    const embed = new EmbedBuilder()
+      .setColor('#60D0AA')
+      .setTitle('Role Purchase')
+      .setDescription(
+        `**User:** <@${interaction.user.id}>
+**Role:** <@&${roleId}>
+**Server:** ${guildId}`,
+      )
+      .setTimestamp();
+
+    await subscriptionChannel.send({ embeds: [embed] });
   } catch (err) {
     console.error(`Error adding role to user: ${err}`);
   }

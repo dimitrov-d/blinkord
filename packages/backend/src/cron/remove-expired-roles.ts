@@ -1,5 +1,5 @@
 import { schedule } from 'node-cron';
-import { discordApi } from '../services/oauth';
+import { discordApi, sendDiscordLogMessage } from '../services/oauth';
 import env from '../services/env';
 import { getExpiringRoles, initializeDatabase } from '../database/database';
 
@@ -42,6 +42,12 @@ schedule(
         await sendDiscordMessage(
           discordUserId,
           `Your role **${roleName}** on the server **${guildName}** has expired. \nRenew it on <https://blinkord.com/${guildId}>`,
+        );
+
+        sendDiscordLogMessage(
+          '1300902493458272369',
+          'Role Expired',
+          `**User:** <@${discordUserId}>\n**Role:** ${roleName}\n**Server:** ${guildName}`,
         );
       }
     }

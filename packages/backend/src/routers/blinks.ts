@@ -3,7 +3,7 @@ import { Action } from '@solana/actions-spec';
 import { generateSendTransaction, isTxConfirmed } from '../services/transaction';
 import env from '../services/env';
 import { findAccessTokenByCode, findGuildById, saveRolePurchase } from '../database/database';
-import { discordApi } from '../services/oauth';
+import { discordApi, sendDiscordLogMessage } from '../services/oauth';
 import { createPostResponse } from '@solana/actions';
 import { BlinksightsClient } from 'blinksights-sdk';
 import { decryptText } from '../services/encrypt';
@@ -228,6 +228,12 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
 
     const rolePurchase = new RolePurchase({ discordUserId: user.id, guild, role, signature }).setExpiresAt();
     saveRolePurchase(rolePurchase).catch((err) => console.error(`Error saving role purchase: ${err}`));
+
+    sendDiscordLogMessage(
+      '1300902493458272369',
+      'Role Purchase',
+      `**User:** <@${user.id}>\n**Role:** ${role.name}\n**Server:** ${guild.name}`,
+    ).catch((err) => console.error(`Error sending role purchase log message: ${err}`));
 
     return res.json({
       title: guild.name,

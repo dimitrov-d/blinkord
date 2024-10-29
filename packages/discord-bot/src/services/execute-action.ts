@@ -33,7 +33,7 @@ export async function executeAction(
     const content = `✅ Success\n${message || ''}\n${signature ? `Transaction: https://solscan.io/tx/${signature}` : ''}`;
 
     // Blinkord only
-    if (guildId && roleId) addBlinkordRole(guildId, roleId, interaction.user.id);
+    if (guildId && roleId) addBlinkordRole(guildId, roleId, interaction);
     // Handle action chaining
     else if (links?.next) {
       const { type, action: nextAction, href } = links.next;
