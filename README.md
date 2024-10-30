@@ -1,4 +1,4 @@
-# Blinkord: Monetize your Discord Community Effortlessly
+# Blinkord: Bring Solana into your Discord Community
 
 <p align="center">
     <img src="https://blinkord.com/banner.png" alt="Blinkord Banner" width="500">
