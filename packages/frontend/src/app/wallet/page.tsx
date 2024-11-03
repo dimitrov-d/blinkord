@@ -125,20 +125,6 @@ export default function Wallet () {
             </label>
           </div>
         }
-        {/* <button 
-          className={`${(!delegatedWallets)?'bg-gray-300 text-gray-500 cursor-not-allowed':'bg-white hover:bg-purple-300 text-black hover:text-white'} w-full text-center px-4 py-2 border border-purple-300 rounded-lg `}
-          disabled={!delegatedWallets} 
-          onClick={onRevoke}
-        >
-          Revoke permission for this app to transact on my behalf
-        </button> */}
-        {/* {isAlreadyDelegated?'yes,':'No,'}  */}
-        {/* {hasDelegatedWallets?'yes,':'No,'} */}
-
-        {/* {delegatedWallets ? "yes," : 'No'} */}
-        
-        {/* // {JSON.stringify(embeddedWallets)} */}
-        {/* {JSON.stringify(user)} */}
 
       </div>
     </div>
