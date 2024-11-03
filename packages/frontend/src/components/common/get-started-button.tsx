@@ -7,18 +7,6 @@ import { useRouter } from "next/navigation";
 import { useLogin, usePrivy, getAccessToken } from "@privy-io/react-auth";
 import { cn } from "@/lib/utils";
 
-async function verifyToken() {
-  const url = "/api/verify";
-  const accessToken = await getAccessToken();
-  const result = await fetch(url, {
-    headers: {
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined),
-    },
-  });
-
-  return await result.json();
-}
-
 export const handleConnectDiscord = async () => {
 
   try {
@@ -38,8 +26,6 @@ export const handleConnectDiscord = async () => {
     console.error("Failed to connect Discord", error);
   }
 };
-
-
 
 export default function GetStartedButton({
   className,
@@ -64,25 +50,8 @@ export default function GetStartedButton({
   const {
     ready,
     authenticated,
-    user,
     logout,
-    linkEmail,
-    linkWallet,
-    unlinkEmail,
-    linkPhone,
-    unlinkPhone,
-    unlinkWallet,
-    linkGoogle,
-    unlinkGoogle,
-    linkTwitter,
-    unlinkTwitter,
-    linkDiscord,
-    unlinkDiscord,
   } = usePrivy();
-
-  // const handleLogin = () => {
-  //   login('discord'); // This will initiate Discord login
-  // };
 
   useEffect(() => {
     if (ready && !authenticated) {
