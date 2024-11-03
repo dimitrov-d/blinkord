@@ -4,6 +4,7 @@ import HowItWorks from "@/components/home/HowItWorks";
 import Features from "@/components/home/Features";
 import MeetTheBot from "@/components/home/MeetTheBot";
 import CTA from "@/components/home/CTA";
+import { PrivyProvider } from "@privy-io/react-auth";
 
 const Index: React.FC = () => (
   <main className="font-excon">

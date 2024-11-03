@@ -4,8 +4,20 @@ import { useState, useEffect } from "react";
 import { LogIn, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { useLogin, usePrivy, getAccessToken } from "@privy-io/react-auth";
 import { cn } from "@/lib/utils";
+
+async function verifyToken() {
+  const url = "/api/verify";
+  const accessToken = await getAccessToken();
+  const result = await fetch(url, {
+    headers: {
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined),
+    },
+  });
+
+  return await result.json();
+}
 
 export const handleConnectDiscord = async () => {
 
@@ -52,8 +64,25 @@ export default function GetStartedButton({
   const {
     ready,
     authenticated,
+    user,
     logout,
+    linkEmail,
+    linkWallet,
+    unlinkEmail,
+    linkPhone,
+    unlinkPhone,
+    unlinkWallet,
+    linkGoogle,
+    unlinkGoogle,
+    linkTwitter,
+    unlinkTwitter,
+    linkDiscord,
+    unlinkDiscord,
   } = usePrivy();
+
+  // const handleLogin = () => {
+  //   login('discord'); // This will initiate Discord login
+  // };
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -64,6 +93,13 @@ export default function GetStartedButton({
     }
     
   }, [ready, authenticated, router]);
+
+  const handleGetStartedClick = async () => {
+    setLoading(true);
+    await handleConnectDiscord();
+    setLoading(false);
+  };
+  // {() => login({loginMethods: ['email', 'sms']})}
 
   return (
     <Button

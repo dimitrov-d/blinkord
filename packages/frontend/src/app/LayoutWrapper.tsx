@@ -29,8 +29,9 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
   // const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   const endpoint = "https://api.mainnet-beta.solana.com";
   // const PRIVY_APP_ID = process.env.PRIVY_APP_ID;
-  const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID ||"cm2wpdo01018li0o97hdxgban"
+  const PRIVY_APP_ID = "cm2wpdo01018li0o97hdxgban"
 
+  const PRIVY_CLIENT_ID = process.env.PRIVY_CLIENT_ID;
   const privyConfig:object = {
     "appearance": {
       "accentColor": "#38CCCD",
@@ -45,8 +46,12 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
         "phantom"
       ]
     },
+    // "captchaEnabled": true,
     "loginMethods": [
       "discord",
+      // "email",
+      // "google",
+      // "wallet"
     ],
     "fundingMethodConfig": {
       "moonpay": {
@@ -56,6 +61,8 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
     "embeddedWallets": {
       "createOnLogin": "all-users",
       "requireUserPasswordOnCreate": false,
+      "priceDisplay": true,
+      // "noPromptOnSignature": true,
     },
     "mfa": {
       "noPromptOnMfaRequired": false
@@ -79,6 +86,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
               <PrivyProvider
                 appId={PRIVY_APP_ID || ""}
                 onSuccess={() => router.push("/wallet")}
+                clientId={PRIVY_CLIENT_ID || ""}
                 config={privyConfig}
               >
                 {children}

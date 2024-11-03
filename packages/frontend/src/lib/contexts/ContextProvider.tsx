@@ -16,9 +16,10 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({
   const onError = useCallback((error: WalletError) => {
     console.error(error);
   }, []);
+  const NEXT_PUBLIC_HELIUS_URL="https://mainnet.helius-rpc.com/?api-key=433243"
 
   return (
-    <ConnectionProvider endpoint={process.env.NEXT_PUBLIC_HELIUS_URL!}>
+    <ConnectionProvider endpoint={NEXT_PUBLIC_HELIUS_URL!}>
       <WalletProvider wallets={wallets} onError={onError} autoConnect={false}>
         <ReactUIWalletModalProvider>{children}</ReactUIWalletModalProvider>
       </WalletProvider>
