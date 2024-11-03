@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from "react";
 import { usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
-import { LogIn, LogOut, Info, PackageCheck } from "lucide-react";
+import { Info, PackageCheck } from "lucide-react";
 
 export default function Wallet () {
   const { ready, authenticated, user } = usePrivy();
@@ -40,20 +40,10 @@ export default function Wallet () {
     exportWallet();
     setIsExporting(false);
   }
-  // const wallet = user?.linkedAccounts.find(
-  //   (account): account is WalletWithMetadata =>
-  //     account.type === 'wallet' &&
-  //     account.walletClientType === 'privy' &&
-  //     account.chainType === 'solana',
-  // );
 
   // Find the embedded wallet to delegate from the array of the user's Solana wallets
   const walletToDelegate = wallets.find((wallet) => wallet.walletClientType === 'privy');
 // Check if the wallet to delegate by inspecting the user's linked accounts
-  const isAlreadyDelegated = user?.linkedAccounts.find(
-    (account): account is WalletWithMetadata =>
-      account.type === 'wallet' && account.address === walletToDelegate?.address && account.delegated,
-  );
 
   const onDelegate = async () => {
     if (!walletToDelegate) return; // Button is disabled to prevent this case
@@ -70,21 +60,6 @@ export default function Wallet () {
     let isDelegated = localStorage.getItem("isDelegated");
     setIsDelegated(!!isDelegated);
   }, [isDelegatedClicked])
-  // const embeddedWallets = user?.linkedAccounts.filter((account): account is WalletWithMetadata => (account.type === 'wallet' && account.walletClientType === 'privy'));
-
-  // const delegatedWallets = embeddedWallets && embeddedWallets.filter((wallet) => wallet.delegated);
-
-  // Check if the user has any delegated wallets by searching the linkedAccounts array for wallets
-  // with `delegated: true` set
-  // const hasDelegatedWallets =
-  //   user?.linkedAccounts.filter(
-  //     (account): account is WalletWithMetadata => account.type === 'wallet' && account.delegated,
-  //   );
-
-  // const onRevoke = async () => {
-  //   if (!hasDelegatedWallets) return; // Button is disabled to prevent this case
-  //   await revokeWallets({address: delegatedWallets?.address, chainType: 'solana'});
-  // };
 
   return (
     <div className="w-full h-screen mt-12 flex justify-center items-center">
@@ -150,20 +125,6 @@ export default function Wallet () {
             </label>
           </div>
         }
-        {/* <button 
-          className={`${(!delegatedWallets)?'bg-gray-300 text-gray-500 cursor-not-allowed':'bg-white hover:bg-purple-300 text-black hover:text-white'} w-full text-center px-4 py-2 border border-purple-300 rounded-lg `}
-          disabled={!delegatedWallets} 
-          onClick={onRevoke}
-        >
-          Revoke permission for this app to transact on my behalf
-        </button> */}
-        {/* {isAlreadyDelegated?'yes,':'No,'}  */}
-        {/* {hasDelegatedWallets?'yes,':'No,'} */}
-
-        {/* {delegatedWallets ? "yes," : 'No'} */}
-        
-        {/* // {JSON.stringify(embeddedWallets)} */}
-        {/* {JSON.stringify(user)} */}
 
       </div>
     </div>
