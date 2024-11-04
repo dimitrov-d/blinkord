@@ -10,7 +10,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
-import { usePrivy } from "@privy-io/react-auth";
 
 import { IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -70,17 +69,7 @@ export default function Drawer() {
     bottom: false,
     right: false,
   });
-  const [lists, setLists] = React.useState([]);
-
-  const { ready, authenticated } = usePrivy();
   
-  React.useEffect(() => {
-    if(ready && authenticated ) {
-      setLists(["Home", "Marketplace", "Docs", "My Blinks", "My Wallet"]);
-    } else {
-      setLists(["Home", "Marketplace", "Docs", "My Blinks"]);
-    }
-  }, [authenticated])
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
       (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -132,7 +121,7 @@ export default function Drawer() {
                 </div>
                 <Divider />
                 <List>
-                  {lists.map((text, index) => (
+                  {["Home", "Marketplace", "Docs", "My Blinks", "My Wallet"].map((text, index) => (
                     <ListItem key={text} disablePadding>
                       <ListItemButton href={getLink(text)} target={text === "Docs" ? "_blank" : "_self"}>
                         <ListItemIcon>
