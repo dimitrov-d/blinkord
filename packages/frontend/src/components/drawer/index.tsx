@@ -10,10 +10,11 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Image from "next/image";
+import { usePrivy } from "@privy-io/react-auth";
 
 import { IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Book, HomeIcon, Mail, Store, SquareChartGantt } from "lucide-react";
+import { Book, HomeIcon, Mail, Store, SquareChartGantt, WalletCards } from "lucide-react";
 import { Logo } from "../logo";
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -55,6 +56,8 @@ function getIcon(text: string) {
       return <Mail />;
     case "My Blinks":
       return <SquareChartGantt />;
+    case "My Wallet":
+      return <WalletCards />;
     default:
       return null;
   }
@@ -67,7 +70,17 @@ export default function Drawer() {
     bottom: false,
     right: false,
   });
+  const [lists, setLists] = React.useState([]);
 
+  const { ready, authenticated } = usePrivy();
+  
+  React.useEffect(() => {
+    if(ready && authenticated ) {
+      setLists(["Home", "Marketplace", "Docs", "My Blinks", "My Wallet"]);
+    } else {
+      setLists(["Home", "Marketplace", "Docs", "My Blinks"]);
+    }
+  }, [authenticated])
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
       (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -119,7 +132,7 @@ export default function Drawer() {
                 </div>
                 <Divider />
                 <List>
-                  {["Home", "Marketplace", "Docs", "My Blinks"].map((text, index) => (
+                  {lists.map((text, index) => (
                     <ListItem key={text} disablePadding>
                       <ListItemButton href={getLink(text)} target={text === "Docs" ? "_blank" : "_self"}>
                         <ListItemIcon>
