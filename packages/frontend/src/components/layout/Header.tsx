@@ -110,7 +110,6 @@ export default function Header() {
                     My Blinks
                   </Link>
                   {
-                    ready && authenticated &&
                     <Link
                       href="/wallet"
                       className={`${pathname==='/wallet'?'text-[#000000]':'text-[#555555]'} dark:text-white text-[16px] font-bold navLink`}
