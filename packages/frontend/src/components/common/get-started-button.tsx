@@ -53,15 +53,15 @@ export default function GetStartedButton({
     logout,
   } = usePrivy();
 
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push("/");
-    }
-    if (ready && authenticated) {
-      router.push("/wallet");
-    }
+  // useEffect(() => {
+  //   if (ready && !authenticated) {
+  //     router.push("/");
+  //   }
+  //   if (ready && authenticated) {
+  //     router.push("/wallet");
+  //   }
     
-  }, [ready, authenticated, router]);
+  // }, [ready, authenticated, router]);
 
   const handleGetStartedClick = async () => {
     setLoading(true);
