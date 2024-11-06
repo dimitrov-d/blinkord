@@ -1,33 +1,35 @@
 'use client'
 import { useState, useEffect } from "react";
 import { useLogin, usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
-import { PackageCheck, WalletCards, View, MessageCircleWarning, Accessibility } from "lucide-react";
+import { PackageCheck, WalletCards, View, MessageCircleWarning, Accessibility, InfoIcon, Copy, BanIcon, LogOut, SendToBack } from "lucide-react";
 import GridPatternBg from "@/components/common/grid-pattern-bg";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
 // import { Hero } from "@/components/hero/hero";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { toast } from "sonner";
 
-export default function Wallet () {
+export default function Wallet() {
   const { ready, authenticated, user, logout } = usePrivy();
   const { createWallet, wallets, exportWallet } = useSolanaWallets();
   const [isCreating, setIsCreating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const { delegateWallet } = useDelegatedActions();
+  // @ts-ignore
+  const { delegateWallet, revokeWallets } = useDelegatedActions();
   const [isDismiss, setIsDismiss] = useState(true);
   const [isDismiss1, setIsDismiss1] = useState(true);
   const [isDelegatedClicked, setIsDelegatedClicked] = useState(false);
   const [isDelegated, setIsDelegated] = useState(false);
 
   const gridBlocks = [
-    [3, 1],
-    [3, 16],
-    [4, 3],
-    [4, 14],
+    [4, 1],
+    [5, 17],
+    [6, 3],
+    [7, 14],
   ];
-  
-  const { login }  = useLogin({
+
+  const { login } = useLogin({
     onComplete: (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
       console.log(user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount);
       // Any logic you'd like to execute if the user is/becomes authenticated while this
@@ -38,7 +40,7 @@ export default function Wallet () {
       // Any logic you'd like to execute after a user exits the login flow or there is an error
     },
   });
- 
+  console.log({ user })
   const hasExistingSolanaWallet = !!user?.linkedAccounts.find(
     (account): account is WalletWithMetadata =>
       account.type === 'wallet' &&
@@ -46,21 +48,21 @@ export default function Wallet () {
       account.chainType === 'solana',
   );
 
-  useEffect(() => {
-    if(ready && authenticated && !hasExistingSolanaWallet) {
-      const createEmbeddedWallet = async () => {
-        setIsCreating(true);
-        await createWallet();
-        setIsCreating(false);
-      }
-      try {
-        createEmbeddedWallet();
-      } catch(error) {
-        console.log(error);
-      }
-    }
-    return;
-  },[]);
+  // useEffect(() => {
+  //   if (ready && authenticated && !hasExistingSolanaWallet) {
+  //     const createEmbeddedWallet = async () => {
+  //       setIsCreating(true);
+  //       await createWallet();
+  //       setIsCreating(false);
+  //     }
+  //     try {
+  //       createEmbeddedWallet();
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  //   return;
+  // }, []);
   // Check that your user is authenticated
   const isAuthenticated = ready && authenticated;
   // Check that your user has an embedded wallet
@@ -71,6 +73,13 @@ export default function Wallet () {
       account.chainType === 'solana',
   );
 
+  console.log(user?.linkedAccounts.find(
+    (account): account is WalletWithMetadata =>
+      account.type === 'wallet' &&
+      account.walletClientType === 'privy' &&
+      account.chainType === 'solana',
+  ))
+
   const exportEmbeddedWallet = () => {
     setIsExporting(true);
     exportWallet();
@@ -79,7 +88,7 @@ export default function Wallet () {
 
   // Find the embedded wallet to delegate from the array of the user's Solana wallets
   const walletToDelegate = wallets.find((wallet) => wallet.walletClientType === 'privy');
-// Check if the wallet to delegate by inspecting the user's linked accounts
+  // Check if the wallet to delegate by inspecting the user's linked accounts
   const isAlreadyDelegated = user?.linkedAccounts.find(
     (account): account is WalletWithMetadata =>
       account.type === 'wallet' && account.address === walletToDelegate?.address && account.delegated,
@@ -88,7 +97,7 @@ export default function Wallet () {
   const onDelegate = async () => {
     if (!walletToDelegate) return; // Button is disabled to prevent this case
     try {
-      await delegateWallet({address: walletToDelegate.address, chainType: 'solana'});
+      await delegateWallet({ address: walletToDelegate.address, chainType: 'solana' });
       setIsDelegatedClicked(true);
       localStorage.setItem("isDelegated", "true");
     } catch (error) {
@@ -96,8 +105,23 @@ export default function Wallet () {
     }
   };
 
+  // Check if the user has any delegated wallets
+  const hasDelegatedWallets = user?.linkedAccounts.filter(
+    (account): account is WalletWithMetadata => account.type === 'wallet' && account.delegated,
+  ).length !== 0;
+
+  const onRevoke = async () => {
+    if (!hasDelegatedWallets) return; // Button is disabled to prevent this case
+    try {
+      await revokeWallets();
+      toast.success('Access revoked successfully');
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to revoke access');
+    }
+  };
+
   useEffect(() => {
-    let isDelegated = localStorage.getItem("isDelegated");
     setIsDelegated(!!isDelegated);
   }, [isDelegatedClicked])
 
@@ -110,16 +134,16 @@ export default function Wallet () {
       <div className="ml-48 hidden md:block 1w-full -mt-72">
         <Evolve />
       </div>
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-center mb-6 mt-12 px-16 bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Embedded Wallet</h1>
+      <div className="text-center w-full max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-6 mt-12 px-16 bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Blinkord Embedded Wallet</h1>
         {
           (!ready || !authenticated) &&
-          <Alert className="1w-full min-w-96 sm:w-1/3 mx-auto text-center mb-4">
+          <Alert className="w-full min-w-96 sm:w-1/2 mx-auto text-center mb-4">
             <div className="flex flex-col items-center">
               <div className="flex items-center mb-4">
                 <div>
                   <AlertTitle>
-                    <MessageCircleWarning
+                    <InfoIcon
                       className="h-7 w-7 mr-2"
                       style={{ display: 'inline' }}
                     />
@@ -140,80 +164,96 @@ export default function Wallet () {
             </div>
           </Alert>
         }
-        <Alert className="1w-full min-w-96 sm:w-1/3 mx-auto">
-          <div className="flex flex-col mb-4">
-            {/* <h2 className="text-2xl font-bold text-center bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Embedded Wallet</h2> */}
-            <p className="text-sm text-center text-gray-500 my-4">A user's embedded wallet is theirs to keep, and even take with them.</p>
-          </div>
 
-          <div className="text-center mb-4">
-            {isCreating && 'Creating...'}
-          </div> 
-          {
-            (hasExistingSolanaWallet && isDismiss) &&
-            <div className="w-full flex justify-between items-center px-2 py-1 text-sm text-gray-500 mb-4 border border-yellow-300 rounded-lg">
-              <div className="flex items-center">
-                <PackageCheck className="h-4 w-4 mr-2 text-yellow-300" />
-                Created your embedded wallet successfully!
-              </div> 
-              <label
-              className="px-[2px] py-[2px] bg-yellow-300 cursor-pointer rounded-sm text-white"
-                onClick={() => setIsDismiss(false)}
-              >
-                Dismiss
-              </label>
+        {
+          (ready && authenticated) &&
+          <Alert className="w-full min-w-50 sm:w-1/2 mx-auto">
+
+            <div className="text-center mb-4">
+              {isCreating && 'Creating your embedded wallet...'}
             </div>
-          }
-
-          <Button
-            className={`${(!isAuthenticated || !hasEmbeddedWallet)?'bg-builderz-blue/30 text-black/50 cursor-not-allowed':'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
+            <Button
+              className={`${(!isAuthenticated || hasEmbeddedWallet) ? 'bg-builderz-blue/30 text-black/50 cursor-not-allowed' : 'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
               w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
-            disabled={!isAuthenticated || !hasEmbeddedWallet}
-            onClick={exportEmbeddedWallet} 
-          >
-            <View className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-            {isExporting ? 'Loading...' : 'Export Embedded Wallet'}
-          </Button>
-          
-          {
-            hasExistingSolanaWallet && 
-            <div className="flex items-center text-sm text-gray-500 mb-4 px-2 py-2 rounded-lg border border-teal-400">
-              <MessageCircleWarning className="h-4 w-4 mr-2 text-teal-300" />
-              Please provide delegated access by using the Privy SDK.
-            </div>
-          }
+              disabled={!isAuthenticated || hasEmbeddedWallet}
+              onClick={createWallet}
+            >
+              <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              Create Embedded Wallet
+            </Button>
+            {
+              isAlreadyDelegated ? (
+                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-teal-400">
+                  <InfoIcon className="h-8 w-8" />
+                  Your wallet is already delegated, you can close this page and continue using it through the Blinkord Bot on Discord.
+                </div>
+              ) : (
+                hasExistingSolanaWallet &&
+                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-teal-400">
+                  <InfoIcon className="h-8 w-8" />
+                  Please provide delegated access by using the Privy SDK.
+                </div>
+              )
+            }
 
-          <Button
-            className={`${(!walletToDelegate || isDelegatedClicked)?'bg-builderz-blue/30 text-black/50 cursor-not-allowed':'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
-              w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
-            disabled={!walletToDelegate || isDelegatedClicked}
-            onClick={onDelegate} 
-          >
-            <Accessibility className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-            Delegate Access
-          </Button>
-          
-          {
-            (isDelegatedClicked ) &&
-            <div className="w-full flex justify-between items-center px-2 py-1 text-sm text-gray-500 mb-4 border border-yellow-300 rounded-lg">
-              <PackageCheck className="h-4 w-4 mr-2 text-yellow-300" />
-              Delegated your embedded wallet successfully!
-              <label
-              className="px-[2px] py-[2px] bg-yellow-300 cursor-pointer rounded-sm text-white"
-                onClick={() => setIsDismiss1(false)}
-              >
-                Dismiss
-              </label>
+            <span className="text-sm font-bold mb-2">Your Wallet Address</span>
+            <div className="flex flex-col items-center justify-center mb-4 border border-gray-300 p-2 rounded-lg">
+              <div className="flex flex-row items-center">
+                <span className="text-sm font-bold mr-2">
+                  {walletToDelegate?.address ? `${walletToDelegate.address.slice(0, 10)}...${walletToDelegate.address.slice(-10)}` : ''}
+                </span>
+                <Button
+                  className="p-1 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                  onClick={() => {
+                    navigator.clipboard.writeText(walletToDelegate?.address || '');
+                    toast.success('Text copied to clipboard');
+                  }}
+                >
+                  <Copy className="h-4 w-4 sm:h-5 sm:w-5 text-black dark:text-white" />
+                </Button>
+              </div>
             </div>
-          }
-        </Alert>
+
+            <Button
+              className={`${(!isAuthenticated || !hasEmbeddedWallet) ? 'bg-builderz-blue/30 text-black/50 cursor-not-allowed' : 'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
+              w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
+              disabled={!isAuthenticated || !hasEmbeddedWallet}
+              onClick={exportEmbeddedWallet}
+            >
+              <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              {isExporting ? 'Loading...' : 'Export Embedded Wallet'}
+            </Button>
+
+            {
+              isAlreadyDelegated ? (<Button
+                className="bg-[#5E0307] hover:bg-[#5E0307]/80 text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#5E0307] focus:ring-opacity-50"
+                onClick={onRevoke}
+              >
+                <BanIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Revoke Access
+              </Button>) : (
+                <Button
+                  className={`${(!walletToDelegate || isDelegatedClicked) ? 'bg-builderz-blue/30 text-black/50 cursor-not-allowed' : 'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
+                  w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
+                  disabled={!walletToDelegate || isDelegatedClicked}
+                  onClick={onDelegate}
+                >
+                  <SendToBack className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  Delegate Access
+                </Button>
+              )
+            }
+
+          </Alert>
+        }
       </div>
-      
+
       <div className="mr-48 hidden md:block 1w-full -mt-72">
         <Bot />
       </div>
     </div>
   )
+
 }
 
 function Evolve() {
