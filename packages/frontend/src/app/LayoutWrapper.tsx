@@ -33,12 +33,8 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
                 appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
                 config={{
                   appearance: {
-                    accentColor: "#38CCCD",
-                    theme: "#FFFFFF",
-                    landingHeader: 'Log In or Sign In',
-                    loginMessage: "Please login with discord.",
+                    landingHeader: 'Sign in with Discord',
                     showWalletLoginFirst: false,
-                    logo: "https://auth.privy.io/logos/privy-logo.png",
                     walletChainType: "solana-only",
                     walletList: ["detected_solana_wallets", "phantom"]
                   },

@@ -1,6 +1,6 @@
 'use client'
 import { usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
-import { Info, Copy, Ban, LogOut, SendToBack } from "lucide-react";
+import { Info, Copy, Ban, LogOut, CircleCheck, CircleAlert, ArrowRightFromLine } from "lucide-react";
 import GridPatternBg from "@/components/common/grid-pattern-bg";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
@@ -105,8 +105,7 @@ export default function Wallet() {
             {
               !hasEmbeddedWallet && (
                 <Button
-                  className={`${(!isAuthenticated || hasEmbeddedWallet) ? 'bg-builderz-blue/30 text-black/50 cursor-not-allowed' : 'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
-              w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
+                  className="transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md"
                   onClick={createWallet}
                 >
                   <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
@@ -117,27 +116,27 @@ export default function Wallet() {
 
             {
               isDelegated ? (
-                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-teal-400">
-                  <Info className="h-12 w-12 mr-2" />
+                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
+                  <CircleCheck className="h-14 w-14 mr-2 text-green-500" />
                   Your wallet has provided delegated access, you can close this page and continue using the Blinkord Bot on Discord
                 </div>
               ) : (
                 hasEmbeddedWallet &&
-                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-teal-400">
-                  <Info className="h-10 w-10 mr-2" />
+                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
+                  <CircleAlert className="h-14 w-14 mr-2 text-red-500" />
                   You must provide delegated access for your wallet before being able to use it through the Blinkord Bot on Discord
                 </div>
               )
             }
 
             <span className="text-sm font-bold mb-2">Your Wallet Address</span>
-            <div className="flex flex-col items-center justify-center mb-4 border border-gray-300 p-2 rounded-lg">
+            <div className="flex flex-col items-center justify-center mb-4 border border-teal-300 p-2 rounded-lg">
               <div className="flex flex-row items-center">
                 <span className="text-sm font-bold mr-2">
                   {walletToDelegate?.address ? `${walletToDelegate.address.slice(0, 10)}...${walletToDelegate.address.slice(-10)}` : ''}
                 </span>
                 <Button
-                  className="p-1 bg-transparent hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                  className="p-1 bg-transparent rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
                   onClick={() => {
                     navigator.clipboard.writeText(walletToDelegate?.address || '');
                     toast.success('Text copied to clipboard');
@@ -148,42 +147,51 @@ export default function Wallet() {
               </div>
             </div>
 
-            <Button
-              className={`${(!isAuthenticated || !hasEmbeddedWallet) ? 'bg-builderz-blue/30 text-black/50 cursor-not-allowed' : 'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
-              w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
-              disabled={!isAuthenticated || !hasEmbeddedWallet}
-              onClick={() => exportWallet()}
-            >
-              <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              Export Wallet
-            </Button>
-
             {
-              isDelegated ? (
+              !isDelegated && (
                 <Button
-                  className="bg-[#AC362F] hover:bg-[#AC362F]/80 text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#AC362F] focus:ring-opacity-50"
-                  onClick={onRevoke}
-                >
-                  <Ban className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Revoke Access
-                </Button>
-              ) : (
-                <Button
-                  className="transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full"
+                  className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200"
                   onClick={onDelegate}>
-                  <SendToBack className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  <Image
+                    src="/images/delegated-actions.svg"
+                    alt="Delegate Access"
+                    width={20}
+                    height={20}
+                    className="mr-2"
+                  />
                   Delegate Access
                 </Button>
               )
             }
 
             <Button
-              className="transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 bg-gray-600 hover:bg-gray-700 text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full"
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200 mt-12"
               onClick={logout}
             >
               <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              Logout
+              Sign Out
             </Button>
+
+            <Button
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white font-bold px-6 py-4 rounded-md w-full mb-4 h-10 sm:h-12 font-bold px-4 sm:px-6 hover:bg-gray-200"
+              disabled={!isAuthenticated || !hasEmbeddedWallet}
+              onClick={() => exportWallet()}
+            >
+              <ArrowRightFromLine className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              Export Wallet
+            </Button>
+
+            {
+              isDelegated && (
+                <Button
+                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-[#AC362F] focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200"
+                  onClick={onRevoke}
+                >
+                  <Ban className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  Revoke Access
+                </Button>
+              )
+            }
 
           </Alert>
         }
