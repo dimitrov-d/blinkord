@@ -67,6 +67,17 @@ export default function Wallet() {
     }
   };
 
+  const onFundWallet = async () => {
+    if (!walletToDelegate) return;
+
+    await fundWallet(walletToDelegate.address, {
+      cluster: { name: 'mainnet-beta' },
+      amount: '0.1', // SOL
+    });
+  };
+
+  // #endregion handlers
+
   if (!ready || loading) return (<div> <OverlaySpinner /> </div>);
 
   return (
@@ -185,6 +196,14 @@ export default function Wallet() {
             >
               <ArrowRightFromLine className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Export Wallet
+            </Button>
+
+            <Button
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 text-black dark:text-white font-bold px-6 py-4 rounded-md w-full mb-4 h-10 sm:h-12 font-bold px-4 sm:px-6 hover:bg-gray-200"
+              onClick={onFundWallet}
+            >
+              <CircleDollarSign className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              Fund Wallet
             </Button>
 
             {

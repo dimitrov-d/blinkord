@@ -38,7 +38,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
                     walletChainType: "solana-only",
                     walletList: ["detected_solana_wallets", "phantom"]
                   },
-                  loginMethods: ["discord",],
+                  loginMethods: ["discord"],
                   embeddedWallets: { createOnLogin: "all-users", },
                 }}
               >
