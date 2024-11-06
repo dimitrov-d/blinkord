@@ -8,8 +8,16 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "sonner";
 import OverlaySpinner from "@/components/overlay-spinner";
+import { useLoginWithOAuth } from '@privy-io/react-auth';
 
 export default function Wallet() {
+  const { loading, initOAuth, } = useLoginWithOAuth();
+
+  const handleInitOAuth = async () => initOAuth({ provider: 'discord' }).catch((err) => {
+    console.error(`Error connecting to Discord: ${err}`);
+    toast.error('Failed to connect Discord');
+  });
+
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { createWallet, wallets, exportWallet } = useSolanaWallets();
   // @ts-ignore
@@ -28,6 +36,7 @@ export default function Wallet() {
 
   // Find the embedded wallet to delegate from the array of the user's Solana wallets
   const walletToDelegate = wallets.find((wallet) => wallet.walletClientType === 'privy');
+
   // Check if the wallet to delegate by inspecting the user's linked accounts
   const isDelegated = user?.linkedAccounts.find(
     (account): account is WalletWithMetadata =>
@@ -35,7 +44,9 @@ export default function Wallet() {
   );
 
   const onDelegate = async () => {
-    if (!walletToDelegate) return; // Button is disabled to prevent this case
+    // Button is disabled to prevent this case
+    if (!walletToDelegate) return;
+
     try {
       await delegateWallet({ address: walletToDelegate.address, chainType: 'solana' });
     } catch (error) {
@@ -43,24 +54,20 @@ export default function Wallet() {
     }
   };
 
-  // Check if the user has any delegated wallets
-  const hasDelegatedWallets = user?.linkedAccounts.filter(
-    (account): account is WalletWithMetadata => account.type === 'wallet' && account.delegated,
-  ).length !== 0;
-
   const onRevoke = async () => {
-    if (!hasDelegatedWallets) return; // Button is disabled to prevent this case
+    // Button is disabled to prevent this case
+    if (!isDelegated) return;
+
     try {
       await revokeWallets();
-      toast.success('Access revoked successfully');
+      toast.success('Delegated actions revoked successfully');
     } catch (error) {
-      console.log(error);
-      toast.error('Failed to revoke access');
+      console.error(`Error revoking delegated actions: ${error}`);
+      toast.error('Failed to revoke delegated actions');
     }
   };
 
-  if (!ready) return (<div> <OverlaySpinner /> </div>);
-
+  if (!ready || loading) return (<div> <OverlaySpinner /> </div>);
 
   return (
     <div className="w-full min-h-screen mt-12 flex justify-evenly items-center bg-gradient-to-r from-green-300/20 via-cyan-200/20 to-indigo-600/20 transition-colors duration-300 ease-in-out">
@@ -89,8 +96,8 @@ export default function Wallet() {
                 </div>
               </div>
               <Button
-                onClick={login}
-                className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full taransition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                onClick={handleInitOAuth}
+                className="w-fit h-10 sm:h-12 bg-builderz-blue text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:bg-neon-cyan hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
               >
                 <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" alt="Discord Logo" />
                 Connect Discord
@@ -118,13 +125,13 @@ export default function Wallet() {
               isDelegated ? (
                 <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
                   <CircleCheck className="h-14 w-14 mr-2 text-green-500" />
-                  Your wallet has provided delegated access, you can close this page and continue using the Blinkord Bot on Discord
+                  Your wallet has enabled delegated actions, you can close this page and continue using the Blinkord Bot on Discord
                 </div>
               ) : (
                 hasEmbeddedWallet &&
                 <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
                   <CircleAlert className="h-14 w-14 mr-2 text-red-500" />
-                  You must provide delegated access for your wallet before being able to use it through the Blinkord Bot on Discord
+                  You must enable delegated actions for your wallet before being able to use it through the Blinkord Bot on Discord
                 </div>
               )
             }
@@ -150,16 +157,16 @@ export default function Wallet() {
             {
               !isDelegated && (
                 <Button
-                  className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200"
+                  className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-neon-cyan"
                   onClick={onDelegate}>
                   <Image
                     src="/images/delegated-actions.svg"
-                    alt="Delegate Access"
+                    alt="Delegated Actions"
                     width={20}
                     height={20}
                     className="mr-2"
                   />
-                  Delegate Access
+                  Enable delegated actions
                 </Button>
               )
             }
@@ -174,7 +181,6 @@ export default function Wallet() {
 
             <Button
               className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white font-bold px-6 py-4 rounded-md w-full mb-4 h-10 sm:h-12 font-bold px-4 sm:px-6 hover:bg-gray-200"
-              disabled={!isAuthenticated || !hasEmbeddedWallet}
               onClick={() => exportWallet()}
             >
               <ArrowRightFromLine className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
@@ -188,7 +194,7 @@ export default function Wallet() {
                   onClick={onRevoke}
                 >
                   <Ban className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Revoke Access
+                  Revoke Delegated Actions
                 </Button>
               )
             }
