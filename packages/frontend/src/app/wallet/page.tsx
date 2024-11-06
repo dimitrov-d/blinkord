@@ -1,6 +1,6 @@
 'use client'
 import { usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
-import { Info, Copy, Ban, LogOut, CircleCheck, CircleAlert, ArrowRightFromLine } from "lucide-react";
+import { Info, Copy, Ban, LogOut, CircleCheck, CircleAlert, ArrowRightFromLine, CircleDollarSign } from "lucide-react";
 import GridPatternBg from "@/components/common/grid-pattern-bg";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
@@ -9,24 +9,16 @@ import Image from "next/image";
 import { toast } from "sonner";
 import OverlaySpinner from "@/components/overlay-spinner";
 import { useLoginWithOAuth } from '@privy-io/react-auth';
+import { useFundWallet } from '@privy-io/react-auth/solana';
 
 export default function Wallet() {
-  const { loading, initOAuth, } = useLoginWithOAuth();
-
-  const handleInitOAuth = async () => initOAuth({ provider: 'discord' }).catch((err) => {
-    console.error(`Error connecting to Discord: ${err}`);
-    toast.error('Failed to connect Discord');
-  });
-
-  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { ready, authenticated, user, logout } = usePrivy();
   const { createWallet, wallets, exportWallet } = useSolanaWallets();
+  const { loading, initOAuth } = useLoginWithOAuth();
+  const { fundWallet } = useFundWallet();
   // @ts-ignore
   const { delegateWallet, revokeWallets } = useDelegatedActions();
 
-  // Check that your user is authenticated
-  const isAuthenticated = ready && authenticated;
-
-  // Check that your user has an embedded wallet
   const hasEmbeddedWallet = !!user?.linkedAccounts.find(
     (account): account is WalletWithMetadata =>
       account.type === 'wallet' &&
@@ -34,17 +26,26 @@ export default function Wallet() {
       account.chainType === 'solana',
   );
 
-  // Find the embedded wallet to delegate from the array of the user's Solana wallets
-  const walletToDelegate = wallets.find((wallet) => wallet.walletClientType === 'privy');
+  // Automatically create the embedded wallet if it doesn't exist
+  if (authenticated && !hasEmbeddedWallet) createWallet();
 
-  // Check if the wallet to delegate by inspecting the user's linked accounts
+  const walletToDelegate = wallets.find((wallet) => wallet.walletClientType === 'privy');
   const isDelegated = user?.linkedAccounts.find(
     (account): account is WalletWithMetadata =>
       account.type === 'wallet' && account.address === walletToDelegate?.address && account.delegated,
   );
 
+  // #region handlers
+  const onInitOAuth = async () => {
+    try {
+      await initOAuth({ provider: 'discord' });
+    } catch (err) {
+      console.error(`Error connecting to Discord: ${err}`);
+      toast.error('Failed to connect Discord');
+    }
+  };
+
   const onDelegate = async () => {
-    // Button is disabled to prevent this case
     if (!walletToDelegate) return;
 
     try {
@@ -55,7 +56,6 @@ export default function Wallet() {
   };
 
   const onRevoke = async () => {
-    // Button is disabled to prevent this case
     if (!isDelegated) return;
 
     try {
@@ -75,7 +75,6 @@ export default function Wallet() {
       amount: '0.1', // SOL
     });
   };
-
   // #endregion handlers
 
   if (!ready || loading) return (<div> <OverlaySpinner /> </div>);
@@ -88,8 +87,7 @@ export default function Wallet() {
       </div>
       <div className="text-center w-full max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-6 mt-12 px-16 bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Blinkord Embedded Wallet</h1>
-        {
-          (!ready || !authenticated) &&
+        {(!ready || !authenticated) &&
           <Alert className="w-full min-w-96 sm:w-1/2 mx-auto text-center mb-4">
             <div className="flex flex-col items-center">
               <div className="flex items-center mb-4">
@@ -107,7 +105,7 @@ export default function Wallet() {
                 </div>
               </div>
               <Button
-                onClick={handleInitOAuth}
+                onClick={onInitOAuth}
                 className="w-fit h-10 sm:h-12 bg-builderz-blue text-black font-bold py-2 px-4 sm:px-6 rounded-full transition duration-300 ease-in-out transform hover:bg-neon-cyan hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
               >
                 <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" alt="Discord Logo" />
@@ -120,67 +118,63 @@ export default function Wallet() {
           (ready && authenticated) &&
           <Alert className="w-full min-w-50 sm:w-1/2 mx-auto">
 
-            {
-              !hasEmbeddedWallet && (
-                <Button
-                  className="transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md"
-                  onClick={createWallet}
-                >
-                  <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Create Embedded Wallet
-                </Button>
-              )
-            }
+            {!hasEmbeddedWallet && (
+              <Button
+                className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-neon-cyan dark:text-black"
+                onClick={createWallet}
+              >
+                <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Create Embedded Wallet
+              </Button>
+            )}
 
-            {
-              isDelegated ? (
-                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
-                  <CircleCheck className="h-14 w-14 mr-2 text-green-500" />
-                  Your wallet has enabled delegated actions, you can close this page and continue using the Blinkord Bot on Discord
-                </div>
-              ) : (
-                hasEmbeddedWallet &&
-                <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
-                  <CircleAlert className="h-14 w-14 mr-2 text-red-500" />
-                  You must enable delegated actions for your wallet before being able to use it through the Blinkord Bot on Discord
-                </div>
-              )
-            }
-
-            <span className="text-sm font-bold mb-2">Your Wallet Address</span>
-            <div className="flex flex-col items-center justify-center mb-4 border border-teal-300 p-2 rounded-lg">
-              <div className="flex flex-row items-center">
-                <span className="text-sm font-bold mr-2">
-                  {walletToDelegate?.address ? `${walletToDelegate.address.slice(0, 10)}...${walletToDelegate.address.slice(-10)}` : ''}
-                </span>
-                <Button
-                  className="p-1 bg-transparent rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
-                  onClick={() => {
-                    navigator.clipboard.writeText(walletToDelegate?.address || '');
-                    toast.success('Text copied to clipboard');
-                  }}
-                >
-                  <Copy className="h-4 w-4 sm:h-5 sm:w-5 text-black dark:text-white" />
-                </Button>
+            {isDelegated ? (
+              <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
+                <CircleCheck className="h-14 w-14 mr-2 text-green-500" />
+                Your wallet has enabled delegated actions, you can close this page and continue using the Blinkord Bot on Discord
               </div>
-            </div>
+            ) : (
+              hasEmbeddedWallet &&
+              <div className="flex items-center text-sm mb-4 px-2 py-2 rounded-lg border border-gray-300">
+                <CircleAlert className="h-14 w-14 mr-2 text-red-500" />
+                You must enable delegated actions for your wallet before being able to use it through the Blinkord Bot on Discord
+              </div>
+            )}
 
-            {
-              !isDelegated && (
-                <Button
-                  className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-neon-cyan"
-                  onClick={onDelegate}>
-                  <Image
-                    src="/images/delegated-actions.svg"
-                    alt="Delegated Actions"
-                    width={20}
-                    height={20}
-                    className="mr-2"
-                  />
-                  Enable delegated actions
-                </Button>
-              )
-            }
+            {hasEmbeddedWallet && (<>
+              <span className="text-sm font-bold mb-2">Your Wallet Address</span>
+              <div className="flex flex-col items-center justify-center mb-4 border border-teal-300 p-2 rounded-lg">
+                <div className="flex flex-row items-center">
+                  <span className="text-sm font-bold mr-2">
+                    {walletToDelegate?.address ? `${walletToDelegate.address.slice(0, 10)}...${walletToDelegate.address.slice(-10)}` : ''}
+                  </span>
+                  <Button
+                    className="p-1 bg-transparent rounded-md hover:bg-gray-200 dark:hover:bg-gray-800"
+                    onClick={() => {
+                      navigator.clipboard.writeText(walletToDelegate?.address || '');
+                      toast.success('Text copied to clipboard');
+                    }}
+                  >
+                    <Copy className="h-4 w-4 sm:h-5 sm:w-5 text-black dark:text-white" />
+                  </Button>
+                </div>
+              </div>
+            </>)}
+
+            {!isDelegated && (
+              <Button
+                className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-neon-cyan dark:text-black"
+                onClick={onDelegate}>
+                <Image
+                  src="/images/delegated-actions.svg"
+                  alt="Delegated Actions"
+                  width={20}
+                  height={20}
+                  className="mr-2"
+                />
+                Enable delegated actions
+              </Button>
+            )}
 
             <Button
               className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200 mt-12"
@@ -206,17 +200,15 @@ export default function Wallet() {
               Fund Wallet
             </Button>
 
-            {
-              isDelegated && (
-                <Button
-                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-[#AC362F] focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200"
-                  onClick={onRevoke}
-                >
-                  <Ban className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Revoke Delegated Actions
-                </Button>
-              )
-            }
+            {isDelegated && (
+              <Button
+                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-[#AC362F] focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-gray-200"
+                onClick={onRevoke}
+              >
+                <Ban className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Revoke Delegated Actions
+              </Button>
+            )}
 
           </Alert>
         }
