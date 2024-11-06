@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from "react";
-import { usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
+import { useLogin, usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
 import { PackageCheck, WalletCards, View, MessageCircleWarning, Accessibility } from "lucide-react";
 import GridPatternBg from "@/components/common/grid-pattern-bg";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function Wallet () {
-  const { ready, authenticated, user } = usePrivy();
+  const { ready, authenticated, user, logout } = usePrivy();
   const { createWallet, wallets, exportWallet } = useSolanaWallets();
   const [isCreating, setIsCreating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -27,6 +27,18 @@ export default function Wallet () {
     [4, 14],
   ];
   
+  const { login }  = useLogin({
+    onComplete: (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
+      console.log(user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount);
+      // Any logic you'd like to execute if the user is/becomes authenticated while this
+      // component is mounted
+    },
+    onError: (error) => {
+      console.log(error);
+      // Any logic you'd like to execute after a user exits the login flow or there is an error
+    },
+  });
+ 
   const hasExistingSolanaWallet = !!user?.linkedAccounts.find(
     (account): account is WalletWithMetadata =>
       account.type === 'wallet' &&
@@ -98,73 +110,105 @@ export default function Wallet () {
       <div className="ml-48 hidden md:block 1w-full -mt-72">
         <Evolve />
       </div>
-      <Alert className="1w-full min-w-96 sm:w-1/3 mx-auto">
-        <div className="flex flex-col mb-4">
-          <h2 className="text-2xl font-bold text-center bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Embedded Wallet</h2>
-          <p className="text-sm text-center text-gray-500 my-4">A user's embedded wallet is theirs to keep, and even take with them.</p>
-        </div>
-
-        <div className="text-center mb-4">
-          {isCreating && 'Creating...'}
-        </div> 
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-center mb-6 mt-12 px-16 bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Embedded Wallet</h1>
         {
-          (hasExistingSolanaWallet && isDismiss) &&
-          <div className="w-full flex justify-between items-center px-2 py-1 text-sm text-gray-500 mb-4 border border-yellow-300 rounded-lg">
-            <div className="flex items-center">
+          (!ready || !authenticated) &&
+          <Alert className="1w-full min-w-96 sm:w-1/3 mx-auto text-center mb-4">
+            <div className="flex flex-col items-center">
+              <div className="flex items-center mb-4">
+                <div>
+                  <AlertTitle>
+                    <MessageCircleWarning
+                      className="h-7 w-7 mr-2"
+                      style={{ display: 'inline' }}
+                    />
+                    Discord Connection Required
+                  </AlertTitle>
+                  <AlertDescription className="mt-2">
+                    Blinkord requires you to connect your Discord in order to create your own embedded wallet
+                  </AlertDescription>
+                </div>
+              </div>
+              <Button
+                onClick={login}
+                className="w-fit h-10 sm:h-12 bg-builderz-blue hover:bg-neon-cyan text-black font-bold py-2 px-4 sm:px-6 rounded-full taransition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+              >
+                <img className="mr-2 h-4 w-4 sm:h-5 sm:w-5" src="https://unpkg.com/simple-icons@v13/icons/discord.svg" alt="Discord Logo" />
+                Connect Discord
+              </Button>
+            </div>
+          </Alert>
+        }
+        <Alert className="1w-full min-w-96 sm:w-1/3 mx-auto">
+          <div className="flex flex-col mb-4">
+            {/* <h2 className="text-2xl font-bold text-center bg-blink-green/70 p-4 rounded-lg shadow-lg inline-block">Embedded Wallet</h2> */}
+            <p className="text-sm text-center text-gray-500 my-4">A user's embedded wallet is theirs to keep, and even take with them.</p>
+          </div>
+
+          <div className="text-center mb-4">
+            {isCreating && 'Creating...'}
+          </div> 
+          {
+            (hasExistingSolanaWallet && isDismiss) &&
+            <div className="w-full flex justify-between items-center px-2 py-1 text-sm text-gray-500 mb-4 border border-yellow-300 rounded-lg">
+              <div className="flex items-center">
+                <PackageCheck className="h-4 w-4 mr-2 text-yellow-300" />
+                Created your embedded wallet successfully!
+              </div> 
+              <label
+              className="px-[2px] py-[2px] bg-yellow-300 cursor-pointer rounded-sm text-white"
+                onClick={() => setIsDismiss(false)}
+              >
+                Dismiss
+              </label>
+            </div>
+          }
+
+          <Button
+            className={`${(!isAuthenticated || !hasEmbeddedWallet)?'bg-builderz-blue/30 text-black/50 cursor-not-allowed':'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
+              w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
+            disabled={!isAuthenticated || !hasEmbeddedWallet}
+            onClick={exportEmbeddedWallet} 
+          >
+            <View className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+            {isExporting ? 'Loading...' : 'Export Embedded Wallet'}
+          </Button>
+          
+          {
+            hasExistingSolanaWallet && 
+            <div className="flex items-center text-sm text-gray-500 mb-4 px-2 py-2 rounded-lg border border-teal-400">
+              <MessageCircleWarning className="h-4 w-4 mr-2 text-teal-300" />
+              Please provide delegated access by using the Privy SDK.
+            </div>
+          }
+
+          <Button
+            className={`${(!walletToDelegate || isDelegatedClicked)?'bg-builderz-blue/30 text-black/50 cursor-not-allowed':'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
+              w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
+            disabled={!walletToDelegate || isDelegatedClicked}
+            onClick={onDelegate} 
+          >
+            <Accessibility className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+            Delegate Access
+          </Button>
+          
+          {
+            (isDelegatedClicked ) &&
+            <div className="w-full flex justify-between items-center px-2 py-1 text-sm text-gray-500 mb-4 border border-yellow-300 rounded-lg">
               <PackageCheck className="h-4 w-4 mr-2 text-yellow-300" />
-              Created your embedded wallet successfully!
-            </div> 
-            <label
-            className="px-[2px] py-[2px] bg-yellow-300 cursor-pointer rounded-sm text-white"
-              onClick={() => setIsDismiss(false)}
-            >
-              Dismiss
-            </label>
-          </div>
-        }
-
-        <Button
-          className={`${(!isAuthenticated || !hasEmbeddedWallet)?'bg-builderz-blue/30 text-black/50 cursor-not-allowed':'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
-            w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
-          disabled={!isAuthenticated || !hasEmbeddedWallet}
-          onClick={exportEmbeddedWallet} 
-        >
-          <View className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-          {isExporting ? 'Loading...' : 'Export Embedded Wallet'}
-        </Button>
-        
-        {
-          hasExistingSolanaWallet && 
-          <div className="flex items-center text-sm text-gray-500 mb-4 px-2 py-2 rounded-lg border border-teal-400">
-            <MessageCircleWarning className="h-4 w-4 mr-2 text-teal-300" />
-            Please provide delegated access by using the Privy SDK.
-          </div>
-        }
-
-        <Button
-          className={`${(!walletToDelegate || isDelegatedClicked)?'bg-builderz-blue/30 text-black/50 cursor-not-allowed':'transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 bg-builderz-blue hover:bg-neon-cyan text-black'}
-            w-full h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-full `}
-          disabled={!walletToDelegate || isDelegatedClicked}
-          onClick={onDelegate} 
-        >
-          <Accessibility className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-          Delegate Access
-        </Button>
-        
-        {
-          (isDelegatedClicked ) &&
-          <div className="w-full flex justify-between items-center px-2 py-1 text-sm text-gray-500 mb-4 border border-yellow-300 rounded-lg">
-            <PackageCheck className="h-4 w-4 mr-2 text-yellow-300" />
-            Delegated your embedded wallet successfully!
-            <label
-            className="px-[2px] py-[2px] bg-yellow-300 cursor-pointer rounded-sm text-white"
-              onClick={() => setIsDismiss1(false)}
-            >
-              Dismiss
-            </label>
-          </div>
-        }
-      </Alert>
+              Delegated your embedded wallet successfully!
+              <label
+              className="px-[2px] py-[2px] bg-yellow-300 cursor-pointer rounded-sm text-white"
+                onClick={() => setIsDismiss1(false)}
+              >
+                Dismiss
+              </label>
+            </div>
+          }
+        </Alert>
+      </div>
+      
       <div className="mr-48 hidden md:block 1w-full -mt-72">
         <Bot />
       </div>
