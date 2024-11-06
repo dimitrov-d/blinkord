@@ -7,6 +7,8 @@ import { getExpiringRoles, initializeDatabase } from '../database/database';
 schedule(
   '0 * * * *',
   async () => {
+    if (env.NODE_ENV === 'development') return;
+
     await initializeDatabase();
 
     const expiringRoles = await getExpiringRoles();

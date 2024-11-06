@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 // Define the keys for the environment variables as a constant array
 const envKeys = [
+  'NODE_ENV',
   'DISCORD_BOT_TOKEN',
   'DISCORD_CLIENT_ID',
   'DISCORD_CLIENT_SECRET',
