@@ -10,9 +10,10 @@ import { toast } from "sonner";
 import OverlaySpinner from "@/components/overlay-spinner";
 import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useFundWallet } from '@privy-io/react-auth/solana';
+import { createEmbeddedWallet } from "@/lib/actions/discord.actions";
 
 export default function Wallet() {
-  const { ready, authenticated, user, logout } = usePrivy();
+  const { ready, authenticated, user, logout, getAccessToken } = usePrivy();
   const { createWallet, wallets, exportWallet } = useSolanaWallets();
   const { loading, initOAuth } = useLoginWithOAuth();
   const { fundWallet } = useFundWallet();
@@ -27,7 +28,7 @@ export default function Wallet() {
   );
 
   // Automatically create the embedded wallet if it doesn't exist
-  if (authenticated && !hasEmbeddedWallet) createWallet();
+  // if (authenticated && !hasEmbeddedWallet) createWallet();
 
   const walletToDelegate = wallets.find((wallet) => wallet.walletClientType === 'privy');
   const isDelegated = user?.linkedAccounts.find(
@@ -46,10 +47,14 @@ export default function Wallet() {
   };
 
   const onDelegate = async () => {
-    if (!walletToDelegate) return;
+    if (!walletToDelegate || !user) return;
 
     try {
+      const accessToken = await getAccessToken();
       await delegateWallet({ address: walletToDelegate.address, chainType: 'solana' });
+
+      const discordAccount = user.linkedAccounts.find(account => account.type === 'discord_oauth')!;
+      await createEmbeddedWallet(accessToken!, discordAccount.subject, walletToDelegate.address);
     } catch (error) {
       console.error(`Error delegating wallet: ${error}`);
     }

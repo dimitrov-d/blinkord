@@ -27,3 +27,38 @@ export const fetchRoles = async (
     return { roles: [], blinkordRolePosition: -1 };
   }
 };
+
+// Create an embedded wallet for a Discord user
+export const createEmbeddedWallet = async (
+  accessToken: string,
+  discordUserId: string,
+  address: string
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/embedded-wallet`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ accessToken, discordUserId, address }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(
+        `Failed to create embedded wallet: ${response.statusText}`,
+        errorData
+      );
+      return { success: false, error: errorData.error };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error(`Error creating embedded wallet`, error);
+    return { success: false, error: `${error}` };
+  }
+};
