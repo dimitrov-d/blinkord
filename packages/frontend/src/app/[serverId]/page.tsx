@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useParams, useRouter } from "next/navigation";
 import { BlinkDisplay } from "@/components/blink/blink-display";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon, LogIn } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -16,6 +16,7 @@ import {
 import Image from "next/image";
 import { useWindowSize } from "@/lib/hooks/use-window-size";
 import { Button } from "@/components/ui/button";
+import NotFound from "../not-found";
 
 export default function BlinkPage() {
   const router = useRouter();
@@ -23,6 +24,10 @@ export default function BlinkPage() {
   const { serverId } = useParams<{ serverId: string }>();
   const code = searchParams.get("code") || "";
 
+  // If serverId is not valid discord server ID, redirect to not found page
+  if (!/^\d{17,19}$/.test(serverId)) {
+    return <NotFound />;
+  }
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -63,7 +68,7 @@ export default function BlinkPage() {
   }, [code]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
