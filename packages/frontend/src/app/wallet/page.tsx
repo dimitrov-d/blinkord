@@ -1,6 +1,6 @@
 'use client'
 import { usePrivy, useSolanaWallets, useDelegatedActions, type WalletWithMetadata } from "@privy-io/react-auth";
-import { Info, Copy, Ban, LogOut, CircleCheck, CircleAlert, ArrowRightFromLine, CircleDollarSign } from "lucide-react";
+import { Info, Copy, Ban, LogOut, CircleCheck, CircleAlert, ArrowRightFromLine, CircleDollarSign, WalletIcon } from "lucide-react";
 import GridPatternBg from "@/components/common/grid-pattern-bg";
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
@@ -128,7 +128,7 @@ export default function Wallet() {
                 className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-neon-cyan dark:text-black"
                 onClick={createWallet}
               >
-                <LogOut className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                <WalletIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 Create Embedded Wallet
               </Button>
             )}

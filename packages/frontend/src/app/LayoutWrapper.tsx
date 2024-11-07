@@ -40,8 +40,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
                   },
                   loginMethods: ["discord"],
                   embeddedWallets: { createOnLogin: "all-users", },
-                }}
-              >
+                }}>
                 {children}
               </PrivyProvider>
             </ThemeProvider>
