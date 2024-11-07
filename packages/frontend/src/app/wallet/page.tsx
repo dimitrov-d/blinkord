@@ -166,7 +166,7 @@ export default function Wallet() {
               </div>
             </>)}
 
-            {!isDelegated && (
+            {!isDelegated && hasEmbeddedWallet && (
               <Button
                 className="border border-gray-200 dark:border-gray-600 bg-builderz-blue hover:bg-neon-cyan hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white w-full mb-4 h-10 sm:h-12 font-bold py-2 px-4 sm:px-6 rounded-md hover:bg-neon-cyan dark:text-black"
                 onClick={onDelegate}>
@@ -189,21 +189,24 @@ export default function Wallet() {
               Sign Out
             </Button>
 
-            <Button
-              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white font-bold px-6 py-4 rounded-md w-full mb-4 h-10 sm:h-12 font-bold px-4 sm:px-6 hover:bg-gray-200"
-              onClick={() => exportWallet()}
-            >
-              <ArrowRightFromLine className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              Export Wallet
-            </Button>
+            {hasEmbeddedWallet && (
+              <Button
+                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-black dark:text-white font-bold px-6 py-4 rounded-md w-full mb-4 h-10 sm:h-12 font-bold px-4 sm:px-6 hover:bg-gray-200"
+                onClick={() => exportWallet()}
+              >
+                <ArrowRightFromLine className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Export Wallet
+              </Button>
+            )}
 
-            <Button
+            {hasEmbeddedWallet && (<Button
               className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:scale-105 transition duration-300 ease-in-out transform focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 text-black dark:text-white font-bold px-6 py-4 rounded-md w-full mb-4 h-10 sm:h-12 font-bold px-4 sm:px-6 hover:bg-gray-200"
               onClick={onFundWallet}
             >
               <CircleDollarSign className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Fund Wallet
             </Button>
+            )}
 
             {isDelegated && (
               <Button

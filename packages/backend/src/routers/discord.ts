@@ -10,7 +10,7 @@ import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi } from '../services/oauth';
 import { verifySignature, verifyJwt } from '../middleware/auth';
-// import { PrivyClient } from '@privy-io/server-auth';
+import { PrivyClient } from '@privy-io/server-auth';
 
 export const discordRouter = express.Router();
 
@@ -143,7 +143,7 @@ discordRouter.get('/guilds/:guildId/roles', [verifyJwt], async (req: Request, re
 discordRouter.post('/embedded-wallet', [], async (req: Request, res: Response) => {
   try {
     const accessToken = req.headers.authorization.replace('Bearer ', '');
-    // await new PrivyClient(env.PRIVY_APP_ID, env.PRIVY_APP_SECRET).verifyAuthToken(accessToken);
+    await new PrivyClient(env.PRIVY_APP_ID, env.PRIVY_APP_SECRET).verifyAuthToken(accessToken);
   } catch (error) {
     console.error(`Token verification failed with error ${error}.`);
     return res.status(401).json({ error: 'Unauthorized' });
