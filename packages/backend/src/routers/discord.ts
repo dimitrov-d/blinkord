@@ -1,9 +1,16 @@
 import express, { Request, Response } from 'express';
-import { findAllGuildIdsSortedByCreateTime, findGuildById, insertGuild, updateGuild } from '../database/database';
+import {
+  createUserWallet,
+  findAllGuildIdsSortedByCreateTime,
+  findGuildById,
+  insertGuild,
+  updateGuild,
+} from '../database/database';
 import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi } from '../services/oauth';
 import { verifySignature, verifyJwt } from '../middleware/auth';
+import { PrivyClient } from '@privy-io/server-auth';
 
 export const discordRouter = express.Router();
 
@@ -125,5 +132,34 @@ discordRouter.get('/guilds/:guildId/roles', [verifyJwt], async (req: Request, re
   } catch (error) {
     console.error('Error fetching server roles', error);
     res.status(500).json({ error: `Unable to get server roles: ${error}` });
+  }
+});
+
+/**
+ * Create an embedded wallet for a Discord user
+ * @param {string} discordUserId - The Discord user ID
+ * @param {string} address - The Solana wallet address
+ */
+discordRouter.post('/embedded-wallet', [], async (req: Request, res: Response) => {
+  try {
+    const accessToken = req.headers.authorization.replace('Bearer ', '');
+    await new PrivyClient(env.PRIVY_APP_ID, env.PRIVY_APP_SECRET).verifyAuthToken(accessToken);
+  } catch (error) {
+    console.error(`Token verification failed with error ${error}.`);
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { discordUserId, address } = req.body;
+
+  if (!discordUserId || !address) {
+    return res.status(400).json({ error: 'discordUserId and address are required' });
+  }
+
+  try {
+    const wallet = await createUserWallet(discordUserId, address);
+    return res.status(201).json(wallet);
+  } catch (error) {
+    console.error('Error creating embedded wallet', error);
+    return res.status(500).json({ error: 'Failed to create embedded wallet' });
   }
 });

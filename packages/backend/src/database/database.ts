@@ -5,13 +5,14 @@ import { Role } from './entities/role';
 import env from '../services/env';
 import { AccessToken } from './entities/access-token';
 import { RolePurchase } from './entities/role-purchase';
+import { Wallet } from './entities/wallet';
 
 let dataSource: DataSource;
 
 let guildRepository: Repository<Guild>;
 let accessTokenRepository: Repository<AccessToken>;
 let rolePurchaseRepository: Repository<RolePurchase>;
-
+let walletRepository: Repository<Wallet>;
 export async function initializeDatabase() {
   dataSource = new DataSource({
     host: env.DATABASE_HOST,
@@ -22,7 +23,7 @@ export async function initializeDatabase() {
     database: 'postgres',
     port: 5432,
     driver: require('pg'),
-    entities: [Guild, Role, AccessToken, RolePurchase],
+    entities: [Guild, Role, AccessToken, RolePurchase, Wallet],
     synchronize: false, // Set to true when you want to sync DB fields and tables with codebase
   });
   await dataSource
@@ -33,6 +34,7 @@ export async function initializeDatabase() {
   guildRepository = dataSource.getRepository(Guild);
   accessTokenRepository = dataSource.getRepository(AccessToken);
   rolePurchaseRepository = dataSource.getRepository(RolePurchase);
+  walletRepository = dataSource.getRepository(Wallet);
 }
 
 export async function findAllGuildIdsSortedByCreateTime(): Promise<string[]> {
@@ -148,4 +150,8 @@ export async function getExpiringRoles(): Promise<RolePurchase[]> {
     .andWhere('role.id IS NOT NULL')
     // .andWhere('guild.limitedTimeRoles = true')
     .getMany();
+}
+
+export async function createUserWallet(discordUserId: string, address: string) {
+  return await walletRepository.save(new Wallet(address, discordUserId));
 }

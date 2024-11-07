@@ -3,8 +3,8 @@ import "@/styles/globals.css";
 import { DM_Sans as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/layout/Footer";
-import LayoutWrapper from "@/app/LayoutWrapper";
 import Header from "@/components/layout/Header";
+import LayoutWrapper from "@/app/LayoutWrapper";
 import { Toaster } from "sonner";
 
 require("@solana/wallet-adapter-react-ui/styles.css");
@@ -62,64 +62,66 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <LayoutWrapper>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          {/* SEO Meta Tags */}
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="robots" content="index, follow" />
-          <meta charSet="UTF-8" />
-          <link rel="icon" href="/favicon.ico" />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* SEO Meta Tags */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="index, follow" />
+        <meta charSet="UTF-8" />
+        <link rel="icon" href="/favicon.ico" />
 
-          {/* Open Graph & Twitter Cards */}
-          <meta
-            property="og:title"
-            content="Blinkord - Bring Solana Blinks into your Discord Community"
-          />
-          <meta
-            property="og:description"
-            content="Create and share links that enable Solana interactions directly within your Discord Server"
-          />
-          <meta property="og:url" content="https://blinkord.com" />
-          <meta property="og:type" content="website" />
-          <meta
-            property="og:image"
-            content="https://blinkord.com/images/og-image.png"
-          />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Blinkord platform interface" />
+        {/* Open Graph & Twitter Cards */}
+        <meta
+          property="og:title"
+          content="Blinkord - Bring Solana Blinks into your Discord Community"
+        />
+        <meta
+          property="og:description"
+          content="Create and share links that enable Solana interactions directly within your Discord Server"
+        />
+        <meta property="og:url" content="https://blinkord.com" />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:image"
+          content="https://blinkord.com/images/og-image.png"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Blinkord platform interface" />
 
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta
-            name="twitter:title"
-            content="Blinkord - Bring Solana Blinks into your Discord Community"
-          />
-          <meta
-            name="twitter:description"
-            content="Create and share links that enable Solana interactions directly within your Discord Server"
-          />
-          <meta
-            name="twitter:image"
-            content="https://blinkord.com/images/og-image.png"
-          />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="Blinkord - Bring Solana Blinks into your Discord Community"
+        />
+        <meta
+          name="twitter:description"
+          content="Create and share links that enable Solana interactions directly within your Discord Server"
+        />
+        <meta
+          name="twitter:image"
+          content="https://blinkord.com/images/og-image.png"
+        />
 
-          <script src="/scripts/mailgo.min.js" />
-          <meta name="dscvr:canvas:version" content="vNext" />
-        </head>
-        <body
-          className={cn(
-            "min-h-screen font-sans antialiased bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_10%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_10%,#63e_100%)]",
-            fontSans.variable
-          )}
-          style={{ display: 'flex', flexDirection: 'column', minHeight: '90vh' }}
-        >
-          <Header />
-          {children}
-          <Footer />
-          <Toaster position="bottom-right" />
-        </body>
-      </html>
-    </LayoutWrapper>
+        <script src="/scripts/mailgo.min.js" />
+        <meta name="dscvr:canvas:version" content="vNext" />
+      </head>
+      <body
+        className={cn(
+          "min-h-screen font-sans antialiased bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_10%,#63e_100%)] dark:bg-slate-950 dark:[background:radial-gradient(125%_125%_at_50%_10%,#000_10%,#63e_100%)]",
+          fontSans.variable
+        )}
+        style={{ display: 'flex', flexDirection: 'column', minHeight: '90vh' }}
+      >
+        <LayoutWrapper>
+          <>
+            <Header />
+            {children}
+            <Footer />
+          </>
+        </LayoutWrapper>
+        <Toaster position="bottom-right" />
+      </body>
+    </html>
   );
 }

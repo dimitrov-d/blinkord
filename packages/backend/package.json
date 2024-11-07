@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@onsol/tldparser": "^0.6.6",
+    "@privy-io/server-auth": "^1.16.1",
     "@solana/actions": "^1.6.5",
     "@solana/actions-spec": "^2.4.2",
     "@solana/spl-token": "^0.4.9",
@@ -55,6 +56,7 @@
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   }
 }
