@@ -5,7 +5,7 @@ import { Role } from './entities/role';
 import env from '../services/env';
 import { AccessToken } from './entities/access-token';
 import { RolePurchase } from './entities/role-purchase';
-import { Wallet, WalletType } from './entities/wallet';
+import { Wallet } from './entities/wallet';
 
 let dataSource: DataSource;
 

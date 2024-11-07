@@ -1,6 +1,6 @@
 import { Entity, Column, CreateDateColumn, PrimaryColumn } from 'typeorm';
 
-export enum WalletType {
+enum WalletType {
   GENERATED = 1,
   IMPORTED = 2,
   EMBEDDED = 3,
