@@ -148,12 +148,12 @@ const faq = [
             Visit{" "}
             <a
               className="text-blue-700 cursor-pointer"
-              href="https://discord.com/developers/docs/topics/oauth2"
+              href="https://blinkord.com"
               target="_blank"
             >
               blinkord.com
             </a>{" "}
-            and click on “Connect Discord.”
+            and click on "Get Started”.
           </li>
           <li>
             <strong>2. </strong> Log in with your Discord account to fetch a
@@ -259,7 +259,7 @@ const faq = [
             administration.
           </li>
           <li>
-            <strong>Wallet Security:</strong> Undoubtedly one of the most important aspects of security is the protection of your wallet, which is achieved through advanced encryption and decentralized signing methods. This ensures that your assets remain secure, with transactions only being executed upon your direct authorization through the Blinkord Bot, giving you full control over your wallet at all times.
+            <strong>Wallet Security:</strong> Undoubtedly one of the most important aspects of security is the protection of your wallet, which is achieved through advanced encryption and decentralized signing methods. This ensures that your assets remain secure, with transactions only being executed upon your direct authorization through the Blinkord Bot, giving you full control over your wallet at all times. Additionally, Blinkord utilizes <a href="https://www.privy.io/" className="text-blue-700 cursor-pointer" target="_blank">Privy.io</a> to provide embedded wallets for users to create and manage self-custodial Solana wallets on Discord.
           </li>
         </ul>
       </div>
@@ -347,7 +347,7 @@ const faq = [
           The{" "}
           <a
             className="text-blue-700 cursor-pointer"
-            href="https://discord.com/developers/docs/topics/oauth2"
+            href="https://blinkord.com/marketplace"
             target="_blank"
           >
             Blinkord Marketplace

@@ -33,5 +33,5 @@ Learn more about Solana actions and Blinks by [using this link](https://solana.c
 - Displays Blink actions in Discord, allowing users to interact and send transactions directly within the app
 - Detects Blink URLs and instantly provides available actions, simplifying user interactions
 - Enables users to create and manage a secure Solana wallet without leaving the Discord app
-- Ensures wallet security by using a dedicated Key Management Service (KMS) and using MPC wallet solutions (🔜)
+- Ensures wallet security by using a dedicated Key Management Service (KMS) and utilizing embedded wallets provided by [Privy.io](https://www.privy.io/)
 - Automatically assigns premium roles to members after successful payments, giving instant access

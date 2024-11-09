@@ -80,8 +80,11 @@ function MeetTheBot() {
                   <div>
                     <CircleCheck className="w-8" />
                   </div>
-                  Ensures wallet security by using a dedicated Key Management
-                  Service (KMS) and using MPC wallet solutions (🔜)
+                  <span>
+                    Ensures wallet security by using a dedicated Key Management
+                    Service (KMS) and utilizing embedded wallets provided by
+                    <a href="https://www.privy.io" className="text-blue-700 cursor-pointer" target="_blank"> Privy.io</a>
+                  </span>
                 </li>
                 <li className="flex items-center gap-2">
                   <div>
