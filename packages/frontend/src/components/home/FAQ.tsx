@@ -215,8 +215,9 @@ const faq = [
           <p>
             Yes, Blinkord requires the use of a Solana Wallet, such as Phantom, Solflare or others, for processing payments in SOL. The Phantom and Solflare Wallets are secure and user-friendly Solana wallets that facilitate quick transactions. You can download them as a browser extension or mobile app.
           </p>
+          <br />
           <p>
-            Alternatively, if you prefer to use the in-app wallet on Discord, you are able to create a new wallet using the Blinkord Bot. The bot is going to generate a wallet for you and after depositing funds to that wallet, you can start using it to interact with the blink actions.
+            Alternatively, if you prefer to use the in-app wallet on Discord, you are able to create a new wallet using the Blinkord Bot. The bot is going to generate a wallet for you, or you can also choose to import your own wallet or create an embedded wallet. After depositing funds to that wallet, you can start using it to interact with the blink actions. Find out more on the <a href="https://docs.blinkord.com/blinkord-bot" className="text-blue-700 cursor-pointer" target="_blank">Blinkord Bot documentation page</a>.
           </p>
         </div>
       ),
