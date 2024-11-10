@@ -1,31 +1,17 @@
 import { schedule } from 'node-cron';
 import { discordApi, sendDiscordLogMessage } from '../services/oauth';
 import env from '../services/env';
-import { getExpiringRoles, initializeDatabase } from '../database/database';
+import { getAllRolesForUser as getUserRolePurchases, getExpiringRoles, initializeDatabase } from '../database/database';
 
 // Cron job to run every hour
 schedule(
   '0 * * * *',
   async () => {
-    if (env.NODE_ENV === 'development') return;
+    // if (env.NODE_ENV === 'development') return;
 
     await initializeDatabase();
 
-    let expiringRoles = await getExpiringRoles();
-    const uniqueExpiringRolesMap = new Map();
-
-    // Filter out duplicates by user, guild and role. Only take role purchase with the latest expiration date
-    // If a same role purchase is found with a later expiration date, it means the user has renewed the role
-    expiringRoles.forEach((rolePurchase) => {
-      const key = `${rolePurchase.discordUserId}-${rolePurchase.guild.id}-${rolePurchase.role.id}`;
-      const existingRolePurchase = uniqueExpiringRolesMap.get(key);
-
-      if (!existingRolePurchase || new Date(existingRolePurchase.expiresAt) < new Date(rolePurchase.expiresAt)) {
-        uniqueExpiringRolesMap.set(key, rolePurchase);
-      }
-    });
-
-    expiringRoles = Array.from(uniqueExpiringRolesMap.values());
+    const expiringRoles = await getExpiringRoles();
 
     console.info(`Total expiring roles: ${expiringRoles.length}`);
 
@@ -38,6 +24,14 @@ schedule(
         role: { id: roleId, name: roleName },
         expiresAt,
       } = rolePurchase;
+
+      const userRolePurchases = await getUserRolePurchases(discordUserId, guildId, roleId);
+
+      // If the user has renewed the role, skip
+      if (userRolePurchases.length > 1 && userRolePurchases.some((role) => new Date(role.expiresAt) > expiresAt)) {
+        console.info(`User ${discordUserId} has renewed the role ${roleName} on guild ${guildName}, skipping`);
+        continue;
+      }
 
       const hoursUntilExpiration = Math.floor((new Date(expiresAt).getTime() - now.getTime()) / (1000 * 60 * 60));
 

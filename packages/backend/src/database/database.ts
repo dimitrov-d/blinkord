@@ -152,6 +152,27 @@ export async function getExpiringRoles(): Promise<RolePurchase[]> {
     .getMany();
 }
 
+/**
+ * Get all role purchases for a given discordUserId, guildId, and roleId
+ * @param {string} discordUserId
+ * @param {string} guildId
+ * @param {string} roleId
+ * @returns {Promise<RolePurchase[]>}
+ */
+export async function getAllRolesForUser(
+  discordUserId: string,
+  guildId: string,
+  roleId: string,
+): Promise<RolePurchase[]> {
+  return await rolePurchaseRepository.find({
+    where: {
+      discordUserId,
+      guild: { id: guildId },
+      role: { id: roleId },
+    },
+  });
+}
+
 export async function createUserWallet(discordUserId: string, address: string) {
   return await walletRepository.save(new Wallet(address, discordUserId));
 }
