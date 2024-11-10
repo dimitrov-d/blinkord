@@ -118,8 +118,8 @@ export async function saveNewAccessToken(authToken: AccessToken): Promise<Access
   return await accessTokenRepository.save(authToken);
 }
 
-export async function saveRolePurchase(rolePurchase: RolePurchase): Promise<RolePurchase> {
-  return await rolePurchaseRepository.save(rolePurchase);
+export async function saveRolePurchase(rolePurchase: RolePurchase) {
+  await rolePurchaseRepository.insert(rolePurchase);
 }
 
 /**

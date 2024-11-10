@@ -11,7 +11,22 @@ schedule(
 
     await initializeDatabase();
 
-    const expiringRoles = await getExpiringRoles();
+    let expiringRoles = await getExpiringRoles();
+    const uniqueExpiringRolesMap = new Map();
+
+    // Filter out duplicates by user, guild and role. Only take role purchase with the latest expiration date
+    // If a same role purchase is found with a later expiration date, it means the user has renewed the role
+    expiringRoles.forEach((rolePurchase) => {
+      const key = `${rolePurchase.discordUserId}-${rolePurchase.guild.id}-${rolePurchase.role.id}`;
+      const existingRolePurchase = uniqueExpiringRolesMap.get(key);
+
+      if (!existingRolePurchase || new Date(existingRolePurchase.expiresAt) < new Date(rolePurchase.expiresAt)) {
+        uniqueExpiringRolesMap.set(key, rolePurchase);
+      }
+    });
+
+    expiringRoles = Array.from(uniqueExpiringRolesMap.values());
+
     console.info(`Total expiring roles: ${expiringRoles.length}`);
 
     const now = new Date();
