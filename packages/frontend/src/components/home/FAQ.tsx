@@ -216,6 +216,23 @@ const faq = [
       ),
   },
   {
+    question: "How to use Blinkord within Discord?",
+    answer: (
+      <div>
+        <p>
+          Instead of using the platform, you can directly interact with blinks on Discord with the help of the Blinkord Bot. The bot recognizes Solana action URLs, unfurls the links and displays all the actions as clickable buttons. You can learn more about the bot{" "}
+          <a className="text-blue-700 cursor-pointer" href="https://docs.blinkord.com/blinkord-bot" target="_blank">
+            here
+          </a>.
+          and add it to your server{" "}
+          <a className="text-blue-700 cursor-pointer" href="https://blinkord.com/install-bot" target="_blank">
+            by using this link
+          </a>.
+        </p>
+      </div>
+    ),
+  },
+  {
     question: "What are Blinkord's achievements so far?",
     answer: (
       <div>
@@ -279,23 +296,6 @@ const faq = [
     ),
   },
   {
-    question: "How to use Blinkord within Discord?",
-    answer: (
-      <div>
-        <p>
-          Instead of using the platform, you can directly interact with blinks on Discord with the help of the Blinkord Bot. The bot recognizes Solana action URLs, unfurls the links and displays all the actions as clickable buttons. You can learn more about the bot{" "}
-          <a className="text-blue-700 cursor-pointer" href="https://docs.blinkord.com/blinkord-bot" target="_blank">
-            here
-          </a>.
-          and add it to your server{" "}
-          <a className="text-blue-700 cursor-pointer" href="https://blinkord.com/install-bot" target="_blank">
-            by using this link
-          </a>.
-        </p>
-      </div>
-    ),
-  },
-  {
     question:
       "Are there any fees associated with purchasing roles on Blinkord?",
     answer:
@@ -326,13 +326,16 @@ const faq = [
     answer: (
       <div>
         <p>
-          Server owners can set roles with <strong>expiration dates</strong>.
+          Server owners can set roles with <strong>expiration times</strong>.
           Blinkord automatically:
         </p>
         <br />
         <ul>
           <li>
             <strong>Removes expired roles</strong> from members.
+          </li>
+          <li>
+            <strong>Sends reminders</strong> to members before their roles expire.
           </li>
           <li>
             <strong>Sends notifications</strong> to members via Discord direct
