@@ -29,17 +29,17 @@ function FAQ() {
           <div className="flex flex-col gap-10 items-center">
             <div className="flex-1 w-full max-w-3xl bg-white/70 dark:bg-gray-800/70 p-6 rounded-lg shadow-lg">
               <Accordion type="single" collapsible className="w-full">
-                {faq.map((ele) => (
+                {faq.map((el, id) => (
                   <AccordionItem
-                    key={ele.id}
-                    value={`item-${ele.id + 1}`}
+                    key={id}
+                    value={`item-${id + 1}`}
                     className="py-2"
                   >
                     <AccordionTrigger className="text-left text-base font-semibold">
-                      {ele.question}
+                      {el.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-lg text-foreground/70 dark:text-gray-300">
-                      {ele.answer}
+                      {el.answer}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
@@ -54,13 +54,11 @@ function FAQ() {
 
 const faq = [
   {
-    id: 0,
     question: "What is Blinkord?",
     answer:
       "Blinkord is a platform that enables Discord server owners to enable Solana interactions within their Discord community through shareable links called Solana Actions and Blinks. By integrating with the Solana blockchain, Blinkord facilitates secure and fast transactions using SOL (Solana’s native cryptocurrency), providing a seamless experience for both server owners and members.",
   },
   {
-    id: 1,
     question: "What does Blinkord mean?",
     answer: (
       <div>
@@ -76,7 +74,6 @@ const faq = [
     ),
   },
   {
-    id: 2,
     question: "How does Blinkord work?",
     answer: (
       <div>
@@ -116,7 +113,6 @@ const faq = [
     ),
   },
   {
-    id: 3,
     question: "What are Blinks and Solana Actions?",
     answer: (
       <div>
@@ -138,7 +134,6 @@ const faq = [
     ),
   },
   {
-    id: 4,
     question: "How do I get started as a Discord server owner?",
     answer: (
       <div>
@@ -179,7 +174,6 @@ const faq = [
     ),
   },
   {
-    id: 5,
     question: "How do I purchase a premium role as a Discord member?",
     answer: (
       <div>
@@ -207,7 +201,6 @@ const faq = [
     ),
   },
   {
-    id: 6,
     question: "Do I need a Solana Wallet to use Blinkord?",
     answer:
       (
@@ -223,7 +216,26 @@ const faq = [
       ),
   },
   {
-    id: 7,
+    question: "What are Blinkord's achievements so far?",
+    answer: (
+      <div>
+        <ul>
+          <li>👉 100+ Discord roles purchased</li>
+          <li>👉 40+ SOL exchanged</li>
+          <li>👉 80+ Solana wallets created on Discord</li>
+          <li>👉 200+ blinks unfurled and used on Discord</li>
+          <li>👉 60+ servers where the Blinkord Bot is installed and used</li>
+          <li>👉 Partnered with <a href="https://x.com/privy_io/status/1854900257173520478" className="text-blue-700 cursor-pointer" target="_blank">Privy</a> to enable embedded wallets on Discord</li>
+          <li>👉 Partnered with <a href="https://x.com/blinkord_sol/status/1848715894538551343" className="text-blue-700 cursor-pointer" target="_blank">SOL Decoder</a> to offer subscriptions for their Meteora tools</li>
+          <li>👉 Partnered with <a href="https://x.com/DEGEN_MARKETS/status/1848339309696295055" className="text-blue-700 cursor-pointer" target="_blank">Degen Markets</a> to enable prediction market voting via Discord</li>
+          <li>👉 Partnered with <a href="https://x.com/bulbappio/status/1852105688488775819" className="text-blue-700 cursor-pointer" target="_blank">Bulb</a> to enable them to trade the Bulb token via Discord</li>
+          <li>👉 Partnered with <a href="https://p-link.io/" className="text-blue-700 cursor-pointer" target="_blank">P-link</a> to enable payments and games on Discord</li>
+          <li>👉 Enabled playing <a href="http://sendarcade.fun/" className="text-blue-700 cursor-pointer" target="_blank">Send Arcade</a> and <a href="https://www.catoff.xyz/" className="text-blue-700 cursor-pointer" target="_blank">Cat Off</a> games on Discord</li>
+        </ul>
+      </div>
+    ),
+  },
+  {
     question: "Is Blinkord secure and safe to use?",
     answer: (
       <div>
@@ -267,7 +279,6 @@ const faq = [
     ),
   },
   {
-    id: 8,
     question: "How to use Blinkord within Discord?",
     answer: (
       <div>
@@ -285,14 +296,12 @@ const faq = [
     ),
   },
   {
-    id: 9,
     question:
       "Are there any fees associated with purchasing roles on Blinkord?",
     answer:
       "While Blinkord does not charge users any fees for purchasing roles, standard Solana network transaction fees (usually minimal) apply when making payments. These fees are paid to the network validators to process your transaction.",
   },
   {
-    id: 10,
     question: "Is Blinkord Free?",
     answer: (
       <div>
@@ -313,7 +322,6 @@ const faq = [
     ),
   },
   {
-    id: 11,
     question: "How does Blinkord handle role expiration and management?",
     answer: (
       <div>
@@ -340,7 +348,6 @@ const faq = [
     ),
   },
   {
-    id: 12,
     question: "What is the Blinkord Marketplace?",
     answer: (
       <div>
