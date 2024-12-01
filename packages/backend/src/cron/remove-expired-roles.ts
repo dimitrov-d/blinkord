@@ -41,7 +41,7 @@ schedule(
           discordUserId,
           `**Reminder**: Your role **${roleName}** on the server **${guildName}** will expire in ${hoursUntilExpiration / 24} ${hoursUntilExpiration / 24 === 1 ? 'day' : 'days'}. \nRenew it on <https://blinkord.com/${guildId}>`,
         );
-      } else if (hoursUntilExpiration <= 0) {
+      } else if (hoursUntilExpiration === 0) {
         // Remove role
         await discordApi
           .delete(`/guilds/${guildId}/members/${discordUserId}/roles/${roleId}`, {
