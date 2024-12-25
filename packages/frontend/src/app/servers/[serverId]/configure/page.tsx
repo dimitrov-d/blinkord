@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -31,6 +31,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { fetchRoles } from "@/lib/actions/discord.actions";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
+import MySubscriptions from "./subscriptions";
 
 export default function ConfigureServerPage() {
   const { serverId } = useParams<{ serverId: string }>();
@@ -56,6 +59,8 @@ export default function ConfigureServerPage() {
   const token =
     useUserStore((state) => state.token) ||
     localStorage.getItem("discordToken");
+
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     const fetchGuildData = async () => {
@@ -259,88 +264,107 @@ export default function ConfigureServerPage() {
           error={errorOccurred}
         />
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MotionCard
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          <MotionCard
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
+      <Tabs selectedIndex={activeTab} onSelect={(index: number) => setActiveTab(index)}>
+        <TabList className="flex justify-center space-x-4 pb-4">
+          <Tab
+            className={`px-4 py-2 rounded border cursor-pointer flex items-center ${activeTab === 0 ? "bg-gray-400 text-black font-bold" : "bg-gray-200 text-black"
+              }`}
           >
-            <MotionCardContent className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">
-                Your custom Blink URL 🔗
-              </h2>
-              <Separator className="my-4" />
-              {isLoading ? (
-                <div className="flex items-center justify-between">
-                  <Skeleton className="h-10 w-3/4 mr-4" />
-                  <Skeleton className="h-10 w-24" />
-                </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <MotionInput
-                    type="text"
-                    value={customUrl}
-                    readOnly
-                    className="flex-grow mr-4"
-                    whileFocus={{ scale: 1.05 }}
-                  />
-                  <MotionButton
-                    className="mr-2"
-                    onClick={copyCustomUrl}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <CopyIcon className="mr-2 h-4 w-4" />
-                    Copy URL
-                  </MotionButton>
-                  <MotionButton
-                    onClick={openCustomUrl}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <SquareArrowOutUpRight className="mr-2 h-4 w-4" />
-                    Open URL
-                  </MotionButton>
-                </div>
-              )}
-            </MotionCardContent>
-            <ServerFormEdit
-              formData={formData}
-              setFormData={setFormData}
-              roleData={roleData}
-              setRoleData={setRoleData}
-              formErrors={formErrors}
-              onSubmit={handleSubmit}
-              isLoading={isLoading}
-            />
-          </MotionCard>
-        </MotionCard>
-        <MotionCard
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <MotionCardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">Blink Preview 👀</h2>
-            <Separator className="my-4" />
-            {isLoading ? (
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-10 w-3/4 mr-4" />
-                <Skeleton className="h-10 w-24" />
-              </div>
-            ) : (
-              <BlinkDisplay
-                serverId={Array.isArray(serverId) ? serverId[0] : serverId}
+            <span className="mr-2">🔧</span> Configure
+          </Tab>
+          <Tab
+            className={`px-4 py-2 rounded border cursor-pointer flex items-center ${activeTab === 1 ? "bg-gray-400 text-black font-bold" : "bg-gray-200 text-black"
+              }`}
+          >
+            <span className="mr-2">📜</span> My Subscriptions
+          </Tab>
+        </TabList>
+
+        <TabPanel>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <MotionCard
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
+              <MotionCardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">
+                  Your custom Blink URL 🔗
+                </h2>
+                <Separator className="my-4" />
+                {isLoading ? (
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-10 w-3/4 mr-4" />
+                    <Skeleton className="h-10 w-24" />
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <MotionInput
+                      type="text"
+                      value={customUrl}
+                      readOnly
+                      className="flex-grow mb-4 sm:mb-0 sm:mr-4"
+                      whileFocus={{ scale: 1.05 }}
+                    />
+                    <div className="flex flex-col sm:flex-row">
+                      <MotionButton
+                        className="mb-2 sm:mb-0 sm:mr-2"
+                        onClick={copyCustomUrl}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <CopyIcon className="mr-2 h-4 w-4" />
+                        Copy URL
+                      </MotionButton>
+                      <MotionButton
+                        onClick={openCustomUrl}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <SquareArrowOutUpRight className="mr-2 h-4 w-4" />
+                        Open URL
+                      </MotionButton>
+                    </div>
+                  </div>
+                )}
+              </MotionCardContent>
+              <ServerFormEdit
+                formData={formData}
+                setFormData={setFormData}
+                roleData={roleData}
+                setRoleData={setRoleData}
+                formErrors={formErrors}
+                onSubmit={handleSubmit}
+                isLoading={isLoading}
               />
-            )}
-          </MotionCardContent>
-        </MotionCard>
-      </div>
+            </MotionCard>
+            <MotionCard
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <MotionCardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">Blink Preview 👀</h2>
+                <Separator className="my-4" />
+                {isLoading ? (
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-10 w-3/4 mr-4" />
+                    <Skeleton className="h-10 w-24" />
+                  </div>
+                ) : (
+                  <BlinkDisplay
+                    serverId={Array.isArray(serverId) ? serverId[0] : serverId}
+                  />
+                )}
+              </MotionCardContent>
+            </MotionCard>
+          </div>
+        </TabPanel>
+
+        <TabPanel>
+          <MySubscriptions />
+        </TabPanel>
+      </Tabs>
     </motion.div>
   );
 }
