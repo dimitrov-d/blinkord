@@ -15,8 +15,7 @@ export const verifyJwt = async (req: Request, res: Response, next: NextFunction)
   if (!token) return res.status(401).json({ error: 'Token not provided' });
 
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as { userId: string; guildIds: string[] };
-    req['user'] = decoded;
+    req['user'] = jwt.verify(token, env.JWT_SECRET) as { userId: string; guildIds: string[] };
   } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });
   }

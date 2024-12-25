@@ -47,6 +47,12 @@ export class Guild extends BaseEntity<Guild> {
   website: string;
 
   /**
+   * ID of the channel where notifications will be sent
+   */
+  @Column({ type: 'varchar', nullable: true })
+  notificationChannelId: string;
+
+  /**
    * If the guild owner wants to receive payment in USDC tokens
    */
   @Column({ type: 'boolean', default: false })
