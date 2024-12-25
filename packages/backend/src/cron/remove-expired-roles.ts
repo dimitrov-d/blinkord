@@ -7,19 +7,21 @@ import { getAllRolesForUser as getUserRolePurchases, getExpiringRoles, initializ
 schedule(
   '0 * * * *',
   async () => {
-    // if (env.NODE_ENV === 'development') return;
+    if (env.NODE_ENV === 'development') return;
 
     await initializeDatabase();
     const expiringRoles = await getExpiringRoles();
 
     // Ensure expiring roles are unique by guild.id, role.id, and discordUserId
-    const uniqueExpiringRoles = expiringRoles.reduce((acc, rolePurchase) => {
-      const key = `${rolePurchase.guild.id}-${rolePurchase.role.id}-${rolePurchase.discordUserId}`;
-      if (!acc.has(key)) {
-        acc.set(key, rolePurchase);
-      }
-      return acc;
-    }, new Map()).values();
+    const uniqueExpiringRoles = expiringRoles
+      .reduce((acc, rolePurchase) => {
+        const key = `${rolePurchase.guild.id}-${rolePurchase.role.id}-${rolePurchase.discordUserId}`;
+        if (!acc.has(key)) {
+          acc.set(key, rolePurchase);
+        }
+        return acc;
+      }, new Map())
+      .values();
 
     console.info(`Total expiring roles: ${expiringRoles.length}`);
 
