@@ -12,7 +12,7 @@ export default function InstallBot() {
     const redirect = url.searchParams.get('redirect');
     const guild_id = url.searchParams.get('guild_id');
 
-    let baseUrl = 'https://discord.com/oauth2/authorize?client_id=1277276051592052787&permissions=268462081&integration_type=0&scope=bot+applications.commands';
+    let baseUrl = 'https://discord.com/oauth2/authorize?client_id=1277276051592052787&permissions=268463105&integration_type=0&scope=bot+applications.commands';
 
     if (guild_id) baseUrl += `&guild_id=${guild_id}`;
 
