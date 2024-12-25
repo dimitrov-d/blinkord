@@ -48,3 +48,19 @@ export const verifySignature = async (req: Request, res: Response, next: NextFun
 
   next();
 };
+
+/**
+ * Middleware to check if the user is an owner/admin of the guild
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+export const checkGuildOwnership = async (req: Request, res: Response, next: NextFunction) => {
+  const guildId = req.params.guildId;
+
+  if (!req['user']?.guildIds?.includes(guildId)) {
+    return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
+  }
+
+  next();
+};

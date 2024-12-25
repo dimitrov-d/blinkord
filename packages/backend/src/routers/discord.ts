@@ -9,7 +9,7 @@ import {
 import { Guild } from '../database/entities/guild';
 import env from '../services/env';
 import { discordApi } from '../services/oauth';
-import { verifySignature, verifyJwt } from '../middleware/auth';
+import { verifySignature, verifyJwt, checkGuildOwnership } from '../middleware/auth';
 import { PrivyClient } from '@privy-io/server-auth';
 
 export const discordRouter = express.Router();
@@ -61,12 +61,8 @@ discordRouter.post('/guilds', [verifyJwt, verifySignature], async (req: Request,
  * @param {string} guildId - Path parameter representing ID of the guild
  * @returns {Guild}
  */
-discordRouter.get('/guilds/:guildId', verifyJwt, async (req: Request, res: Response) => {
+discordRouter.get('/guilds/:guildId', [verifyJwt, checkGuildOwnership], async (req: Request, res: Response) => {
   const guildId = req.params.guildId;
-
-  if (!req['user']?.guildIds?.includes(guildId)) {
-    return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
-  }
 
   const guild = await findGuildById(guildId);
   return res.json({ guild });
@@ -81,10 +77,13 @@ discordRouter.get('/guilds/:guildId', verifyJwt, async (req: Request, res: Respo
  * @param {Guild} data - The guild data which will be stored in the database
  * @returns {Guild}
  */
-discordRouter.put('/guilds/:guildId', [verifyJwt, verifySignature], async (req: Request, res: Response) => {
-  const { address, data } = req.body;
+discordRouter.put(
+  '/guilds/:guildId',
+  [verifyJwt, verifySignature, checkGuildOwnership],
+  async (req: Request, res: Response) => {
+    const { address, data } = req.body;
 
-  const guildId = req.params.guildId;
+    const guildId = req.params.guildId;
 
   const guild = await findGuildById(guildId);
   if (!guild) return res.status(404).send('Guild not found');
@@ -96,22 +95,19 @@ discordRouter.put('/guilds/:guildId', [verifyJwt, verifySignature], async (req: 
     await updateGuild(guildId, data);
     return res.status(200).json(data);
   } catch (error) {
-    console.error('Error updating guild', error);
-    return res.status(500).json({ error: `Failed to update guild and roles` });
-  }
-});
+      console.error('Error updating guild', error);
+      return res.status(500).json({ error: `Failed to update guild and roles` });
+    }
+  },
+);
 
 /**
  * Get the roles of a guild through the API with Bot credentials
  * @param {string} guildId - Path parameter representing ID of the guild
  * @returns { blinkordRolePosition: number, roles: { id: string, name: string, position: number}[]}
  */
-discordRouter.get('/guilds/:guildId/roles', [verifyJwt], async (req: Request, res: Response) => {
+discordRouter.get('/guilds/:guildId/roles', [verifyJwt, checkGuildOwnership], async (req: Request, res: Response) => {
   const guildId = req.params.guildId;
-
-  if (!req['user']?.guildIds?.includes(guildId)) {
-    return res.status(403).json({ error: 'User is not an owner/admin of the guild' });
-  }
 
   try {
     const { data: roles } = await discordApi.get(`/guilds/${guildId}/roles`, {
