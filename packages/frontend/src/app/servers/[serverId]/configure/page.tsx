@@ -48,11 +48,11 @@ export default function ConfigureServerPage() {
 
   // Form data is set later when guild is fetched
   const [formData, setFormData] = useState<ServerFormData>({ ...defaultSchema, id: serverId });
+  const [channels, setChannels] = useState<{ name: string; id: string }[]>([]);
 
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ServerFormData, string>>
   >({});
-  const [showBlinkPreview, setShowBlinkPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [guildFound, setGuildFound] = useState(false);
   const router = useRouter();
@@ -96,6 +96,19 @@ export default function ConfigureServerPage() {
           }
         } else {
           setGuildFound(false); // Failed to fetch guild data
+        }
+
+        // Fetch channels
+        const channelsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${serverIdStr}/channels`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (channelsResponse.ok) {
+          const channels = await channelsResponse.json();
+          // Assuming channels is an array of channel objects with id and name
+          setChannels(channels);
+        } else {
+          console.error("Failed to fetch channels");
         }
       } catch (error: any) {
         console.error("Error fetching guild data", error);
@@ -151,8 +164,6 @@ export default function ConfigureServerPage() {
 
         if (response.ok) {
           toast.success("Blink data updated successfully");
-          setShowBlinkPreview(false);
-          setShowBlinkPreview(true);
 
           const guild = await response.json();
           setFormData(guild);
@@ -336,6 +347,7 @@ export default function ConfigureServerPage() {
                 formErrors={formErrors}
                 onSubmit={handleSubmit}
                 isLoading={isLoading}
+                channels={channels}
               />
             </MotionCard>
             <MotionCard
@@ -362,7 +374,7 @@ export default function ConfigureServerPage() {
         </TabPanel>
 
         <TabPanel>
-          <MySubscriptions />
+          <MySubscriptions serverName={guildName} />
         </TabPanel>
       </Tabs>
     </motion.div>
