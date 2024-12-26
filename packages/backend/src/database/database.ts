@@ -186,8 +186,8 @@ export async function getSubscriptionsByGuildId(guildId: string): Promise<RolePu
   return await rolePurchaseRepository.find({
     where: {
       guild: { id: guildId },
-      expiresAt: Not(IsNull()), // Ensure it is a subscription with an expiration date
     },
     relations: ['guild', 'role'],
+    order: { createTime: 'DESC' },
   });
 }
