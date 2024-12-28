@@ -235,6 +235,14 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
       `**User:** <@${user.id}>\n**Role:** ${role.name}\n**Server:** ${guild.name}`,
     ).catch((err) => console.error(`Error sending role purchase log message: ${err}`));
 
+    if (guild.notificationChannelId) {
+      sendDiscordLogMessage(
+        guild.notificationChannelId,
+        'Role Purchase',
+        `**User:** <@${user.id}>\n**Role:** ${role.name}\n**Server:** ${guild.name}`,
+      ).catch((err) => console.error(`Error sending role purchase log message to notification channel: ${err}`));
+    }
+
     return res.json({
       title: guild.name,
       icon: guild.iconUrl,

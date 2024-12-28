@@ -42,6 +42,7 @@ function ServerForm({
   formErrors,
   onSubmit,
   isLoading,
+  channels,
 }: ServerFormProps) {
   const wallet = useWallet();
   const [roleErrors, setRoleErrors] = useState<{ [key: string]: boolean }>({});
@@ -140,26 +141,52 @@ function ServerForm({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Label htmlFor="website">Website Link (optional)</Label>
-            <MotionInput
-              id="website"
-              placeholder="Enter the website URL"
-              value={formData.website || ""}
-              onChange={(e) =>
-                handleInputChange("website", e.target.value, setFormData)
-              }
-              whileFocus={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            />
-            {formErrors.website && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-destructive text-sm mt-1"
-              >
-                {formErrors.website}
-              </motion.p>
-            )}
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1">
+                <Label htmlFor="website">Website Link (optional)</Label>
+                <MotionInput
+                  id="website"
+                  placeholder="Enter the website URL"
+                  value={formData.website || ""}
+                  onChange={(e) =>
+                    handleInputChange("website", e.target.value, setFormData)
+                  }
+                  whileFocus={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                />
+                {formErrors.website && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-destructive text-sm mt-1"
+                  >
+                    {formErrors.website}
+                  </motion.p>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center">
+                  <Label htmlFor="notificationChannelId" className="mr-2">Notifications Channel (optional)</Label>
+                  {HelpTooltip("Notifications for new role purchases will be sent to this channel on your Discord server")}
+                </div>
+                <select
+                  id="notificationChannelId"
+                  value={formData.notificationChannelId ?? ""}
+                  onChange={(e) => {
+                    const value = e.target.value === "null" ? null : e.target.value;
+                    handleInputChange("notificationChannelId", value, setFormData);
+                  }}
+                  className={`mt-1 w-full rounded border-gray-300 dark:border-gray-800 bg-transparent`}
+                >
+                  <option value="null">None</option>
+                  {channels.map((channel) => (
+                    <option key={channel.id} value={channel.id}>
+                      {channel.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </MotionCardContent>
 
           <MotionCardContent

@@ -13,6 +13,7 @@ export const defaultSchema = {
   limitedTimeRoles: false,
   limitedTimeQuantity: "1",
   limitedTimeUnit: "Months",
+  notificationChannelId: "",
 };
 
 export const serverFormSchema = z
@@ -76,6 +77,9 @@ export const serverFormSchema = z
       .string()
       .refine((val) => ["Hours", "Days", "Weeks", "Months"].includes(val))
       .default("Months"),
+    notificationChannelId: z
+      .string()
+      .min(1, "Notification channel is required"),
   })
   .default(defaultSchema);
 

@@ -24,15 +24,16 @@ export default function CreateServerPage() {
 
   const { guildName, guildImage } = JSON.parse(localStorage.getItem('selectedGuild') || '{}');
 
-
   const [formData, setFormData] = useState<ServerFormData>({ ...defaultSchema, id: serverId });
   const [roleData, setRoleData] = useState<RoleData>({ blinkordRolePosition: -1, roles: [] });
   const [formErrors, setFormErrors] = useState<
     Partial<Record<keyof ServerFormData, string>>
   >({});
   const [isLoading, setIsLoading] = useState(true);
+  const [channels, setChannels] = useState<{ name: string; id: string }[]>([]);
   const router = useRouter();
   const wallet = useWallet();
+  const token = useUserStore((state) => state.token) || localStorage.getItem("discordToken");
 
   useEffect(() => {
     if (guildName || guildImage) {
@@ -57,9 +58,21 @@ export default function CreateServerPage() {
               enabled: false,
             }))
           });
+
+          // Fetch channels
+          const channelsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/discord/guilds/${serverId}/channels`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (channelsResponse.ok) {
+            const channels = await channelsResponse.json();
+            setChannels(channels);
+          } else {
+            console.error("Failed to fetch channels");
+          }
         } catch (error) {
-          console.error("Error fetching roles:", error);
-          toast.error("Failed to fetch server roles");
+          console.error("Error fetching roles or channels:", error);
+          toast.error("Failed to fetch server roles or channels");
         } finally {
           setIsLoading(false);
         }
@@ -67,7 +80,7 @@ export default function CreateServerPage() {
     };
 
     fetchData();
-  }, [serverId]);
+  }, [serverId, token]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -177,6 +190,7 @@ export default function CreateServerPage() {
               formErrors={formErrors}
               onSubmit={handleSubmit}
               isLoading={isLoading}
+              channels={channels}
             />
           </MotionCardContent>
         </MotionCard>

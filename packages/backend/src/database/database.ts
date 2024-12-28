@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Repository, DataSource, InsertResult, UpdateResult, MoreThan, Between } from 'typeorm';
+import { Repository, DataSource, InsertResult, UpdateResult, MoreThan, Between, Not, IsNull } from 'typeorm';
 import { Guild } from './entities/guild';
 import { Role } from './entities/role';
 import env from '../services/env';
@@ -175,4 +175,19 @@ export async function getAllRolesForUser(
 
 export async function createUserWallet(discordUserId: string, address: string) {
   return await walletRepository.save(new Wallet(address, discordUserId));
+}
+
+/**
+ * Get all subscriptions for a given guildId (server id) that have an expiration date
+ * @param {string} guildId
+ * @returns {Promise<RolePurchase[]>}
+ */
+export async function getSubscriptionsByGuildId(guildId: string): Promise<RolePurchase[]> {
+  return await rolePurchaseRepository.find({
+    where: {
+      guild: { id: guildId },
+    },
+    relations: ['guild', 'role'],
+    order: { createTime: 'DESC' },
+  });
 }

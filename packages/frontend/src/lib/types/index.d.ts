@@ -177,4 +177,5 @@ declare interface ServerFormProps {
   formErrors: Partial<Record<keyof ServerFormData, string>>;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   isLoading: boolean;
+  channels: { name: string; id: string }[];
 }

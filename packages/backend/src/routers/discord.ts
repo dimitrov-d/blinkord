@@ -3,6 +3,7 @@ import {
   createUserWallet,
   findAllGuildIdsSortedByCreateTime,
   findGuildById,
+  getSubscriptionsByGuildId,
   insertGuild,
   updateGuild,
 } from '../database/database';
@@ -85,16 +86,16 @@ discordRouter.put(
 
     const guildId = req.params.guildId;
 
-  const guild = await findGuildById(guildId);
-  if (!guild) return res.status(404).send('Guild not found');
+    const guild = await findGuildById(guildId);
+    if (!guild) return res.status(404).send('Guild not found');
 
-  data.address = address;
+    data.address = address;
 
-  console.info(`Going to update guild: ${JSON.stringify(data)}`);
-  try {
-    await updateGuild(guildId, data);
-    return res.status(200).json(data);
-  } catch (error) {
+    console.info(`Going to update guild: ${JSON.stringify(data)}`);
+    try {
+      await updateGuild(guildId, data);
+      return res.status(200).json(data);
+    } catch (error) {
       console.error('Error updating guild', error);
       return res.status(500).json({ error: `Failed to update guild and roles` });
     }
@@ -130,6 +131,53 @@ discordRouter.get('/guilds/:guildId/roles', [verifyJwt, checkGuildOwnership], as
     res.status(500).json({ error: `Unable to get server roles: ${error}` });
   }
 });
+
+/**
+ * Get all subscriptions for a given guildId (server id) that have an expiration date
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @returns {Promise<RolePurchase[]>}
+ */
+discordRouter.get(
+  '/guilds/:guildId/subscriptions',
+  [verifyJwt, checkGuildOwnership],
+  async (req: Request, res: Response) => {
+    const guildId = req.params.guildId;
+
+    try {
+      const subscriptions = await getSubscriptionsByGuildId(guildId);
+      return res.json(subscriptions);
+    } catch (error) {
+      console.error('Error fetching subscriptions', error);
+      res.status(500).json({ error: `Unable to get subscriptions: ${error}` });
+    }
+  },
+);
+
+/**
+ * Get all channels for a given guildId (server id)
+ * @param {string} guildId - Path parameter representing ID of the guild
+ * @returns {Promise<{ id: string, name: string }[]>}
+ */
+discordRouter.get(
+  '/guilds/:guildId/channels',
+  [verifyJwt, checkGuildOwnership],
+  async (req: Request, res: Response) => {
+    const guildId = req.params.guildId;
+
+    try {
+      const { data: channels } = await discordApi.get(`/guilds/${guildId}/channels`, {
+        headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
+      });
+      console.info(`Fetched ${channels.length} channels for guild ${guildId}`);
+
+      const textChannels = channels.filter((channel) => channel.type === 0); // Type 0 represents text channels
+      return res.json(textChannels.map(({ id, name }) => ({ id, name })));
+    } catch (error) {
+      console.error('Error fetching server channels', error);
+      res.status(500).json({ error: `Unable to get server channels: ${error}` });
+    }
+  },
+);
 
 /**
  * Create an embedded wallet for a Discord user
