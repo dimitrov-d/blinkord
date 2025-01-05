@@ -54,14 +54,37 @@ export default function MySubscriptions({ serverName }: { serverName: string }) 
     currentPage * recordsPerPage
   );
 
-  const totalSOLAmount = subscriptions.reduce((total, subscription) => {
-    console.log(subscription.role.amount);
-    return total + parseFloat(subscription.role.amount);
-  }, 0);
+  const totalSOLAmount = subscriptions.reduce((total, subscription) => total + parseFloat(subscription.role.amount), 0);
+
+  const exportToCSV = () => {
+    const csvContent = [
+      ["Purchase Date", "Discord User ID", "Expires At", "Role Name", "SOL Amount"],
+      ...subscriptions.map(sub => [
+        sub.createTime ? new Date(sub.createTime).toLocaleString().replace(/,/g, '') : "N/A",
+        sub.discordUserId,
+        sub.expiresAt ? new Date(sub.expiresAt).toLocaleString().replace(/,/g, '') : "Never",
+        sub.role.name,
+        sub.role.amount
+      ])
+    ].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "subscriptions.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Subscriptions for {serverName}</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold">Subscriptions for {serverName}</h2>
+        <Button onClick={exportToCSV}>⬇️ Export to CSV</Button>
+      </div>
       <Separator className="my-4" />
       {subscriptions.length > 0 ? (
         <>
@@ -79,11 +102,11 @@ export default function MySubscriptions({ serverName }: { serverName: string }) 
               {currentSubscriptions.map((subscription) => (
                 <tr key={subscription.id}>
                   <td className="py-2 px-4 border-b dark:border-gray-700 text-left">
-                    {subscription.createTime ? new Date(subscription.createTime).toLocaleString() : "N/A"}
+                    {subscription.createTime ? new Date(subscription.createTime).toLocaleString().replace(/,/g, '') : "N/A"}
                   </td>
                   <td className="py-2 px-4 border-b dark:border-gray-700 text-left">{subscription.discordUserId}</td>
                   <td className="py-2 px-4 border-b dark:border-gray-700 text-left">
-                    {subscription.expiresAt ? new Date(subscription.expiresAt).toLocaleString() : "Never"}
+                    {subscription.expiresAt ? new Date(subscription.expiresAt).toLocaleString().replace(/,/g, '') : "Never"}
                   </td>
                   <td className="py-2 px-4 border-b dark:border-gray-700 text-left">{subscription.role.name}</td>
                   <td className="py-2 px-4 border-b dark:border-gray-700 text-left">{subscription.role.amount}</td>
