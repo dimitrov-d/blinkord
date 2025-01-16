@@ -227,20 +227,20 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
     console.info(`Successfully added user ${user.username} to guild ${guild.name} with role ${role.name}`);
 
     const rolePurchase = new RolePurchase({ discordUserId: user.id, guild, role, signature }).setExpiresAt();
-    saveRolePurchase(rolePurchase).catch((err) => console.error(`Error saving role purchase: ${err}`));
+    await saveRolePurchase(rolePurchase).catch((err) => console.error(`Error saving role purchase: ${err}`));
 
     sendDiscordLogMessage(
       '1300902493458272369',
       'Role Purchase',
       `**User:** <@${user.id}>\n**Role:** ${role.name}\n**Server:** ${guild.name}`,
-    ).catch((err) => console.error(`Error sending role purchase log message: ${err}`));
+    );
 
     if (guild.notificationChannelId) {
       sendDiscordLogMessage(
         guild.notificationChannelId,
         'Role Purchase',
         `**User:** <@${user.id}>\n**Role:** ${role.name}\n**Server:** ${guild.name}`,
-      ).catch((err) => console.error(`Error sending role purchase log message to notification channel: ${err}`));
+      );
     }
 
     return res.json({
