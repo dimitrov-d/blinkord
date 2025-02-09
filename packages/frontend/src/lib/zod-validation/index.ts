@@ -79,7 +79,7 @@ export const serverFormSchema = z
       .default("Months"),
     notificationChannelId: z
       .string()
-      .min(1, "Notification channel is required"),
+      .nullable(),
   })
   .default(defaultSchema);
 
