@@ -165,7 +165,9 @@ discordRouter.get('/decoderSubs', async (req: Request, res: Response) => {
   try {
     // SOL Decoder Subscriptions
     const subscriptions = await getSubscriptionsByGuildId('925207817923743794');
-    return res.json(subscriptions.map((s) => s.discordUserId));
+    return res.json(
+      Array.from(new Set(subscriptions.filter((s) => new Date(s.expiresAt) > new Date()).map((s) => s.discordUserId))),
+    );
   } catch (error) {
     console.error('Error fetching subscriptions', error);
     res.status(500).json({ error: `Unable to get subscriptions: ${error}` });
