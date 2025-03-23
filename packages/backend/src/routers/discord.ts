@@ -154,6 +154,25 @@ discordRouter.get(
 );
 
 /**
+ * Get all subscribed user IDs for SOL Decoder server
+ * @returns {Promise<string[]>}
+ */
+discordRouter.get('/decoderSubs', async (req: Request, res: Response) => {
+  if (req.query.apiKey !== env.DECODER_API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    // SOL Decoder Subscriptions
+    const subscriptions = await getSubscriptionsByGuildId('925207817923743794');
+    return res.json(subscriptions.map((s) => s.discordUserId));
+  } catch (error) {
+    console.error('Error fetching subscriptions', error);
+    res.status(500).json({ error: `Unable to get subscriptions: ${error}` });
+  }
+});
+
+/**
  * Get all channels for a given guildId (server id)
  * @param {string} guildId - Path parameter representing ID of the guild
  * @returns {Promise<{ id: string, name: string }[]>}
