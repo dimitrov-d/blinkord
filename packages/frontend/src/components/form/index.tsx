@@ -23,6 +23,7 @@ import {
   handleInputChange,
   handleDiscordRoleToggle,
   handleDiscordRolePriceChange,
+  handleLimitedTimeChange,
 } from "./form-common";
 import { HelpTooltip } from "../ui/tooltip";
 import { SpinnerSvg } from "../loading";
@@ -200,7 +201,6 @@ function ServerForm({
                 <Label htmlFor="useUsdc" className="mr-1">Pay in $USDC</Label>
                 {HelpTooltip("Use $USDC token for payments instead of SOL")}
               </div>
-
               <Switch
                 id="useUsdc"
                 checked={formData.useUsdc}
@@ -224,43 +224,6 @@ function ServerForm({
                 className="mt-2"
               />
             </div>
-
-            {formData.limitedTimeRoles && (
-              <>
-                <div className="flex flex-col w-1/4">
-                  <Label htmlFor="limitedTimeQuantity" className="mb-2">Amount</Label>
-                  <select
-                    id="limitedTimeQuantity"
-                    value={formData.limitedTimeQuantity}
-                    onChange={(e) =>
-                      handleInputChange("limitedTimeQuantity", e.target.value, setFormData)
-                    }
-                    className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
-                  >
-                    {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={`${num}`}>{num}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex flex-col w-1/4">
-                  <Label htmlFor="limitedTimeUnit" className="mb-2">Unit</Label>
-                  <select
-                    id="limitedTimeUnit"
-                    value={formData.limitedTimeUnit as string}
-                    onChange={(e) =>
-                      handleInputChange("limitedTimeUnit", e.target.value, setFormData)
-                    }
-                    className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
-                  >
-                    <option value="Hours">Hours</option>
-                    <option value="Days">Days</option>
-                    <option value="Weeks">Weeks</option>
-                    <option value="Months">Months</option>
-                  </select>
-                </div>
-              </>
-            )}
           </MotionCardContent>
 
         </div>
@@ -326,6 +289,47 @@ function ServerForm({
                             transition={{ type: "spring", stiffness: 300 }}
                           />
                           <span className="text-gray-600">{formData.useUsdc ? 'USDC' : 'SOL'}</span>
+                          {formData.limitedTimeRoles && role.enabled && (
+                            <>
+                              <select
+                                value={role.limitedTimeQuantity || ""}
+                                onChange={(e) =>
+                                  handleLimitedTimeChange(
+                                    role.id,
+                                    'limitedTimeQuantity',
+                                    e.target.value,
+                                    roleData,
+                                    setRoleData,
+                                    setFormData
+                                  )
+                                }
+                                className="border rounded p-2 w-20 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                              >
+                                {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
+                                  <option key={num} value={`${num}`}>{num}</option>
+                                ))}
+                              </select>
+                              <select
+                                value={role.limitedTimeUnit || ""}
+                                onChange={(e) =>
+                                  handleLimitedTimeChange(
+                                    role.id,
+                                    'limitedTimeUnit',
+                                    e.target.value,
+                                    roleData,
+                                    setRoleData,
+                                    setFormData
+                                  )
+                                }
+                                className="border rounded p-2 w-20 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                              >
+                                <option value="Hours">Hours</option>
+                                <option value="Days">Days</option>
+                                <option value="Weeks">Weeks</option>
+                                <option value="Months">Months</option>
+                              </select>
+                            </>
+                          )}
                         </div>
                       </div>
                       {roleErrors[role.id] && (
@@ -334,7 +338,7 @@ function ServerForm({
                           animate={{ opacity: 1 }}
                           className="text-destructive text-sm mt-1"
                         >
-                          The bot is unable to assign this role due to having a lower position on the role list. Drag the Blinkord role above the roles which you want to enable. For a tutorial{" "}
+                          The bot is unable to assign this role due to having a lower position on the role list. Drag the Blinkord role above the roles you want to enable, then refresh this page. For a tutorial{" "}
                           <a
                             className="underline"
                             href="https://youtu.be/HBqebvEi8Vk?si=X72ZRggcp4ieq04G&t=10"

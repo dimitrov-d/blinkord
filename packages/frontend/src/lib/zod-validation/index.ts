@@ -64,22 +64,22 @@ export const serverFormSchema = z
                 "Amount must be a valid number or decimal greater than 0",
             })
             .transform((val) => parseFloat(val).toString()),
+          limitedTimeQuantity: z
+            .string()
+            .default("1")
+            .transform((val) => parseInt(val).toString())
+            .nullable(),
+          limitedTimeUnit: z
+            .string()
+            .refine((val) => ["Hours", "Days", "Weeks", "Months"].includes(val))
+            .default("Months")
+            .nullable(),
         })
       )
       .min(1, "At least one role is required"),
     useUsdc: z.boolean().default(false),
     limitedTimeRoles: z.boolean().default(false),
-    limitedTimeQuantity: z
-      .string()
-      .default("1")
-      .transform((val) => parseInt(val).toString()),
-    limitedTimeUnit: z
-      .string()
-      .refine((val) => ["Hours", "Days", "Weeks", "Months"].includes(val))
-      .default("Months"),
-    notificationChannelId: z
-      .string()
-      .nullable(),
+    notificationChannelId: z.string().nullable(),
   })
   .default(defaultSchema);
 

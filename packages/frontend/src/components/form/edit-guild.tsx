@@ -24,6 +24,7 @@ import {
   handleDiscordRoleToggle,
   handleDiscordRolePriceChange,
   refreshRoles,
+  handleLimitedTimeChange,
 } from "./form-common";
 import { HelpTooltip } from "../ui/tooltip";
 import { SpinnerSvg } from "../loading";
@@ -221,7 +222,6 @@ function ServerFormEdit({
             <Label htmlFor="useUsdc" className="mr-1">Pay in $USDC</Label>
             {HelpTooltip("Use $USDC token for payments instead of SOL")}
           </div>
-
           <Switch
             id="useUsdc"
             checked={formData.useUsdc}
@@ -245,43 +245,6 @@ function ServerFormEdit({
             className="mt-2"
           />
         </div>
-
-        {formData.limitedTimeRoles && (
-          <>
-            <div className="flex flex-col w-1/4">
-              <Label htmlFor="limitedTimeQuantity" className="mb-2">Amount</Label>
-              <select
-                id="limitedTimeQuantity"
-                value={formData.limitedTimeQuantity}
-                onChange={(e) =>
-                  handleInputChange("limitedTimeQuantity", e.target.value, setFormData)
-                }
-                className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
-              >
-                {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
-                  <option key={num} value={`${num}`}>{num}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col w-1/4">
-              <Label htmlFor="limitedTimeUnit" className="mb-2">Unit</Label>
-              <select
-                id="limitedTimeUnit"
-                value={formData.limitedTimeUnit as string}
-                onChange={(e) =>
-                  handleInputChange("limitedTimeUnit", e.target.value, setFormData)
-                }
-                className="border rounded p-2 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
-              >
-                <option value="Hours">Hours</option>
-                <option value="Days">Days</option>
-                <option value="Weeks">Weeks</option>
-                <option value="Months">Months</option>
-              </select>
-            </div>
-          </>
-        )}
       </MotionCardContent>
 
       <MotionCard
@@ -322,7 +285,7 @@ function ServerFormEdit({
                       />
                       <h3 className="text-lg font-medium">{role.name}</h3>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center space-x-2">
                       <MotionNumberInput
                         type="text"
                         placeholder="0"
@@ -336,13 +299,54 @@ function ServerFormEdit({
                             setFormData
                           )
                         }
-                        className="w-32 mr-2 rounded-md"
+                        className="w-32 rounded-md"
                         disabled={!role.enabled}
                         whileFocus={{ scale: 1.02 }}
                         step="0.00000001"
                         transition={{ type: "spring", stiffness: 300 }}
                       />
                       <span className="text-gray-600">{formData.useUsdc ? 'USDC' : 'SOL'}</span>
+                      {formData.limitedTimeRoles && role.enabled && (
+                        <div className="flex space-x-2">
+                          <select
+                            value={role.limitedTimeQuantity || ""}
+                            onChange={(e) =>
+                              handleLimitedTimeChange(
+                                role.id,
+                                'limitedTimeQuantity',
+                                e.target.value,
+                                roleData,
+                                setRoleData,
+                                setFormData
+                              )
+                            }
+                            className="border rounded p-2 w-32 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                          >
+                            {Array.from({ length: 30 }, (_, i) => i + 1).map((num) => (
+                              <option key={num} value={`${num}`}>{num}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={role.limitedTimeUnit || ""}
+                            onChange={(e) =>
+                              handleLimitedTimeChange(
+                                role.id,
+                                'limitedTimeUnit',
+                                e.target.value,
+                                roleData,
+                                setRoleData,
+                                setFormData
+                              )
+                            }
+                            className="border rounded p-2 w-32 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                          >
+                            <option value="Hours">Hours</option>
+                            <option value="Days">Days</option>
+                            <option value="Weeks">Weeks</option>
+                            <option value="Months">Months</option>
+                          </select>
+                        </div>
+                      )}
                     </div>
                   </div>
                   {roleErrors[role.id] && (

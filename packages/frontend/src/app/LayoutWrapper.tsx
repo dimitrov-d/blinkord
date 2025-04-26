@@ -30,7 +30,7 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
           <ContextProvider>
             <ThemeProvider>
               <PrivyProvider
-                appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+                appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ''}
                 config={{
                   appearance: {
                     landingHeader: 'Sign in with Discord',

@@ -71,7 +71,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
 
   const guildBlinkData = {
     title: guild.name,
-    description: `${guild.description}${guild.website ? `\n\n Website: ${guild.website}` : ''}${guild.limitedTimeRoles ? `\n\n Roles are valid for ${guild.limitedTimeQuantity} ${guild.limitedTimeUnit}` : ''}`,
+    description: `${guild.description}${guild.website ? `\n\n Website: ${guild.website}` : ''}`,
     icon: guild.iconUrl,
   };
 

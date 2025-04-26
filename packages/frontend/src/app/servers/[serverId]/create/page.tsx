@@ -102,6 +102,8 @@ export default function CreateServerPage() {
               id: role.id,
               name: role.name,
               amount: role.price.toString(),
+              limitedTimeQuantity: role.limitedTimeQuantity,
+              limitedTimeUnit: role.limitedTimeUnit,
             })),
           },
           address: wallet.publicKey,

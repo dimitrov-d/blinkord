@@ -79,10 +79,9 @@ export default function ConfigureServerPage() {
 
             // Map out the pre-selected roles to enable toggles
             const allRoles = await fetchRoles(serverIdStr)
-
             const mergedRoles = allRoles.roles.map((role: DiscordRole) => {
               const selectedRole = guild.roles.find((r: DiscordRole) => r.id === role.id);
-              return selectedRole ? { ...role, price: selectedRole.amount, enabled: true, } : role;
+              return selectedRole ? { ...role, price: selectedRole.amount, enabled: true, limitedTimeQuantity: selectedRole.limitedTimeQuantity, limitedTimeUnit: selectedRole.limitedTimeUnit } : role;
             });
 
             setRoleData({ ...allRoles, roles: mergedRoles });
@@ -149,6 +148,8 @@ export default function ConfigureServerPage() {
                 id: role.id,
                 name: role.name,
                 amount: role.price.toString(),
+                limitedTimeQuantity: role.limitedTimeQuantity,
+                limitedTimeUnit: role.limitedTimeUnit,
               })),
           },
           address: wallet.publicKey,

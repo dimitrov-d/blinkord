@@ -8,7 +8,22 @@ export const handleInputChange = (
   value: any,
   setFormData: React.Dispatch<React.SetStateAction<any>>
 ) => {
-  setFormData((prev: any) => ({ ...prev, [field]: value }));
+  setFormData((prev: any) => {
+    const updatedFormData = { ...prev, [field]: value };
+
+    if (field === "limitedTimeRoles") {
+      const limitedTimeValues = value
+        ? { limitedTimeQuantity: "1", limitedTimeUnit: "Months" }
+        : { limitedTimeQuantity: null, limitedTimeUnit: null };
+
+      updatedFormData.roles = updatedFormData.roles.map((role: any) => ({
+        ...role,
+        ...limitedTimeValues,
+      }));
+    }
+
+    return updatedFormData;
+  });
 };
 
 export const handleDiscordRoleToggle = (
@@ -44,6 +59,8 @@ export const handleDiscordRoleToggle = (
       id: r.id,
       name: r.name,
       amount: r.price,
+      limitedTimeQuantity: r.limitedTimeQuantity,
+      limitedTimeUnit: r.limitedTimeUnit,
     }));
 
   setFormData((prev: any) => ({ ...prev, roles: enabledRoles }));
@@ -68,6 +85,35 @@ export const handleDiscordRolePriceChange = (
       id: role.id,
       name: role.name,
       amount: price,
+      limitedTimeQuantity: role.limitedTimeQuantity,
+      limitedTimeUnit: role.limitedTimeUnit,
+    }));
+
+  setFormData((prev: any) => ({ ...prev, roles: enabledRoles }));
+};
+
+export const handleLimitedTimeChange = (
+  roleId: string,
+  field: "limitedTimeQuantity" | "limitedTimeUnit",
+  value: string,
+  roleData: RoleData,
+  setRoleData: React.Dispatch<React.SetStateAction<any>>,
+  setFormData: React.Dispatch<React.SetStateAction<any>>
+) => {
+  const updatedRoles = roleData.roles.map((role: any) =>
+    role.id === roleId ? { ...role, [field]: value } : role
+  );
+
+  setRoleData({ ...roleData, roles: updatedRoles });
+
+  const enabledRoles = updatedRoles
+    .filter((role: any) => role.enabled)
+    .map((role: any) => ({
+      id: role.id,
+      name: role.name,
+      amount: role.price,
+      limitedTimeQuantity: role.limitedTimeQuantity,
+      limitedTimeUnit: role.limitedTimeUnit,
     }));
 
   setFormData((prev: any) => ({ ...prev, roles: enabledRoles }));
@@ -86,7 +132,13 @@ export const refreshRoles = async (
     const mergedRoles = allRoles.roles.map((role: any) => {
       const selectedRole = roleData.roles.find((r: any) => r.id === role.id);
       return selectedRole
-        ? { ...role, price: selectedRole.price, enabled: selectedRole.enabled }
+        ? {
+            ...role,
+            price: selectedRole.price,
+            enabled: selectedRole.enabled,
+            limitedTimeQuantity: selectedRole.limitedTimeQuantity,
+            limitedTimeUnit: selectedRole.limitedTimeUnit,
+          }
         : role;
     });
     setRoleData({ ...allRoles, roles: mergedRoles });

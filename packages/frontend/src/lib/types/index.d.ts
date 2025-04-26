@@ -14,6 +14,8 @@ declare interface DiscordRole {
   price: string;
   enabled: boolean;
   position?: number;
+  limitedTimeQuantity?: number;
+  limitedTimeUnit?: string;
 }
 
 declare type DiscordServer = {

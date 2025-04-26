@@ -59,7 +59,15 @@ export async function insertGuild(guild: Guild): Promise<InsertResult> {
     await Promise.all(
       guild.roles.map((role: Partial<Role>) =>
         // Make relation between new guild and role
-        entityManager.insert(Role, new Role({ ...role, guild: new Guild({ id: guild.id }) })),
+        entityManager.insert(
+          Role,
+          new Role({
+            ...role,
+            limitedTimeQuantity: guild.limitedTimeRoles ? role.limitedTimeQuantity || 1 : null,
+            limitedTimeUnit: guild.limitedTimeRoles ? role.limitedTimeUnit || 'Months' : null,
+            guild: new Guild({ id: guild.id }),
+          }),
+        ),
       ),
     );
 
@@ -82,7 +90,15 @@ export async function updateGuild(guildId: string, guild: Guild): Promise<Update
     // Save new roles or update existing ones
     await Promise.all(
       guild.roles.map((role: Partial<Role>) =>
-        entityManager.save(Role, new Role({ ...role, guild: new Guild({ id: guild.id }) })),
+        entityManager.save(
+          Role,
+          new Role({
+            ...role,
+            limitedTimeQuantity: guild.limitedTimeRoles ? role.limitedTimeQuantity || 1 : null,
+            limitedTimeUnit: guild.limitedTimeRoles ? role.limitedTimeUnit || 'Months' : null,
+            guild: new Guild({ id: guild.id }),
+          }),
+        ),
       ),
     );
 
@@ -103,8 +119,6 @@ export async function findGuildById(id: string) {
     .forEach((role) => {
       role.amount = (+role.amount).toFixed(5).replace(/(\.0+|(\.\d+?)0+)$/, '$2') as any;
     });
-  // Convert to string for form parsing
-  guild.limitedTimeQuantity = `${guild.limitedTimeQuantity}` as any;
   return guild;
 }
 
