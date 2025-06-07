@@ -1,6 +1,6 @@
-import { discordApi } from '../services/oauth';
-import env from '../services/env';
 import { getSubscriptionsByGuildId, initializeDatabase } from '../database/database';
+import env from '../services/env';
+import { discordApi } from '../services/oauth';
 
 const GUILD_ID = '925207817923743794'; // SOL Decoder
 
@@ -44,6 +44,7 @@ async function purgeExpiredUsers() {
             headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
           });
           console.log(`Removed role ${subscription.role.name} from user ${userId}`);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       } catch (error) {
         if (error.response?.status === 404) {
@@ -51,8 +52,6 @@ async function purgeExpiredUsers() {
         } else {
           console.error(`Error processing user ${userId}:`, error);
         }
-      } finally {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
 
