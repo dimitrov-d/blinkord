@@ -65,9 +65,9 @@ export const serverFormSchema = z
             })
             .transform((val) => parseFloat(val).toString()),
           limitedTimeQuantity: z
-            .string()
-            .default("1")
-            .transform((val) => parseInt(val).toString())
+            .number()
+            .default(1)
+            // .transform((val) => parseInt(val).toString())
             .nullable(),
           limitedTimeUnit: z
             .string()
