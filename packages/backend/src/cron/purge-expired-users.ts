@@ -44,7 +44,7 @@ async function purgeExpiredUsers() {
             headers: { Authorization: `Bot ${env.DISCORD_BOT_TOKEN}` },
           });
           console.log(`Removed role ${subscription.role.name} from user ${userId}`);
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 100));
         }
       } catch (error) {
         if (error.response?.status === 404) {
