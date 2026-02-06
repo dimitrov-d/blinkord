@@ -18,6 +18,14 @@ import { useWindowSize } from "@/lib/hooks/use-window-size";
 import { Button } from "@/components/ui/button";
 import NotFound from "../not-found";
 
+interface RenewalRole {
+  roleId: string;
+  roleName: string;
+  yourRate: number;
+  currentRate: number;
+  currency: string;
+}
+
 export default function BlinkPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,6 +38,7 @@ export default function BlinkPage() {
   }
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [renewalRoles, setRenewalRoles] = useState<RenewalRole[]>([]);
 
   const { width } = useWindowSize();
 
@@ -67,6 +76,20 @@ export default function BlinkPage() {
     router.push(`${window.location.pathname}?${params.toString()}`);
   }, [code]);
 
+  // Fetch grandfathered pricing info for returning subscribers
+  useEffect(() => {
+    if (!code) return;
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/blinks/${serverId}/renewal-info?code=${code}`
+    )
+      .then((res) => (res.ok ? res.json() : { roles: [] }))
+      .then((data) => {
+        if (data.roles?.length > 0) setRenewalRoles(data.roles);
+      })
+      .catch(() => {});
+  }, [code, serverId]);
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div
@@ -87,6 +110,35 @@ export default function BlinkPage() {
           >
             <Card className="w-full">
               <WelcomeText />
+
+              {renewalRoles.length > 0 && (
+                <CardContent>
+                  <Alert className="border-amber-500/50 bg-amber-500/10">
+                    <InfoIcon className="h-5 w-5" />
+                    <AlertTitle className="text-amber-200 font-bold">
+                      Grandfathered Rate Available!
+                    </AlertTitle>
+                    <AlertDescription className="mt-2">
+                      <p className="mb-2 text-sm">
+                        As a returning subscriber, you can renew at your original rate.
+                        You have <strong>3 days after expiration</strong> to keep your price.
+                        After that, the new price applies.
+                      </p>
+                      {renewalRoles.map((role) => (
+                        <div key={role.roleId} className="flex items-center gap-2 text-sm mt-1">
+                          <span className="font-semibold">{role.roleName}:</span>
+                          <span className="text-green-400 font-bold">
+                            {role.yourRate} {role.currency}
+                          </span>
+                          <span className="text-muted-foreground">
+                            (new price: {role.currentRate} {role.currency})
+                          </span>
+                        </div>
+                      ))}
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              )}
 
               <div className="mt-8" style={{ textAlign: "center" }}>
                 {isAuthenticated || code ? (width! > 800 ? (<Illustration />) : null) : (

@@ -30,9 +30,10 @@ schedule(
     for (const rolePurchase of uniqueExpiringRoles) {
       const {
         discordUserId,
-        guild: { id: guildId, name: guildName },
-        role: { id: roleId, name: roleName },
+        guild: { id: guildId, name: guildName, useUsdc },
+        role: { id: roleId, name: roleName, amount: currentAmount },
         expiresAt,
+        paidAmount,
       } = rolePurchase;
 
       const userRolePurchases = await getUserRolePurchases(discordUserId, guildId, roleId);
@@ -45,11 +46,18 @@ schedule(
 
       const hoursUntilExpiration = Math.floor((new Date(expiresAt).getTime() - now.getTime()) / (1000 * 60 * 60));
 
+      // Check if the user has a grandfathered rate that differs from the current price
+      const currency = useUsdc ? 'USDC' : 'SOL';
+      const priceHasChanged = paidAmount != null && +paidAmount !== +currentAmount;
+      const pricingWarning = priceHasChanged
+        ? `\n\n⚠️ **Important:** If you don't renew within **3 days** of expiration, your current rate of **${paidAmount} ${currency}** will be lost and you'll pay the new price of **${currentAmount} ${currency}**.`
+        : '';
+
       if (hoursUntilExpiration === 3 * 24 || hoursUntilExpiration === 24) {
-        // Send reminder
+        // Send reminder with grandfathered pricing warning
         await sendDiscordMessage(
           discordUserId,
-          `**Reminder**: Your role **${roleName}** on the server **${guildName}** will expire in ${hoursUntilExpiration / 24} ${hoursUntilExpiration / 24 === 1 ? 'day' : 'days'}. \nRenew it on <https://blinkord.com/${guildId}>`,
+          `**Reminder**: Your role **${roleName}** on the server **${guildName}** will expire in ${hoursUntilExpiration / 24} ${hoursUntilExpiration / 24 === 1 ? 'day' : 'days'}.${pricingWarning}\n\nRenew it on <https://blinkord.com/${guildId}>`,
         );
       } else if (hoursUntilExpiration === 0) {
         // Remove role
@@ -60,9 +68,13 @@ schedule(
           .then(() => console.info(`Removed role ${roleId} from user ${discordUserId}`))
           .catch((error) => console.error(`Failed to remove role ${roleId} from user ${discordUserId}: ${error}`));
 
+        const expirationPricingWarning = priceHasChanged
+          ? `\n\n⚠️ **You have 3 days** to renew at your current rate of **${paidAmount} ${currency}**. After that, the price will be **${currentAmount} ${currency}**.`
+          : '';
+
         await sendDiscordMessage(
           discordUserId,
-          `Your role **${roleName}** on the server **${guildName}** has expired. \nRenew it on <https://blinkord.com/${guildId}>`,
+          `Your role **${roleName}** on the server **${guildName}** has expired.${expirationPricingWarning}\n\nRenew it on <https://blinkord.com/${guildId}>`,
         );
 
         sendDiscordLogMessage(

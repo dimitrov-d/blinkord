@@ -1,13 +1,19 @@
-import express, { Request, Response } from 'express';
-import { Action } from '@solana/actions-spec';
-import { generateSendTransaction, isTxConfirmed } from '../services/transaction';
-import env from '../services/env';
-import { findAccessTokenByCode, findGuildById, saveRolePurchase } from '../database/database';
-import { discordApi, sendDiscordLogMessage } from '../services/oauth';
 import { createPostResponse } from '@solana/actions';
+import { Action } from '@solana/actions-spec';
 import { BlinksightsClient } from 'blinksights-sdk';
-import { decryptText } from '../services/encrypt';
+import express, { Request, Response } from 'express';
+import {
+  findAccessTokenByCode,
+  findGuildById,
+  getGrandfatheredPriceForUser,
+  getUserGrandfatheredPricesForGuild,
+  saveRolePurchase,
+} from '../database/database';
 import { RolePurchase } from '../database/entities/role-purchase';
+import { decryptText } from '../services/encrypt';
+import env from '../services/env';
+import { discordApi, sendDiscordLogMessage } from '../services/oauth';
+import { generateSendTransaction, isTxConfirmed } from '../services/transaction';
 
 export const blinksRouter = express.Router();
 
@@ -42,6 +48,47 @@ blinksRouter.post('/link/:serverId?', async (req: Request, res: Response) => {
 });
 
 blinksRouter.get('/', async (req: Request, res: Response) => res.json(generalAction));
+
+/**
+ * Returns grandfathered pricing info for a user in a guild.
+ * Used by the frontend to show a banner about available grandfathered rates.
+ */
+blinksRouter.get('/:guildId/renewal-info', async (req: Request, res: Response) => {
+  const { guildId } = req.params;
+  const { code } = req.query as { code: string };
+
+  if (!code || !guildId) return res.json({ roles: [] });
+
+  try {
+    const accessToken = await findAccessTokenByCode(code);
+    if (!accessToken?.discordUserId) return res.json({ roles: [] });
+
+    const guild = await findGuildById(guildId);
+    if (!guild) return res.json({ roles: [] });
+
+    const grandfatheredPrices = await getUserGrandfatheredPricesForGuild(accessToken.discordUserId, guildId);
+    const currency = guild.useUsdc ? 'USDC' : 'SOL';
+
+    const roles = [];
+    for (const [roleId, grandfatheredPrice] of grandfatheredPrices) {
+      const role = guild.roles.find((r) => r.id === roleId);
+      if (!role || +grandfatheredPrice === +role.amount) continue;
+
+      roles.push({
+        roleId,
+        roleName: role.name,
+        yourRate: grandfatheredPrice,
+        currentRate: role.amount,
+        currency,
+      });
+    }
+
+    return res.json({ roles });
+  } catch (error) {
+    console.error('Error getting renewal info:', error);
+    return res.json({ roles: [] });
+  }
+});
 
 /**
  * Returns an action based on data for a given guild
@@ -93,17 +140,48 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     } as Action<'action'>);
   }
 
+  // Check for grandfathered pricing if user is authenticated
+  let grandfatheredPrices = new Map<string, number>();
+  if (code) {
+    try {
+      const accessToken = await findAccessTokenByCode(code as string);
+      if (accessToken?.discordUserId) {
+        grandfatheredPrices = await getUserGrandfatheredPricesForGuild(accessToken.discordUserId, guildId);
+      }
+    } catch (error) {
+      console.error('Error checking grandfathered pricing:', error);
+    }
+  }
+
+  const currency = guild.useUsdc ? 'USDC' : 'SOL';
+  const hasAnyGrandfathered = Array.from(grandfatheredPrices.entries()).some(([roleId, price]) => {
+    const role = guild.roles.find((r) => r.id === roleId);
+    return role && +price !== +role.amount;
+  });
+
+  const description = hasAnyGrandfathered
+    ? `${guildBlinkData.description}\n\n🔒 Returning subscriber: Your grandfathered rate is shown below. Renew within 3 days of expiration to keep your rate!`
+    : guildBlinkData.description;
+
   const payload: Action<'action'> = {
     type: 'action',
     label: null,
     ...guildBlinkData,
+    description,
     disabled: !code,
     links: {
-      actions: guild.roles.map(({ id, name, amount }) => ({
-        type: 'post',
-        label: `${name} (${amount} ${guild.useUsdc ? 'USDC' : 'SOL'})`,
-        href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
-      })),
+      actions: guild.roles.map(({ id, name, amount }) => {
+        const grandfatheredPrice = grandfatheredPrices.get(id);
+        const isGrandfathered = grandfatheredPrice != null && +grandfatheredPrice !== +amount;
+        const effectivePrice = isGrandfathered ? grandfatheredPrice : amount;
+        return {
+          type: 'post',
+          label: isGrandfathered
+            ? `${name} (${effectivePrice} ${currency})`
+            : `${name} (${amount} ${currency})`,
+          href: `${BASE_URL}/blinks/${guildId}/buy?roleId=${id}&code=${code}`,
+        };
+      }),
     },
   };
 
@@ -135,18 +213,30 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
 
   const { account, isDiscordBot } = req.body;
 
+  // Determine the effective price (potentially grandfathered)
+  let effectiveAmount = +role.amount;
+
   if (!isDiscordBot) {
     // This is here for the user's safety, to prevent sending a tx with an invalid discord grant code
     // Not required if action made via the discord bot
     const accessToken = await findAccessTokenByCode(code);
     if (!accessToken) return res.status(403).json({ error: 'Unauthorized: access_token not found.' });
+
+    // Check for grandfathered pricing
+    if (accessToken.discordUserId) {
+      const grandfatheredPrice = await getGrandfatheredPriceForUser(accessToken.discordUserId, guildId, roleId);
+      if (grandfatheredPrice != null) {
+        effectiveAmount = grandfatheredPrice;
+      }
+    }
   }
 
-  console.info(`Generating transaction for guild ${guildId} and role ${roleId}`);
+  const currency = guild.useUsdc ? 'USDC' : 'SOL';
+  console.info(`Generating transaction for guild ${guildId} and role ${roleId} (amount: ${effectiveAmount} ${currency})`);
   try {
     // Instruction to add blinksights memo to transaction
     const trackingInstruction = await blinkSights.getActionIdentityInstructionV2(account, req.url);
-    const transaction = await generateSendTransaction(account, role.amount, guild, trackingInstruction);
+    const transaction = await generateSendTransaction(account, effectiveAmount, guild, trackingInstruction);
 
     // Run in async, no need to await
     blinkSights.trackActionV2(account, req.url);
@@ -156,7 +246,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
         fields: {
           type: 'transaction',
           transaction,
-          message: `Buy role ${role.name} for ${role.amount} ${guild.useUsdc ? 'USDC' : 'SOL'}`,
+          message: `Buy role ${role.name} for ${effectiveAmount} ${currency}`,
           links: {
             next: {
               type: 'post',
@@ -226,7 +316,11 @@ blinksRouter.post('/:guildId/confirm', async (req: Request, res: Response) => {
 
     console.info(`Successfully added user ${user.username} to guild ${guild.name} with role ${role.name}`);
 
-    const rolePurchase = new RolePurchase({ discordUserId: user.id, guild, role, signature }).setExpiresAt();
+    // Determine the paid amount (grandfathered rate if eligible, otherwise current price)
+    const grandfatheredPrice = await getGrandfatheredPriceForUser(user.id, guildId, roleId);
+    const paidAmount = grandfatheredPrice ?? +role.amount;
+
+    const rolePurchase = new RolePurchase({ discordUserId: user.id, guild, role, signature, paidAmount }).setExpiresAt();
     await saveRolePurchase(rolePurchase).catch((err) => console.error(`Error saving role purchase: ${err}`));
 
     sendDiscordLogMessage(
