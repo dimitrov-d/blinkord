@@ -49,8 +49,9 @@ schedule(
       // Check if the user has a grandfathered rate that differs from the current price
       const currency = useUsdc ? 'USDC' : 'SOL';
       const priceHasChanged = paidAmount != null && +paidAmount !== +currentAmount;
+      const formatPrice = (n: string | number) => Number(Number(n).toFixed(2));
       const pricingWarning = priceHasChanged
-        ? `\n\n⚠️ **Important:** If you don't renew within **3 days** of expiration, your current rate of **${paidAmount} ${currency}** will be lost and you'll pay the new price of **${currentAmount} ${currency}**.`
+        ? `\n\n⚠️ **Important:** If you don't renew within **3 days** of expiration, your current rate of **${formatPrice(paidAmount)} ${currency}** will be lost and you'll pay the new price of **${formatPrice(currentAmount)} ${currency}**.`
         : '';
 
       if (hoursUntilExpiration === 3 * 24 || hoursUntilExpiration === 24) {
@@ -69,7 +70,7 @@ schedule(
           .catch((error) => console.error(`Failed to remove role ${roleId} from user ${discordUserId}: ${error}`));
 
         const expirationPricingWarning = priceHasChanged
-          ? `\n\n⚠️ **You have 3 days** to renew at your current rate of **${paidAmount} ${currency}**. After that, the price will be **${currentAmount} ${currency}**.`
+          ? `\n\n⚠️ **You have 3 days** to renew at your current rate of **${formatPrice(paidAmount)} ${currency}**. After that, the price will be **${formatPrice(currentAmount)} ${currency}**.`
           : '';
 
         await sendDiscordMessage(
