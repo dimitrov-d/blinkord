@@ -1,6 +1,5 @@
 import { createPostResponse } from '@solana/actions';
 import { Action } from '@solana/actions-spec';
-import { BlinksightsClient } from 'blinksights-sdk';
 import express, { Request, Response } from 'express';
 import {
   findAccessTokenByCode,
@@ -18,7 +17,6 @@ import { generateSendTransaction, isTxConfirmed } from '../services/transaction'
 export const blinksRouter = express.Router();
 
 const BASE_URL = env.APP_BASE_URL;
-const blinkSights = new BlinksightsClient(env.BLINKSIGHTS_API_KEY);
 
 const generalAction = {
   title: 'Use Blinkord',
@@ -185,8 +183,7 @@ blinksRouter.get('/:guildId', async (req: Request, res: Response) => {
     },
   };
 
-  const response = await blinkSights.createActionGetResponseV1(req.url, payload);
-  return res.json(response);
+  return res.json(payload);
 });
 
 /**
@@ -234,12 +231,7 @@ blinksRouter.post('/:guildId/buy', async (req: Request, res: Response) => {
   const currency = guild.useUsdc ? 'USDC' : 'SOL';
   console.info(`Generating transaction for guild ${guildId} and role ${roleId} (amount: ${effectiveAmount} ${currency})`);
   try {
-    // Instruction to add blinksights memo to transaction
-    const trackingInstruction = await blinkSights.getActionIdentityInstructionV2(account, req.url);
-    const transaction = await generateSendTransaction(account, effectiveAmount, guild, trackingInstruction);
-
-    // Run in async, no need to await
-    blinkSights.trackActionV2(account, req.url);
+    const transaction = await generateSendTransaction(account, effectiveAmount, guild);
 
     return res.json(
       await createPostResponse({
