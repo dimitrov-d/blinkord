@@ -34,6 +34,14 @@ export class RolePurchase extends BaseEntity<RolePurchase> {
   @Column({ type: 'varchar', nullable: true })
   signature: string;
 
+  /**
+   * The actual amount paid for this role purchase.
+   * Used for grandfathered pricing - returning subscribers keep their original rate
+   * even if the role price is raised, as long as they renew within 3 days of expiration.
+   */
+  @Column('decimal', { precision: 9, scale: 5, nullable: true })
+  paidAmount: number;
+
   setExpiresAt() {
     if (!this.guild?.limitedTimeRoles) return this;
 

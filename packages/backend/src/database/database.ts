@@ -192,6 +192,82 @@ export async function createUserWallet(discordUserId: string, address: string) {
 }
 
 /**
+ * Grace period in days after subscription expiration during which
+ * the user can still renew at their original (grandfathered) rate.
+ */
+const GRACE_PERIOD_DAYS = 3;
+
+/**
+ * Get the grandfathered price for a user's role in a guild.
+ * Returns the price they previously paid if they're within the grace period
+ * (subscription still active OR expired no more than 3 days ago).
+ * @returns The grandfathered price, or null if not eligible
+ */
+export async function getGrandfatheredPriceForUser(
+  discordUserId: string,
+  guildId: string,
+  roleId: string,
+): Promise<number | null> {
+  const latestPurchase = await rolePurchaseRepository.findOne({
+    where: {
+      discordUserId,
+      guild: { id: guildId },
+      role: { id: roleId },
+    },
+    order: { createTime: 'DESC' },
+  });
+
+  if (!latestPurchase || !latestPurchase.expiresAt) return null;
+
+  const now = new Date();
+  const gracePeriodEnd = new Date(latestPurchase.expiresAt);
+  gracePeriodEnd.setDate(gracePeriodEnd.getDate() + GRACE_PERIOD_DAYS);
+
+  // Past grace period - no grandfathered pricing
+  if (now > gracePeriodEnd) return null;
+
+  return latestPurchase.paidAmount != null ? +latestPurchase.paidAmount : null;
+}
+
+/**
+ * Get grandfathered prices for all roles a user has purchased in a guild.
+ * Returns a Map of roleId -> grandfathered price for roles within grace period.
+ */
+export async function getUserGrandfatheredPricesForGuild(
+  discordUserId: string,
+  guildId: string,
+): Promise<Map<string, number>> {
+  const purchases = await rolePurchaseRepository.find({
+    where: {
+      discordUserId,
+      guild: { id: guildId },
+    },
+    relations: ['role'],
+    order: { createTime: 'DESC' },
+  });
+
+  const now = new Date();
+  const result = new Map<string, number>();
+  const seenRoles = new Set<string>();
+
+  for (const purchase of purchases) {
+    if (!purchase.role || seenRoles.has(purchase.role.id)) continue;
+    seenRoles.add(purchase.role.id);
+
+    if (!purchase.expiresAt) continue;
+
+    const gracePeriodEnd = new Date(purchase.expiresAt);
+    gracePeriodEnd.setDate(gracePeriodEnd.getDate() + GRACE_PERIOD_DAYS);
+
+    if (now <= gracePeriodEnd && purchase.paidAmount != null) {
+      result.set(purchase.role.id, +purchase.paidAmount);
+    }
+  }
+
+  return result;
+}
+
+/**
  * Get all subscriptions for a given guildId (server id) that have an expiration date
  * @param {string} guildId
  * @returns {Promise<RolePurchase[]>}
