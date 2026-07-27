@@ -137,33 +137,55 @@ export async function saveRolePurchase(rolePurchase: RolePurchase) {
 }
 
 /**
- * Get all role purchases where guild and role is not null, guild.limitedTimeRoles is true
- * And based on expiresAt it expires in less than three days
- * @returns {Promise<RolePurchase[]>}
+ * Get role purchases that are still active but expire within ~3 days (reminder window).
  */
-export async function getExpiringRoles(): Promise<RolePurchase[]> {
+export async function getRolesNeedingReminder(): Promise<RolePurchase[]> {
   const now = new Date();
-  // Subtract hour to avoid edge case where expiresAt is at the exact time or minutes are before current time
-  now.setHours(now.getHours() - 1);
   const threeDaysFromNow = new Date(now);
   threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
-  // Add hour to avoid edge case where expiresAt is at the exact time or minutes are after current time
-  threeDaysFromNow.setHours(threeDaysFromNow.getHours() + 2);
+  // Small buffers so hourly cron ticks don't miss reminder windows
+  threeDaysFromNow.setHours(threeDaysFromNow.getHours() + 1);
 
   return await rolePurchaseRepository
     .createQueryBuilder('rolePurchase')
     .leftJoinAndSelect('rolePurchase.guild', 'guild')
     .leftJoinAndSelect('rolePurchase.role', 'role')
-    .where('rolePurchase.expiresAt <= :threeDaysFromNow', {
-      threeDaysFromNow,
-    })
-    .andWhere('rolePurchase.expiresAt > :now', {
-      now,
-    })
+    .where('rolePurchase.expiresAt > :now', { now })
+    .andWhere('rolePurchase.expiresAt <= :threeDaysFromNow', { threeDaysFromNow })
     .andWhere('guild.id IS NOT NULL')
     .andWhere('role.id IS NOT NULL')
-    // .andWhere('guild.limitedTimeRoles = true')
     .getMany();
+}
+
+/**
+ * Get role purchases that have already expired (overdue Discord role removals).
+ * Returns the latest purchase per (guild, role, discordUserId) so renewals are not double-processed.
+ */
+export async function getExpiredRolePurchases(): Promise<RolePurchase[]> {
+  const now = new Date();
+
+  const expired = await rolePurchaseRepository
+    .createQueryBuilder('rolePurchase')
+    .leftJoinAndSelect('rolePurchase.guild', 'guild')
+    .leftJoinAndSelect('rolePurchase.role', 'role')
+    .where('rolePurchase.expiresAt IS NOT NULL')
+    .andWhere('rolePurchase.expiresAt <= :now', { now })
+    .andWhere('guild.id IS NOT NULL')
+    .andWhere('role.id IS NOT NULL')
+    .orderBy('rolePurchase.expiresAt', 'DESC')
+    .getMany();
+
+  // Keep only the latest expiry per user+guild+role
+  const latestByKey = new Map<string, RolePurchase>();
+  for (const purchase of expired) {
+    const key = `${purchase.guild.id}-${purchase.role.id}-${purchase.discordUserId}`;
+    const existing = latestByKey.get(key);
+    if (!existing || new Date(purchase.expiresAt) > new Date(existing.expiresAt)) {
+      latestByKey.set(key, purchase);
+    }
+  }
+
+  return Array.from(latestByKey.values());
 }
 
 /**

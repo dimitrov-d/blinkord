@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { actionCorsMiddleware, BLOCKCHAIN_IDS } from '@solana/actions';
 import env from './services/env';
 import './cron/remove-expired-roles';
+import './cron/purge-expired-users';
 import { loginRouter } from './routers/login';
 
 require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss');

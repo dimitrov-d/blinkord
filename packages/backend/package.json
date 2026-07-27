@@ -4,7 +4,8 @@
   "description": "An app that uses solana actions to enable users to easily gain access to a paid discord server",
   "main": "index.ts",
   "scripts": {
-    "start": "nodemon ./src/index.ts"
+    "start": "nodemon ./src/index.ts",
+    "purge-expired-users": "tsx ./src/scripts/purge-expired-users.ts"
   },
   "keywords": [
     "solana",
