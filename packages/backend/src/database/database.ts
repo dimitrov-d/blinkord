@@ -290,6 +290,33 @@ export async function getUserGrandfatheredPricesForGuild(
 }
 
 /**
+ * Returns distinct Discord user IDs who previously had a limited-time subscription
+ * that has since expired and who do not currently hold any active subscription.
+ * Used for the lapsed-subscriber re-engagement DM campaign.
+ */
+export async function getLapsedSubscriberUserIds(): Promise<string[]> {
+  const now = new Date();
+
+  const [expiredRows, activeRows] = await Promise.all([
+    rolePurchaseRepository
+      .createQueryBuilder('rp')
+      .select('DISTINCT rp.discordUserId', 'discordUserId')
+      .where('rp.expiresAt IS NOT NULL')
+      .andWhere('rp.expiresAt <= :now', { now })
+      .getRawMany<{ discordUserId: string }>(),
+
+    rolePurchaseRepository
+      .createQueryBuilder('rp')
+      .select('DISTINCT rp.discordUserId', 'discordUserId')
+      .where('rp.expiresAt > :now', { now })
+      .getRawMany<{ discordUserId: string }>(),
+  ]);
+
+  const activeIds = new Set(activeRows.map((r) => r.discordUserId));
+  return expiredRows.map((r) => r.discordUserId).filter((id) => !activeIds.has(id));
+}
+
+/**
  * Get all subscriptions for a given guildId (server id) that have an expiration date
  * @param {string} guildId
  * @returns {Promise<RolePurchase[]>}

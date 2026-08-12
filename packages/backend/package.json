@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "start": "nodemon ./src/index.ts",
-    "purge-expired-users": "tsx ./src/scripts/purge-expired-users.ts"
+    "purge-expired-users": "tsx ./src/scripts/purge-expired-users.ts",
+    "dm-lapsed-users": "tsx ./src/scripts/dm-lapsed-users.ts"
   },
   "keywords": [
     "solana",
