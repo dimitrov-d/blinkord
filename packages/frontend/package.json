@@ -51,7 +51,7 @@
     "react-dropzone": "^14.2.3",
     "react-tabs": "^6.1.0",
     "react-use": "^17.5.1",
-    "sharp": "^0.35.0",
+    "sharp": "^0.35.4",
     "sonner": "^1.5.0",
     "styled-components": "^6.1.12",
     "tailwind-merge": "^2.5.2",
